@@ -96,3 +96,4 @@ body{
 .card-body img:hover {
     transform: scale(1.05); /* 마우스 오버 시 이미지가 살짝 확대됨 */
 }
+
