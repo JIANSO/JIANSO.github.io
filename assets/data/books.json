@@ -1,0 +1,47 @@
+{
+    "2024" : [
+        {"src": "../assets/img/books/팀켈러의기도.jpg", "text": "팀 켈러의 기도 / 두란노"},
+        {"src": "../assets/img/books/기도하기전에.jpg", "text": "기도하기 전에 / 규장"},
+        {"src": "../assets/img/books/새가족반.jpg", "text": "새가족반 / 복있는사람"},
+        {"src": "../assets/img/books/내면세계의질서와영적성장.jpg", "text": "내면세계의 질서와 영적 성장 / IVP"},
+        {"src": "../assets/img/books/cs루이스의문장들.jpg", "text": "C.S.루이스의 문장들 / 두란노"}
+    ]
+    
+    ,"2023" :[
+        
+        {"src": "../assets/img/books/여섯걸음.jpg", "text": "여섯 걸음 / 규장"},
+        {"src": "../assets/img/books/하나님의퍼즐링.jpg", "text": "하나님의 퍼즐링 / 규장"},
+        {"src": "../assets/img/books/정철의AD영어학습법.jpg", "text": "정철의 A.D.영어학습법 / 규장"},
+        {"src": "../assets/img/books/네마음이어디있느냐.jpg", "text": "네 마음이 어디있느냐 / 규장"},
+        {"src": "../assets/img/books/예수님과여행을시작합니다.jpg", "text": "예수님과 여행을 시작합니다 / 토기장이"},
+        {"src": "../assets/img/books/나는이렇게순종했다.jpg", "text": "나는 이렇게 순종했다 / 교회성장연구소"},
+        {"src": "../assets/img/books/성도님왜.jpg", "text": "성도님,왜? / 미래사CROSS"},
+        {"src": "../assets/img/books/오두막.jpg", "text": "오두막 / 세계사"},
+        {"src": "../assets/img/books/하나님의대사1.jpg", "text": "하나님의 대사 1 / 규장"},
+        {"src": "../assets/img/books/하나님의대사2.jpg", "text": "하나님의 대사 2 / 규장"},
+        {"src": "../assets/img/books/하나님의대사3.jpg", "text": "하나님의 대사 3 / 규장"},
+        {"src": "../assets/img/books/젊은크리스천들에게.jpg", "text": "젊은 크리스천들에게 / 두란노"},
+        {"src": "../assets/img/books/하나님의기쁨을위하여살자.jpg", "text": "하나님의 기쁨을 위하여 살자 / 규장"},
+        {"src": "../assets/img/books/한시간기도.jpg", "text": "한 시간 기도 / 규장"},
+        {"src": "../assets/img/books/먹다듣다걷다.jpg", "text": "먹다 듣다 걷다 / 두란노"},
+        {"src": "../assets/img/books/하나님살리시든지데려가든지하세요.jpg", "text": "하나님, 살리시든지 데려가든지 하세요! / 규장"},
+        {"src": "../assets/img/books/깨어진그릇.jpg", "text": "깨어진그릇 / 규장"},
+        {"src": "../assets/img/books/준비하고있으라.jpg", "text": "준비하고 있으라 / 규장"},
+        {"src": "../assets/img/books/팀켈러의방탕한선지자.jpg", "text": "팀 켈러의 방탕한 선지자 / 두란노"},
+        {"src": "../assets/img/books/팀켈러의일과영성.jpg", "text": "팀 켈러의 일과 영성 / 두란노"},
+        {"src": "../assets/img/books/팀켈러의예수예수.jpg", "text": "팀 켈러의 예수, 예수 / 두란노"},
+        {"src": "../assets/img/books/팀켈러의탕부하나님.jpg", "text": "팀 켈러의 탕부 하나님 / 두란노"},
+        {"src": "../assets/img/books/순전한기독교.jpg", "text": "순전한 기독교 / 홍성사"},
+        {"src": "../assets/img/books/스크루테이프의편지.jpg", "text": "스크루테이프의 편지 / 홍성사"},
+        {"src": "../assets/img/books/기도의자리로.jpg", "text": "기도의 자리로 / 두란노"},
+        {"src": "../assets/img/books/그리스도인을살다.jpg", "text": "그리스도인을 살다 / 두란노"},
+        {"src": "../assets/img/books/가야하는길.jpg", "text": "가야하는 길 / 규장"},
+        {"src": "../assets/img/books/나의나라에서하나님나라로.jpg", "text": "나의 나라에서 하나님 나라로 / 두란노"},
+        {"src": "../assets/img/books/위대하지않은선한그리스도인을찾습니다.jpg", "text": "위대하지 않은, 선한 그리스도인을 찾습니다 / 두란노"},
+        {"src": "../assets/img/books/하나님듣고계시죠.jpg", "text": "하나님, 듣고 계시죠? / 두란노"},
+        {"src": "../assets/img/books/아빠는왜그렇게살아.jpg", "text": "아빠는 왜 그렇게 살아? / 비아토르"},
+        {"src": "../assets/img/books/아빠우린왜이렇게행복하지.jpg", "text": "아빠, 우린 왜 이렇게 행복하지? / 비아토르"},        
+        {"src" : "../assets/img/books/시작에서답을찾다.jpg", "text" : "시작에서 답을 찾다"},
+        {"src" : "../assets/img/books/고난이선물이다.jpg", "text" : "고난이선물이다"}
+    ]
+}
