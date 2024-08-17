@@ -67,36 +67,19 @@
   </div>
 </footer>
 <script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function() {
-
-    //json 렌더링
-    
+  document.addEventListener('DOMContentLoaded', function() {       
     get_books_data(year=2024);
     get_books_data(year=2023);
-
     const wrapper = document.querySelectorAll('.wrapper');
-
     wrapper.forEach(card => {
           card.classList.add('loaded');
       });
-    /*
-    const overlayContainers = document.querySelectorAll('.overlay-container');
-    overlayContainers.forEach(container => {
-        const overlay = container.querySelector('.overlay');
-        container.addEventListener('mouseenter', () => {
-            overlay.style.opacity = '1';
-        });
-        container.addEventListener('mouseleave', () => {
-            overlay.style.opacity = '0';
-        });
-    });*/
+  
 });
 
 function get_books_data(year){
-  // JSON 파일의 경로 설정
-  const jsonFilePath = '../assets/data/books.json';
 
-  // fetch API를 사용하여 JSON 파일 읽어오기
+  const jsonFilePath = '../assets/data/books.json'; 
   fetch(jsonFilePath)
       .then(response => {
           if (!response.ok) {
