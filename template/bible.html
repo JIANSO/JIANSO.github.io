@@ -12,9 +12,19 @@
   <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/carousel/">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
   <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/css/custom.css" rel="stylesheet">
-  <style>      
-  </style>    
+  <link href="../assets/css/custom.css?timestamp=20240817" rel="stylesheet">
+  <style>          
+    .wrapper {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }   
+   
+    .wrapper.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>       
 </head>
   
 <body>    
@@ -40,7 +50,7 @@
   </div>
 </header>
 
-<main class="wrapper fade-in">
+<main class="wrapper">
   <div class="marketing py-5">
     <div class="container">
       <hr class="featurette-divider">

@@ -12,9 +12,18 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/custom.css" rel="stylesheet">
-    <style>      
-    </style>    
+    <link href="../assets/css/custom.css?timestamp=20240817" rel="stylesheet">
+    <style>           
+      .wrapper {
+        opacity: 0;
+        transform: translateY(20px); 
+        transition: opacity 1s ease-out, transform 1s ease-out;
+      }         
+      .wrapper.loaded {
+        opacity: 1;
+        transform: translateY(0); 
+      }
+    </style> 
   </head>
 <body>    
 
@@ -38,7 +47,7 @@
   </div>
 </header>
 
-<main>
+<main class="wrapper">
   <div class="album py-5">
     <div class="container">
       <div class="row mb-2">
@@ -117,6 +126,17 @@
     </p>
   </div>
 </footer>
+<script type="text/javascript">
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.querySelectorAll('.wrapper');
+
+    wrapper.forEach(card => {
+          card.classList.add('loaded');
+      });
+    
+  });
+</script>
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
