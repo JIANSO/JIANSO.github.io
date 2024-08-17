@@ -40,7 +40,7 @@
   </div>
 </header>
 
-<main>
+<main class="wrapper fade-in">
   <div class="marketing py-5">
     <div class="container">
       <hr class="featurette-divider">
@@ -64,7 +64,17 @@
 
 </main>
 
+<script type="text/javascript">
 
+  document.addEventListener('DOMContentLoaded', function() {
+    const wrapper = document.querySelectorAll('.wrapper');
+
+    wrapper.forEach(card => {
+          card.classList.add('loaded');
+      });
+    
+  });
+</script>
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
