@@ -11,7 +11,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
     <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/custom.css?timestamp=202408171258" rel="stylesheet">
+    <link href="../assets/css/custom.css?timestamp=20240819" rel="stylesheet">
     <style>   
       .card{
         border : none;
@@ -25,7 +25,10 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-12 col-md-12 py-4 px-3">
-          <h4>#Books</h4>
+          <h4>Books</h4>
+          <p class="text-body-secondary">
+            #신앙서적 #완독서
+          </p>
           <p class="text-body-secondary">
             <a href="/">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -73,10 +76,11 @@
   document.addEventListener('DOMContentLoaded', function() {       
     get_books_data(year=2024);
     get_books_data(year=2023);
-    const wrapper = document.querySelectorAll('.wrapper');
+
+    const wrapper = document.querySelectorAll('.wrapper');    
     wrapper.forEach(card => {
-          card.classList.add('loaded');
-      });
+      card.classList.add('loaded');
+    });
   
 });
 
@@ -90,8 +94,7 @@ function get_books_data(year){
           }
           return response.json();
       })
-      .then(data => {
-          
+      .then(data => {          
           let card_list = create_book_card(data[year])
           document.getElementById('row_'+year).innerHTML += card_list;
 
