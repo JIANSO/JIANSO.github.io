@@ -132,7 +132,7 @@ body:lang(ko) {
 
 .fade-in {
   opacity: 0;
-  transition: opacity 0.8s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .fade-in.loaded {
