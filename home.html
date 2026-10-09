@@ -105,7 +105,7 @@
 <body>
   <header id="header">
     <button type="button" id="menu" class="krds-btn icon" aria-label="메뉴"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-    <span id="current"></span>
+    <span id="current">JIANSO</span>
     <a id="back" class="krds-btn small text" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg> 목록으로</a>
   </header>
   <div id="body">
@@ -133,6 +133,17 @@
               { group: '1. 운영체제 보안', title: 'Ch2. 취약점 점검', file: 'static/1운영체제보안_ch2취약점점검.html' },
               { group: '2. 네트워크 보안', title: 'Ch1. 네트워크 일반', file: 'static/2네트워크보안_ch1네트워크일반.html' },
               { group: '2. 네트워크 보안', title: 'Ch2. 네트워크 기반 공격 기술', file: 'static/2네트워크보안_ch2네트워크기반공격기술.html' },
+              { group: '2. 네트워크 보안', title: 'Ch3. 네트워크 보안 기술', file: 'static/2네트워크보안_ch3네트워크보안기술.html' },
+              { group: '2. 네트워크 보안', title: 'Ch4. 취약점 점검', file: 'static/2네트워크보안_ch4취약점점검.html' },
+              { group: '3. 애플리케이션 보안', title: 'Ch1. 인터넷 응용 보안', file: 'static/3애플리케이션보안_ch1인터넷응용보안.html' },
+              { group: '3. 애플리케이션 보안', title: 'Ch2. 애플리케이션 보안 취약점', file: 'static/3애플리케이션보안_ch2애플리케이션보안취약점.html' },
+              { group: '3. 애플리케이션 보안', title: 'Ch3. 시스템 공격 기법', file: 'static/3애플리케이션보안_ch3시스템공격기법.html' },
+              { group: '3. 애플리케이션 보안', title: 'Ch4. 취약점 점검', file: 'static/3애플리케이션보안_ch4취약점점검.html' },
+              { group: '4. 보안관제 및 침해사고 대응', title: 'Ch1. 보안 도구', file: 'static/4보안관제및침해사고대응_ch1보안도구.html' },
+              { group: '4. 보안관제 및 침해사고 대응', title: 'Ch2. 로그 및 침해사고 분석', file: 'static/4보안관제및침해사고대응_ch2로그및침해사고분석.html' },
+              { group: '5. 정보보안 일반', title: 'Ch1. 암호학', file: 'static/5정보보안일반_ch1암호학.html' },
+              { group: '5. 정보보안 일반', title: 'Ch2. ISMS-P 및 정보보호제품 인증', file: 'static/5정보보안일반_ch2ISMS-P및정보보호제품인증.html' },
+              { group: '5. 정보보안 일반', title: 'Ch3. 기타', file: 'static/5정보보안일반_ch3기타.html' },
             ],
           },
         ],
@@ -172,7 +183,6 @@
         links[i].className = selected ? 'lnb-btn lnb-link selected' : 'lnb-btn lnb-link';
         if (selected) open(links[i].closest('.lnb-item'), true);
       }
-      document.getElementById('current').textContent = page ? page.title : category.title + ' · ' + menu.title;
       sidebar.classList.remove('open');
 
       list.hidden = !!page;

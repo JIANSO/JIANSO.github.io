@@ -1,0 +1,789 @@
+<title>3애플리케이션보안_ch3시스템공격기법</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: 한 줄 단, 위에 과목·단원 목차 → 단원마다 [개념 정리] 다음 [기출문제] 순서로 쌓아 가는 노트 */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#18212e; --muted:#5a6676; --line:#dde2ea;
+  --accent:#1f56b8; --accent-soft:#e6eefb; --mark:#fff1b8; --mark-ink:#5c4700;
+  --term-bg:#16202c; --term-ink:#d7e3f2; --ok:#1d7a4f; --warn:#b4541b; --warn-soft:#fbeee4;
+  --f-display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --f-body:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.7;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;line-height:1.35;margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+p{margin:0}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+ul ul{margin-top:4px}
+
+/* 머리 */
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+header h1{font-size:28px}
+header h1 .ch{display:block;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--accent);margin-bottom:2px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted)}
+.meta span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+
+/* 목차 */
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.toc h2{font-size:14px;color:var(--muted);letter-spacing:.06em;margin-bottom:8px}
+.toc ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover,.toc a:focus-visible{text-decoration:underline}
+.toc .sub{font-size:13.5px;color:var(--muted)}
+
+/* 과목 → 단원 */
+.subject{display:block;scroll-margin-top:16px}
+.subject-head{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.subject-head .no{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.subject-head h2{font-size:22px}
+.unit{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.unit>h3{font-size:19px}
+.label{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+
+/* 개념 카드 */
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.concept h4{font-size:18px}
+.concept h4 small{font-family:var(--f-mono);font-weight:500;font-size:13px;color:var(--muted);margin-left:6px}
+.block{display:flex;flex-direction:column;gap:8px}
+.block-title{font-size:14px;font-weight:700;color:var(--muted)}
+.why{background:var(--accent-soft);border-radius:8px;padding:12px 14px}
+.why .block-title{color:var(--accent)}
+
+/* 단계 */
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:10px;counter-increment:s}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-family:var(--f-mono);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.steps li>div{min-width:0}
+.steps b{display:block}
+.steps .bad::before{border-color:var(--warn);color:var(--warn)}
+
+/* 터미널 느낌 예시 */
+.term{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre}
+.term .c{opacity:.6}
+
+/* 시험 키워드 */
+.keys{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--mark);color:var(--mark-ink);border-radius:4px;padding:1px 8px;font-size:13.5px}
+.arrow{font-weight:700}
+
+.caution{background:var(--warn-soft);border-radius:8px;padding:12px 14px}
+.caution .block-title{color:var(--warn)}
+
+/* 표 */
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+thead th{background:var(--bg);font-size:13px;color:var(--muted);font-weight:700}
+td.dir{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+tr.extra td.dir{color:var(--muted)}
+tr.hit{background:var(--accent-soft)}
+.tag{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.tag.exam{background:var(--mark);color:var(--mark-ink)}
+.tag.add{border:1px solid var(--line);color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+
+/* 핵심 용어 */
+.terms{display:flex;flex-wrap:wrap;align-items:center;gap:10px;scroll-margin-top:16px}
+.terms-label{font-size:13px;font-weight:700;color:var(--muted)}
+.terms-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;justify-content:space-between}
+.terms-head h3{font-size:16px}
+.term-group{display:flex;flex-direction:column;gap:6px}
+.term-group h4{font-size:13.5px;color:var(--muted);font-weight:700}
+.term-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.term-list li{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.term-list .name{font-weight:700}
+.term-list .name code{color:var(--accent);font-weight:700}
+.term-list .name small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.term-list .desc{min-width:0}
+.term-list .desc .ex{display:block;font-size:13px;color:var(--muted)}
+.term-list .src{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;background:var(--mark);color:var(--mark-ink);white-space:nowrap}
+@media (max-width:480px){.term-list li{grid-template-columns:1fr;gap:2px}}
+
+
+/* 코드 · 다중 빈칸 */
+.code{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:10px 0;font-family:var(--f-mono);font-size:13px;line-height:1.7;overflow-x:auto}
+.code ol{margin:0;padding:0;list-style:none;counter-reset:ln;min-width:max-content}
+.code li{counter-increment:ln;white-space:pre;padding-right:14px}
+.code li::before{content:counter(ln,decimal-leading-zero);display:inline-block;width:2.6em;padding-right:.9em;text-align:right;opacity:.45}
+.out{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.blank{display:inline-block;min-width:2.2em;border-bottom:1.5px solid var(--ink);text-align:center;font-weight:700}
+.sub-title{font-size:13.5px;font-weight:700;color:var(--muted)}
+.multi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.multi label{display:flex;align-items:center;gap:6px;font-weight:700;min-width:0}
+.multi input{flex:1;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.mini{width:100%;border-collapse:collapse;min-width:460px;font-size:14px}
+.mini th,.mini td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.mini thead th{background:var(--bg);color:var(--muted);font-size:12.5px}
+.mini td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+@media (max-width:480px){.multi{grid-template-columns:1fr}}
+
+
+.shadow{border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;justify-content:center;overflow-x:auto}
+.shadow .seg{display:inline-flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--f-mono);font-size:15px;margin:0 6px}
+.shadow .seg u{text-underline-offset:4px}
+.shadow .seg span{font-size:13px;color:var(--muted)}
+.cmd{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.ex-line{display:block;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.multi.cols1{grid-template-columns:1fr}
+
+
+/* 문제 유형 구분 */
+.qtype{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.label.essay{background:var(--warn-soft);color:var(--warn)}
+.qsep{border-top:2px dashed var(--line);margin-top:10px}
+.q.essay{border-left:4px solid var(--warn)}
+.q.essay .q-no{color:var(--warn)}
+.q.essay textarea{width:100%;min-height:96px;font:inherit;font-size:14.5px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);resize:vertical}
+.essay-in{display:flex;flex-direction:column;gap:10px}
+.essay-in label{display:flex;flex-direction:column;gap:4px;font-weight:700}
+.q.essay textarea.mono-in{font-family:var(--f-mono);min-height:56px}
+.sub-qs{font-size:14.5px;gap:6px}
+.cfg{border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.75;white-space:pre;overflow-x:auto}
+.cfg u{text-decoration:none;background:var(--mark);color:var(--mark-ink);border-radius:2px;padding:0 3px}
+.perm-table th,.perm-table td{text-align:center}
+.perm-table td:first-child{color:inherit;font-family:inherit;font-weight:400}
+.mono-cell{font-family:var(--f-mono);font-size:13px;line-height:1.8;white-space:nowrap}
+.mini td ul{padding-left:1.1em;gap:2px}
+.uac{max-width:420px;width:100%;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+.uac-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.uac-q{font-size:16px;line-height:1.5}
+.uac-app{display:flex;align-items:center;gap:10px;font-size:15px}
+.uac-ico{background:var(--term-bg);color:var(--term-ink);font-family:var(--f-mono);font-size:10px;padding:6px 5px;border-radius:2px}
+.uac-meta{font-size:12.5px;color:var(--muted);line-height:1.6}
+.uac-btns{display:flex;justify-content:flex-end}
+.uac-no{border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:4px 40px;font-size:13px}
+.hs{border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;font-size:13.5px;overflow-x:auto}
+.hs .node{grid-row:1 / span 3;border:1.5px solid var(--ink);border-radius:4px;padding:28px 10px;text-align:center;font-weight:700}
+.hs .msg{display:flex;flex-direction:column;align-items:center;font-family:var(--f-mono);font-size:12.5px;min-width:200px}
+.hs .line{width:100%;height:0;border-top:1.5px solid var(--ink);position:relative;margin-top:4px}
+.hs .line.r::after,.hs .line.l::after{content:"";position:absolute;top:-5px;border:4.5px solid transparent}
+.hs .line.r::after{right:-1px;border-left:7px solid var(--ink)}
+.hs .line.l::after{left:-1px;border-right:7px solid var(--ink)}
+.bin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bin-grid>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.steps ul{margin-top:2px}
+.topo{border:1px solid var(--line);border-radius:8px;padding:14px;overflow-x:auto}
+.topo-row{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto 1fr auto;align-items:center;min-width:520px;gap:0}
+.topo .box{border:1.5px solid var(--ink);border-radius:4px;padding:8px 10px;font-size:12.5px;text-align:center;white-space:nowrap}
+.topo .gw{background:var(--accent-soft);color:var(--accent);font-weight:700;border-color:var(--accent)}
+.topo .net{border-radius:50%;font-weight:700}
+.topo .wire{border-top:1.5px dashed var(--muted);height:0;margin:0 4px}
+.topo-span{display:grid;min-width:520px;margin-top:8px;font-size:12px;color:var(--muted);text-align:center}
+.topo-span span{border-top:1.5px solid var(--ink);padding-top:3px;margin:0 2px}
+.topo-span span.prot{border-color:var(--accent);color:var(--accent);font-weight:700}
+.pkt{display:flex;flex-wrap:nowrap;overflow-x:auto;border:1.5px solid var(--ink);border-radius:4px;width:max-content;max-width:100%}
+.pkt span{padding:6px 10px;font-size:12.5px;border-right:1px solid var(--line);white-space:nowrap;text-align:center}
+.pkt span:last-child{border-right:0}
+.pkt span.esp{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.perm{font-family:var(--f-mono);font-size:14px;letter-spacing:.04em}
+.perm b{background:var(--mark);color:var(--mark-ink);padding:0 2px;border-radius:2px}
+.model{border-left:3px solid var(--ok);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:8px}
+
+
+/* 단원 접기 */
+details.subject>summary{cursor:pointer;list-style:none;align-items:center}
+details.subject>summary::-webkit-details-marker{display:none}
+details.subject>summary::before{content:"";width:9px;height:9px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);margin:0 4px 4px 2px;transition:transform .15s;flex:none}
+details.subject:not([open])>summary::before{transform:rotate(-45deg);margin-bottom:0}
+details.subject:not([open])>summary{border-bottom-color:var(--line)}
+.fold-hint{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+.subject-body{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.fold-all{align-self:flex-end}
+
+/* 기출문제 */
+.qbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.qlist{display:flex;flex-direction:column;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.q-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.q-no{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.round{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--ink);color:var(--surface)}
+.q-text{font-weight:500}
+.q-box ul{gap:6px}
+.q-box.mono{font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.q-box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--muted);font-size:14.5px}
+.try{display:flex;flex-wrap:wrap;gap:8px}
+.try input{flex:1 1 180px;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.result{font-size:13.5px;font-weight:700;min-height:1.2em}
+.result.ok{color:var(--ok)}.result.no{color:var(--warn)}
+details{border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";}
+details[open] summary::before{content:"▾ ";}
+.ans{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.ans .answer{font-family:var(--f-display);font-size:17px;font-weight:700}
+.answer-list{list-style:none;padding:0;font-weight:700}
+.answer-list mark,.ans .answer mark{background:var(--mark);color:var(--mark-ink);padding:0 6px;border-radius:3px}
+.ans a{color:var(--accent)}
+
+footer{font-size:12.5px;color:var(--muted);text-align:center}
+@media (max-width:480px){header h1{font-size:23px}.concept,.q{padding:16px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">정보보안기사 실기 · 3과목 애플리케이션 보안</span>
+    <h1><span class="ch">CHAPTER 03</span> 시스템 공격 기법</h1>
+    <div class="meta">
+      <span>마지막 추가 2026-10-09</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="목차">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#sys">01 시스템 공격 기법</a>
+        <div class="sub"><a href="#t-sys">핵심 용어</a> · <a href="#q-sys">단답형</a> · <a href="#q-sys-essay">서술형 · 실무형</a></div>
+      </li>
+      <li><a href="#mal">02 시스템 공격 기술의 이해 및 관리</a>
+        <div class="sub"><a href="#t-mal">핵심 용어</a> · <a href="#q-mal">단답형</a></div>
+      </li>
+      <li><a href="#tool">03 시스템 분석 도구</a>
+        <div class="sub"><a href="#t-tool">핵심 용어</a> · <a href="#q-tool">단답형</a></div>
+      </li>
+    </ol>
+  </nav>
+  <button type="button" class="fold-all" id="fold-all">단원 모두 접기</button>
+
+  <!-- ========== 과목 1: 시스템 보안 ========== -->
+  <details class="subject" id="sys" open>
+    <summary class="subject-head"><span class="no">01</span><h2>시스템 공격 기법</h2><span class="fold-hint">단답 11 · 서술 1</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-sys">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">버퍼 오버플로우 · strcpy</span><span class="chip">사이버 킬 체인</span><span class="chip">스택·힙 영역</span><span class="chip">공급망 공격</span><span class="chip">DDE</span><span class="chip">MITRE ATT&amp;CK</span><span class="chip">크리덴셜 스터핑</span><span class="chip">레이스 컨디션</span><span class="chip">APT</span><span class="chip">TEMPEST · DPA</span><span class="chip">제로 데이 공격</span><span class="chip">스택 가드(Canary)</span><span class="chip">ASLR</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-sys">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="sys">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="sys">
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">4회</span><span class="round">29회</span></div>
+          <p class="q-text">다음은 C언어 코드이다. 질문에 답하시오.</p>
+          <div class="code"><ol><li>#include &lt;string.h&gt;</li><li>int main(int argc, char **argv){</li><li>  char p[4];</li><li>  strcpy(p, argv[1]);</li><li>  return 0;</li><li>}</li></ol></div>
+          <ul class="sub-qs">
+            <li>① 해당 소스 코드에서 발생할 수 있는 취약점이 무엇인지 쓰시오.</li>
+            <li>② 프로그램 소스 코드에서 취약한 함수를 쓰시오.</li>
+          </ul>
+          <div class="multi">
+            <label for="s1-a">①<input id="s1-a" type="text" data-keys="버퍼오버플로우|bufferoverflow|버퍼오버플로" aria-label="Q1 빈칸 1"></label>
+            <label for="s1-b">②<input id="s1-b" type="text" data-keys="strcpy" aria-label="Q1 빈칸 2"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>버퍼 오버플로우(Buffer Overflow)</mark>　② <mark>strcpy</mark></p>
+              <ul>
+                <li>버퍼 오버플로우 공격은 메모리에 할당된 버퍼 크기를 초과하는 양의 데이터를 입력하여 이로 인해 프로세스의 흐름을 변경시켜서 악성 코드를 실행시키는 공격 기법</li>
+              </ul>
+              <span class="sub-title">줄별 풀이</span>
+              <ul>
+                <li><b>01</b> — strcpy 함수를 사용하기 위해서 string 헤더 파일 포함</li>
+                <li><b>02</b> — main 함수(C언어 시작 지점)
+                  <ul>
+                    <li><code>argc</code> — 프로그램 외부에 입력한 문자열의 개수</li>
+                    <li><code>argv</code> — 프로그램 외부에서 입력한 문자열 (argv[0] = 프로그램 파일 이름, argv[1] = 프로그램 외부에서 입력한 문자열)</li>
+                    <li>예: 프로그램 파일 이름이 Soojebi.exe이고, 외부에서 "Soojebi.exe Hello"를 입력하면 argv[0] = "Soojebi.exe", argv[1] = "Hello"</li>
+                  </ul></li>
+                <li><b>03</b> — p라는 배열을 선언(문자형 4개 저장)</li>
+                <li><b>04</b> — argv[1]의 문자열을 p 배열에 덮어씀
+                  <ul><li>p[0]이 100번지라면 100~103번지에 'H','e','l','l'이 저장되고, 104번지('o')는 p 배열의 범위(4개)를 벗어나 버퍼 오버플로우가 발생</li></ul></li>
+                <li><b>05</b> — main 함수 종료(프로그램 종료)</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="사이버킬체인|cyberkillchain|사이버킬체인(cyberkillchain)|킬체인">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">7회</span><span class="round">28회</span></div>
+          <p class="q-text">다음 괄호 (　) 안에 공통으로 들어갈 용어를 쓰시오.</p>
+          <div class="q-box">APT 공격은 특정 타겟을 대상으로 장기간에 걸쳐 다양한 수단을 활용하여 지능적(Advanced)이고 지속적(Persistent)으로 공격(Threat)하는 맞춤형 공격 기법으로, 목표에 침투하여 은밀히 정보를 유출하는 (　)을/를 생성한다. 이러한 개념은 록히드 마틴(Lockheed Martin)이 군사 개념을 정보 보안 분야에 맞게 적용하여 사이버 보안 산업을 위해 발전시킨 것이다. 그리고 (　)은/는 정찰(Reconnaissance), 무기화(Weaponization), 전달(Delivery), 익스플로잇(Exploitation), 설치(Installation), 명령 및 제어(Command and Control), 목표 달성(Actions on Objectives)의 단계로 진행된다.</div>
+          <div class="try">
+            <input id="s2-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q2 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>사이버 킬 체인(Cyber Kill Chain)</mark></p>
+              <ul>
+                <li>사이버 킬 체인은 사이버 공격을 프로세스 기반으로 분석하여 각 단계에서 가해지는 위협 요소를 파악하고 공격을 완화하기 위해, 공격할 때 쓰는 방법을 단계로 정의한 공격 분석 모델</li>
+                <li>록히드 마틴(Lockheed Martin)은 사이버 보안 산업을 위해 킬 체인이라는 군사 개념을 정보 보안 분야에 맞게 적용하였음</li>
+                <li>사이버 킬 체인은 정찰(Reconnaissance), 무기화(Weaponization), 전달(Delivery), 익스플로잇(Exploitation), 설치(Installation), 명령 및 제어(Command and Control), 목표 달성(Actions on Objectives)의 단계로 진행됨</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">9회</span></div>
+          <p class="q-text">다음은 메모리 영역에 대한 설명이다. 괄호 (　) 안에 알맞은 용어를 쓰시오.</p>
+          <div class="q-box">( ① ) 영역은 함수 호출 시 생성되는 지역 변수(Local Value), 매개변수(Parameter)가 저장되는 영역으로 함수를 호출한 곳의 복귀주소(Return Address)를 저장하고 있어 함수 호출이 완료되면 소멸한다. ( ② ) 영역은 메모리 동적 할당(malloc 함수, new를 이용해 할당) 시 저장되는 영역으로 동적 할당된 메모리를 해제할 때 소멸한다.</div>
+          <div class="multi">
+            <label for="s3-a">①<input id="s3-a" type="text" data-keys="스택|stack|스택영역" aria-label="Q3 빈칸 1"></label>
+            <label for="s3-b">②<input id="s3-b" type="text" data-keys="힙|heap|힙영역" aria-label="Q3 빈칸 2"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>스택 영역(Stack Area)</mark>　② <mark>힙 영역(Heap Area)</mark></p>
+              <ul>
+                <li><b>스택 영역</b> (Stack Area)
+                  <ul>
+                    <li>함수 호출 시 생성되는 지역 변수(Local Value), 매개변수(Parameter)가 저장되는 영역</li>
+                    <li>함수를 호출한 곳의 복귀주소(Return Address)를 저장하고 있어 함수 호출이 완료되면 소멸함</li>
+                  </ul></li>
+                <li><b>힙 영역</b> (Heap Area)
+                  <ul>
+                    <li>메모리 동적 할당(malloc 함수, new를 이용해 할당) 시 저장되는 영역</li>
+                    <li>동적으로 할당된 메모리를 해제할 때 소멸</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="공급망공격|supplychainattack|공급망공격(supplychainattack)|공급망">
+          <div class="q-head"><span class="q-no">Q4</span><span class="round">11회</span></div>
+          <p class="q-text">소프트웨어 개발사의 네트워크에 침투하여 소스 코드의 수정 등을 통해 악의적인 코드를 삽입하거나 배포 서버에 접근하여 악의적인 파일로 변경하는 방식을 통해 사용자 PC에 소프트웨어를 설치 또는 업데이트 시에 자동으로 감염되도록 하는 공격 기법은 무엇인지 쓰시오.</p>
+          <div class="try">
+            <input id="s4-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q4 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>공급망 공격(Supply Chain Attack)</mark></p>
+              <ul>
+                <li>공급망 공격은 소프트웨어 개발사의 네트워크에 침투하여 소스코드의 수정 등을 통해 악의적인 코드를 삽입하거나 배포 서버에 접근하여 악의적인 파일로 변경하는 방식을 통해 사용자 PC에 소프트웨어를 설치 또는 업데이트 시에 자동으로 감염되도록 하는 공격 기법</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="dde|dde(dynamicdataexchange)|dynamicdataexchange">
+          <div class="q-head"><span class="q-no">Q5</span><span class="round">14회</span><span class="round">18회</span></div>
+          <p class="q-text">다음 괄호 (　) 안에 들어갈 용어를 쓰시오.</p>
+          <div class="q-box">Microsoft Windows에서 응용 프로그램 간 데이터 교환을 위한 기술인 (　)을/를 악용하여, 사용자가 문서를 열 때 악성 코드가 실행되도록 유도한다.</div>
+          <div class="try">
+            <input id="s5-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q5 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>DDE(Dynamic Data Exchange)</mark></p>
+              <ul>
+                <li>DDE는 Microsoft Windows에서 응용 프로그램 간 데이터를 교환하기 위한 기술</li>
+                <li>DDE 공격은 사용자가 문서를 열 때 DDE 프로토콜을 이용해 악성 코드를 실행하도록 유도하는 방식</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="mitreatt&ck|mitreattack|어택|att&ck">
+          <div class="q-head"><span class="q-no">Q6</span><span class="round">17회</span></div>
+          <p class="q-text">다음이 설명하는 프레임워크는 무엇인지 쓰시오.</p>
+          <div class="q-box">사이버 공격 사례를 관찰한 후 공격자가 사용한 악의적 행위에 대해서 공격 방법과 기술의 관점으로 정리해 놓은 프레임워크이다. 프레임워크의 핵심 요소로는 전략(Strategies), 전술(Tactics), 절차(Procedures) 등이 있다.</div>
+          <div class="try">
+            <input id="s6-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q6 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>MITRE ATT&amp;CK</mark></p>
+              <ul>
+                <li>MITRE ATT&amp;CK은 사이버 공격 사례를 관찰한 후 공격자가 사용한 악의적 행위에 대해서 공격 방법과 기술의 관점으로 정리해 놓은 프레임워크</li>
+              </ul>
+              <span class="sub-title">MITRE ATT&amp;CK 구성 요소</span>
+              <ul>
+                <li><b>기술</b> (Techniques) — 공격자가 특정 작업을 수행해 전술적 목표를 실현하는 방법</li>
+                <li><b>전술</b> (Tactics) — 공격자가 특정 전략을 실현하기 위해 사용하는 실질적인 활동</li>
+                <li><b>절차</b> (Procedures) — 공격자가 특정 기술을 시행하는데에 필요한 상세 단계 및 코스</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="크리덴셜스터핑|credentialstuffing|크리덴셜스터핑(credentialstuffing)">
+          <div class="q-head"><span class="q-no">Q7</span><span class="round">17회</span><span class="round">30회</span></div>
+          <p class="q-text">다음이 설명하는 용어를 쓰시오.</p>
+          <div class="q-box">공격자가 확보한 로그인 자격 증명을 다른 인증시스템의 계정에 무작위로 대입하면서 사용자의 계정을 탈취하는 공격</div>
+          <div class="try">
+            <input id="s7-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q7 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>크리덴셜 스터핑(Credential Stuffing)</mark></p>
+              <ul>
+                <li>크리덴셜 스터핑은 공격자가 확보한 로그인 자격 증명을 다른 인증시스템의 계정에 무작위로 대입하면서 사용자의 계정을 탈취하는 공격</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="레이스컨디션공격|racecondition|raceconditionattack|레이스컨디션|레이스컨디션공격(raceconditionattack)">
+          <div class="q-head"><span class="q-no">Q8</span><span class="round">19회</span></div>
+          <p class="q-text">프로세스가 임시 파일을 만드는 경우 악의적인 프로그램을 통해 그 프로세스의 실행 중에 끼어들어 임시 파일을 심볼릭 링크하여 악의적인 행위를 수행하게 하는 공격 기법은 무엇인지 쓰시오.</p>
+          <div class="try">
+            <input id="s8-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q8 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>레이스 컨디션 공격(Race Condition Attack)</mark></p>
+              <ul>
+                <li>레이스 컨디션 공격은 프로세스가 임시 파일을 만드는 경우 악의적인 프로그램을 통해 그 프로세스의 실행 중에 끼어들어 임시 파일을 심볼릭 링크하여 악의적인 행위를 수행하게 하는 공격 기법</li>
+              </ul>
+              <span class="sub-title">레이스 컨디션 공격 절차</span>
+              <ol class="steps">
+                <li><div><b>프로그램 실행</b>SetUID가 설정되어 있고, 임시 파일을 생성하는 취약한 프로그램을 실행 · 공격자는 심볼릭 링크를 생성하기 위해서 프로그램이 생성하는 임시 파일의 이름을 파악해야 함</div></li>
+                <li><div><b>SetUID로 인한 프로세스 권한 상승</b>취약한 프로그램은 SetUID 비트를 통해 권한이 상승된 상태로 실행</div></li>
+                <li><div><b>임시 파일 생성</b>취약한 프로그램에서 임시 파일이 생성되면 임시 파일에 대해 심볼릭 링크를 생성</div></li>
+                <li><div><b>프로그램 동작 및 임시 파일 처리</b>심볼릭 링크가 생성되어 있는 상태에서 취약한 프로그램 실행 시 기존의 임시 파일이 재생성되면 공격자는 심볼릭 링크를 이용해 파일의 내용을 변경 · 취약한 프로그램은 변경된 파일을 자신이 생성한 임시 파일이라 인식해 프로세스를 진행 · 공격자는 관리자 권한으로 실행되는 프로그램에서 자신이 원하는 동작을 실행</div></li>
+              </ol>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="apt|apt(advancepersistentthreat)|advancepersistentthreat|advancedpersistentthreat|지능형지속위협">
+          <div class="q-head"><span class="q-no">Q9</span><span class="round">21회</span><span class="round">26회</span></div>
+          <p class="q-text">특정 타겟을 공격 대상으로 하여 장기간에 걸쳐 다양한 수단을 통해 지능적이고 지속해서 공격하는 맞춤형 공격 기법은 무엇인지 쓰시오.</p>
+          <div class="try">
+            <input id="s9-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q9 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>APT(Advance Persistent Threat)</mark></p>
+              <ul>
+                <li>APT 공격은 특정 타겟을 공격 대상으로 하여 장기간에 걸쳐 다양한 수단을 통해 지능적(Advanced)이고 지속(Persistent)해서 공격(Threat)하는 맞춤형 공격 기법</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="tempest|tempest(telecommunicationselectronicsmaterialprotectedfromemanatingspurioustransmissions)|템페스트">
+          <div class="q-head"><span class="q-no">Q10</span><span class="round">25회</span></div>
+          <p class="q-text">전자 방사를 통해 민감한 정보를 도청하거나 유출하는 것을 방지하기 위한 일련의 표준과 기술은 무엇인지 쓰시오.</p>
+          <div class="try">
+            <input id="s10-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q10 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>TEMPEST(Telecommunications Electronics Material Protected from Emanating Spurious Transmissions)</mark></p>
+              <span class="sub-title">부채널 공격 사례</span>
+              <ul>
+                <li><b>TEMPEST</b> (Telecommunications Electronics Material Protected from Emanating Spurious Transmissions) — 전자 방사를 통해 민감한 정보를 도청하거나 유출하는 것을 방지하기 위한 일련의 표준과 기술</li>
+                <li><b>DPA</b> (Differential Power Analysis; 차분 전력 분석) — 데이터 암호화를 하는 동안 측정된 전력 소모량의 통계적 특성의 차를 이용하여 암호화에 사용된 키를 찾아내는 기술</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="제로데이공격|zerodayattack|0dayattack|제로데이|zeroday|제로데이공격(zerodayattack)">
+          <div class="q-head"><span class="q-no">Q11</span><span class="round">30회</span></div>
+          <p class="q-text">프로그램에 대한 취약점이 알려지지 않아 패치가 나오지 않은 시점에 이루어지는 공격은 무엇인지 [보기]에서 골라서 쓰시오.</p>
+          <div class="q-box mono"><b>[보기]</b>　SQL 인젝션 공격, XSS 공격, 제로 데이 공격, 크리덴셜 스터핑 공격</div>
+          <div class="try">
+            <input id="s11-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q11 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>제로 데이 공격(Zero Day Attack; 0-Day Attack)</mark></p>
+              <ul>
+                <li>제로 데이 공격은 프로그램에 대한 취약점이 알려지지 않아 패치가 나오지 않은 시점에 이루어지는 공격</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+
+      <!-- 서술형 · 실무형 -->
+      <div class="qsep"></div>
+      <div class="qbar" id="q-sys-essay">
+        <span class="qtype"><span class="label essay">서술형 · 실무형</span><span class="note">문장으로 설명하는 문제 · 직접 써 보고 모범 답안과 비교</span></span>
+        <button type="button" data-toggle="sys-essay">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="sys-essay">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">10회</span></div>
+          <p class="q-text">다음은 버퍼 오버플로우의 메모리 보호 기법 관련 설명이다. 질문에 답하시오.</p>
+          <ul class="sub-qs">
+            <li>(1) 카나리(Canary) 기법의 동작 방식을 서술하고, 공격 차단에 대한 원리를 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="se1-a">(1) ① 동작 방식<textarea id="se1-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se1-b">(1) ② 차단 원리<textarea id="se1-b" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <ul class="sub-qs">
+            <li>(2) ASLR(Address Space Layout Randomization) 기법의 동작 방식을 서술하고, 공격 차단에 대한 원리를 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="se1-c">(2) ① 동작 방식<textarea id="se1-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se1-d">(2) ② 차단 원리<textarea id="se1-d" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>(1)</b> ① 무결성 체크용 값을 복귀 주소와 변수 사이에 삽입　② 버퍼 오버플로우 발생 시 카나리 값을 체크하고 카나리 값이 변하면 복귀 주소를 호출하지 않는 원리</p>
+                <p><b>(2)</b> ① 메모리 공격을 방어하기 위해 주소 공간 배치를 난수화　② 실행 시 메모리 영역의 시작 주소를 무작위로 설정하여 예측이 불가능하도록 하는 원리</p>
+              </div>
+              <span class="sub-title">메모리 보호 기법</span>
+              <ul>
+                <li><b>스택 가드</b> (Stackguard) 활용 — 카나리(Canary)라고 불리는 무결성 체크용 값을 복귀 주소와 변수 사이에 삽입해 두고, 버퍼 오버플로우 발생 시 카나리 값을 체크하고 카나리 값이 변하면 복귀 주소를 호출하지 않는 방식으로 대응</li>
+                <li><b>ASLR</b> (Address Space Layout Randomization)
+                  <ul>
+                    <li>시스템 메모리 주소를 무작위로 배치해서 보안을 강화하는 기법</li>
+                    <li>실행 시 메모리 영역의 시작 주소를 무작위로 설정</li>
+                    <li>리눅스에서 설정 가능(/proc/sys/kernel/randomize_va_space 파일에서 설정값 확인 가능)</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <details class="subject" id="mal" open>
+    <summary class="subject-head"><span class="no">02</span><h2>시스템 공격 기술의 이해 및 관리</h2><span class="fold-hint">단답 2</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-mal">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">다운로더·드롭퍼·인젝터</span><span class="chip">멀버타이징</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-mal">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="mal">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="mal">
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">7회</span></div>
+          <p class="q-text">다음은 악성 소프트웨어에 대한 설명이다. 괄호 (　) 안에 알맞은 용어를 쓰시오.</p>
+          <div class="q-box">악성 소프트웨어 중 ( ① )은/는 감염이 되고 나면 지정된 주소에 접속하여 다른 악성 소프트웨어를 다운받아 실행시키는 프로그램이다.<br>반면에 ( ② )은/는 자신의 내부에 압축해서 가지고 있던 코드를 이용하여 악성 소프트웨어를 생성하는 프로그램이고, ( ③ )은/는 ( ② )의 특수한 형태로 파일을 생성하지 않고 새로운 프로세스를 생성하여 메모리에 상주시키는 프로그램이다.</div>
+          <div class="multi">
+            <label for="ml1-a">①<input id="ml1-a" type="text" data-keys="다운로더|downloader" aria-label="Q1 빈칸 1"></label>
+            <label for="ml1-b">②<input id="ml1-b" type="text" data-keys="드롭퍼|dropper" aria-label="Q1 빈칸 2"></label>
+            <label for="ml1-c">③<input id="ml1-c" type="text" data-keys="인젝터|injector" aria-label="Q1 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>다운로더(Downloader)</mark>　② <mark>드롭퍼(Dropper)</mark>　③ <mark>인젝터(Injector)</mark></p>
+              <ul>
+                <li><b>다운로더</b> (Downloader) — 감염이 되고 나면 지정된 주소에 접속하여 다른 악성 소프트웨어를 다운받아 실행시키는 프로그램</li>
+                <li><b>드롭퍼</b> (Dropper) — 자신의 내부에 압축해서 가지고 있던 코드를 이용하여 악성 소프트웨어를 생성하는 프로그램</li>
+                <li><b>인젝터</b> (Injector) — 파일을 생성하지 않고 새로운 프로세스를 생성하여 메모리에 상주시키는 프로그램, 드롭퍼의 특수한 형태</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="멀버타이징|malvertising|멀버타이징(malvertising)">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">12회</span></div>
+          <p class="q-text">웹사이트, 앱, 소셜 미디어 등 온라인 광고 공간에 악성 코드를 숨겨서 유포하는 공격 방식으로 사용자가 광고를 보기만 하거나 광고를 클릭했을 때, 악성 코드가 사용자의 PC나 모바일에 침투할 수 있는 공격 방식은 무엇인지 쓰시오.</p>
+          <div class="try">
+            <input id="ml2-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q2 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>멀버타이징(Malvertising)</mark></p>
+              <ul>
+                <li><b>애드웨어</b> (Adware)
+                  <ul>
+                    <li>팝업, 사용자 인터페이스 등에 자동으로 광고를 생성하여, 판매 수익 및 광고 수익을 올리려는 악성 소프트웨어</li>
+                    <li>사용자의 동의 없이 광고를 반복적으로 표시하거나, 시스템에 설치된 프로그램이 과도한 광고를 유발하는 소프트웨어</li>
+                  </ul></li>
+                <li><b>멀버타이징</b> (Malvertising)
+                  <ul>
+                    <li>웹사이트, 앱, 소셜 미디어 등 온라인 광고 공간에 악성 코드를 숨겨서 유포하는 공격</li>
+                    <li>사용자가 광고를 보기만 하거나 광고를 클릭했을 때 악성 코드가 사용자의 PC나 모바일 기기에 침투하는 공격 방식</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <details class="subject" id="tool" open>
+    <summary class="subject-head"><span class="no">03</span><h2>시스템 분석 도구</h2><span class="fold-hint">단답 1</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-tool">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">Tripwire · Nessus</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-tool">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="tool">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="tool">
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">2회</span><span class="round">23회</span></div>
+          <p class="q-text">다음은 도구에 대한 설명이다. 괄호 (　) 안에 알맞은 용어를 쓰시오.</p>
+          <div class="q-box">보안 점검 도구들 중에서 Tripwire는 ( ① )을/를 점검하는 대표적인 도구이다.<br>( ② )은/는 미국 Tenable 사가 개발하여 무료로 배포하는 취약점의 진단 도구로 패스워드 취약점, 민감한 데이터에 접근하거나 제어할 수 있는 취약점 등을 점검하여 보고서를 제공한다.</div>
+          <div class="multi">
+            <label for="tl1-a">①<input id="tl1-a" type="text" data-keys="무결성|integrity" aria-label="Q1 빈칸 1"></label>
+            <label for="tl1-b">②<input id="tl1-b" type="text" data-keys="nessus|네서스" aria-label="Q1 빈칸 2"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>무결성</mark>　② <mark>Nessus</mark></p>
+              <ul>
+                <li>무결성 점검 도구로는 Tripwire, Fcheck, Samhain 등이 있음</li>
+                <li><b>Tripwire</b> — 시스템 내의 지정한 중요한 디렉터리와 파일에 대한 데이터베이스를 생성하고 Tripwire를 실행할 때 새로 생성된 데이터베이스와 비교하여 시스템 내에 어떠한 변화가 있는지 감지할 수 있게 해주는 도구</li>
+                <li><b>Nessus</b> — 취약점 진단 도구
+                  <ul>
+                    <li>대부분의 OS에서 동작하는 네트워크 취약점 점검 도구</li>
+                    <li>클라이언트-서버 구조로 클라이언트의 취약점을 점검</li>
+                    <li>민감한 데이터에 접근하거나 제어할 수 있는 취약점, 잘못된 설정, 기본 시스템 계정의 비밀번호 또는 빈 비밀번호 등을 점검</li>
+                    <li>GUI 형태로 편리한 인터페이스 제공</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <footer>교재 기출문제를 바탕으로 정리 · 자료를 받을 때마다 이 페이지에 이어서 추가</footer>
+</div>
+
+<script>
+(function(){
+  const norm = s => s.toLowerCase().replace(/\s+/g,'');
+  document.querySelectorAll('.q:not(.essay), .q.essay[data-check]').forEach(q=>{
+    const out = q.querySelector('.result');
+    const inputs = [...q.querySelectorAll('input')];
+    const answers = q.dataset.answers ? q.dataset.answers.split('|').map(norm) : null;
+    const check = ()=>{
+      const vals = inputs.map(i=>norm(i.value));
+      if(vals.every(v=>!v)){ out.textContent=''; out.className='result'; return; }
+      let ok;
+      if(q.dataset.multi){
+        const marks = inputs.map(i=>{const v=norm(i.value); if(i.dataset.keys) return !!v && i.dataset.keys.split('|').some(k=>v.includes(norm(k))); return v.replace(/^\./,'')===norm(i.dataset.answer).replace(/^\./,'');});
+        ok = marks.every(Boolean);
+        out.textContent = ok ? '모두 정답이에요.' : '맞은 칸: '+marks.filter(Boolean).length+' / '+marks.length+' — 막히면 아래 해설을 열어 보세요.';
+      } else {
+        ok = answers.includes(vals[0]);
+        out.textContent = ok ? '정답이에요.' : '다시 생각해 보세요. 막히면 아래 해설을 열어 보세요.';
+      }
+      out.className = 'result ' + (ok ? 'ok' : 'no');
+    };
+    q.querySelector('.check').addEventListener('click', check);
+    inputs.forEach(i=>i.addEventListener('keydown', e=>{ if(e.key==='Enter') check(); }));
+  });
+  document.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const list = document.querySelectorAll('[data-group="'+btn.dataset.toggle+'"] details');
+      const open = [...list].some(d=>!d.open);
+      list.forEach(d=>d.open = open);
+      btn.textContent = open ? '답 모두 접기' : '답 모두 펼치기';
+    });
+  });
+
+  // 단원 접기: 상태 기억 + 목차 링크로 이동 시 자동 펼치기
+  const units=[...document.querySelectorAll('details.subject')];
+  const KEY='fold-state';
+  let saved={};
+  try{ saved=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  units.forEach(d=>{
+    if(saved[d.id]===false) d.open=false;
+    d.addEventListener('toggle',()=>{
+      saved[d.id]=d.open;
+      try{ localStorage.setItem(KEY,JSON.stringify(saved)); }catch(e){}
+      syncAll();
+    });
+  });
+  const allBtn=document.getElementById('fold-all');
+  function syncAll(){ if(allBtn) allBtn.textContent = units.some(d=>d.open) ? '단원 모두 접기' : '단원 모두 펼치기'; }
+  if(allBtn) allBtn.addEventListener('click',()=>{ const open=!units.some(d=>d.open); units.forEach(d=>d.open=open); });
+  function openFor(hash){
+    if(!hash) return;
+    const el=document.getElementById(hash.slice(1)); if(!el) return;
+    const d=el.closest('details.subject'); if(d && !d.open) d.open=true;
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>openFor(a.getAttribute('href'))));
+  openFor(location.hash);
+  syncAll();
+})();
+</script>

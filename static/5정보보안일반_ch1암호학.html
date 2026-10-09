@@ -1,0 +1,434 @@
+<title>5정보보안일반_ch1암호학</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: 한 줄 단, 위에 과목·단원 목차 → 단원마다 [개념 정리] 다음 [기출문제] 순서로 쌓아 가는 노트 */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#18212e; --muted:#5a6676; --line:#dde2ea;
+  --accent:#1f56b8; --accent-soft:#e6eefb; --mark:#fff1b8; --mark-ink:#5c4700;
+  --term-bg:#16202c; --term-ink:#d7e3f2; --ok:#1d7a4f; --warn:#b4541b; --warn-soft:#fbeee4;
+  --f-display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --f-body:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.7;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;line-height:1.35;margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+p{margin:0}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+ul ul{margin-top:4px}
+
+/* 머리 */
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+header h1{font-size:28px}
+header h1 .ch{display:block;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--accent);margin-bottom:2px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted)}
+.meta span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+
+/* 목차 */
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.toc h2{font-size:14px;color:var(--muted);letter-spacing:.06em;margin-bottom:8px}
+.toc ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover,.toc a:focus-visible{text-decoration:underline}
+.toc .sub{font-size:13.5px;color:var(--muted)}
+
+/* 과목 → 단원 */
+.subject{display:block;scroll-margin-top:16px}
+.subject-head{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.subject-head .no{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.subject-head h2{font-size:22px}
+.unit{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.unit>h3{font-size:19px}
+.label{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+
+/* 개념 카드 */
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.concept h4{font-size:18px}
+.concept h4 small{font-family:var(--f-mono);font-weight:500;font-size:13px;color:var(--muted);margin-left:6px}
+.block{display:flex;flex-direction:column;gap:8px}
+.block-title{font-size:14px;font-weight:700;color:var(--muted)}
+.why{background:var(--accent-soft);border-radius:8px;padding:12px 14px}
+.why .block-title{color:var(--accent)}
+
+/* 단계 */
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:10px;counter-increment:s}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-family:var(--f-mono);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.steps li>div{min-width:0}
+.steps b{display:block}
+.steps .bad::before{border-color:var(--warn);color:var(--warn)}
+
+/* 터미널 느낌 예시 */
+.term{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre}
+.term .c{opacity:.6}
+
+/* 시험 키워드 */
+.keys{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--mark);color:var(--mark-ink);border-radius:4px;padding:1px 8px;font-size:13.5px}
+.arrow{font-weight:700}
+
+.caution{background:var(--warn-soft);border-radius:8px;padding:12px 14px}
+.caution .block-title{color:var(--warn)}
+
+/* 표 */
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+thead th{background:var(--bg);font-size:13px;color:var(--muted);font-weight:700}
+td.dir{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+tr.extra td.dir{color:var(--muted)}
+tr.hit{background:var(--accent-soft)}
+.tag{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.tag.exam{background:var(--mark);color:var(--mark-ink)}
+.tag.add{border:1px solid var(--line);color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+
+/* 핵심 용어 */
+.terms{display:flex;flex-wrap:wrap;align-items:center;gap:10px;scroll-margin-top:16px}
+.terms-label{font-size:13px;font-weight:700;color:var(--muted)}
+.terms-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;justify-content:space-between}
+.terms-head h3{font-size:16px}
+.term-group{display:flex;flex-direction:column;gap:6px}
+.term-group h4{font-size:13.5px;color:var(--muted);font-weight:700}
+.term-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.term-list li{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.term-list .name{font-weight:700}
+.term-list .name code{color:var(--accent);font-weight:700}
+.term-list .name small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.term-list .desc{min-width:0}
+.term-list .desc .ex{display:block;font-size:13px;color:var(--muted)}
+.term-list .src{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;background:var(--mark);color:var(--mark-ink);white-space:nowrap}
+@media (max-width:480px){.term-list li{grid-template-columns:1fr;gap:2px}}
+
+
+/* 코드 · 다중 빈칸 */
+.code{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:10px 0;font-family:var(--f-mono);font-size:13px;line-height:1.7;overflow-x:auto}
+.code ol{margin:0;padding:0;list-style:none;counter-reset:ln;min-width:max-content}
+.code li{counter-increment:ln;white-space:pre;padding-right:14px}
+.code li::before{content:counter(ln,decimal-leading-zero);display:inline-block;width:2.6em;padding-right:.9em;text-align:right;opacity:.45}
+.out{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.blank{display:inline-block;min-width:2.2em;border-bottom:1.5px solid var(--ink);text-align:center;font-weight:700}
+.sub-title{font-size:13.5px;font-weight:700;color:var(--muted)}
+.multi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.multi label{display:flex;align-items:center;gap:6px;font-weight:700;min-width:0}
+.multi input{flex:1;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.mini{width:100%;border-collapse:collapse;min-width:460px;font-size:14px}
+.mini th,.mini td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.mini thead th{background:var(--bg);color:var(--muted);font-size:12.5px}
+.mini td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+@media (max-width:480px){.multi{grid-template-columns:1fr}}
+
+
+.shadow{border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;justify-content:center;overflow-x:auto}
+.shadow .seg{display:inline-flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--f-mono);font-size:15px;margin:0 6px}
+.shadow .seg u{text-underline-offset:4px}
+.shadow .seg span{font-size:13px;color:var(--muted)}
+.cmd{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.ex-line{display:block;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.multi.cols1{grid-template-columns:1fr}
+
+
+/* 문제 유형 구분 */
+.qtype{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.label.essay{background:var(--warn-soft);color:var(--warn)}
+.qsep{border-top:2px dashed var(--line);margin-top:10px}
+.q.essay{border-left:4px solid var(--warn)}
+.q.essay .q-no{color:var(--warn)}
+.q.essay textarea{width:100%;min-height:96px;font:inherit;font-size:14.5px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);resize:vertical}
+.essay-in{display:flex;flex-direction:column;gap:10px}
+.essay-in label{display:flex;flex-direction:column;gap:4px;font-weight:700}
+.q.essay textarea.mono-in{font-family:var(--f-mono);min-height:56px}
+.sub-qs{font-size:14.5px;gap:6px}
+.cfg{border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.75;white-space:pre;overflow-x:auto}
+.cfg u{text-decoration:none;background:var(--mark);color:var(--mark-ink);border-radius:2px;padding:0 3px}
+.perm-table th,.perm-table td{text-align:center}
+.perm-table td:first-child{color:inherit;font-family:inherit;font-weight:400}
+.mono-cell{font-family:var(--f-mono);font-size:13px;line-height:1.8;white-space:nowrap}
+.mini td ul{padding-left:1.1em;gap:2px}
+.uac{max-width:420px;width:100%;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+.uac-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.uac-q{font-size:16px;line-height:1.5}
+.uac-app{display:flex;align-items:center;gap:10px;font-size:15px}
+.uac-ico{background:var(--term-bg);color:var(--term-ink);font-family:var(--f-mono);font-size:10px;padding:6px 5px;border-radius:2px}
+.uac-meta{font-size:12.5px;color:var(--muted);line-height:1.6}
+.uac-btns{display:flex;justify-content:flex-end}
+.uac-no{border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:4px 40px;font-size:13px}
+.hs{border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;font-size:13.5px;overflow-x:auto}
+.hs .node{grid-row:1 / span 3;border:1.5px solid var(--ink);border-radius:4px;padding:28px 10px;text-align:center;font-weight:700}
+.hs .msg{display:flex;flex-direction:column;align-items:center;font-family:var(--f-mono);font-size:12.5px;min-width:200px}
+.hs .line{width:100%;height:0;border-top:1.5px solid var(--ink);position:relative;margin-top:4px}
+.hs .line.r::after,.hs .line.l::after{content:"";position:absolute;top:-5px;border:4.5px solid transparent}
+.hs .line.r::after{right:-1px;border-left:7px solid var(--ink)}
+.hs .line.l::after{left:-1px;border-right:7px solid var(--ink)}
+.bin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bin-grid>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.steps ul{margin-top:2px}
+.topo{border:1px solid var(--line);border-radius:8px;padding:14px;overflow-x:auto}
+.topo-row{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto 1fr auto;align-items:center;min-width:520px;gap:0}
+.topo .box{border:1.5px solid var(--ink);border-radius:4px;padding:8px 10px;font-size:12.5px;text-align:center;white-space:nowrap}
+.topo .gw{background:var(--accent-soft);color:var(--accent);font-weight:700;border-color:var(--accent)}
+.topo .net{border-radius:50%;font-weight:700}
+.topo .wire{border-top:1.5px dashed var(--muted);height:0;margin:0 4px}
+.topo-span{display:grid;min-width:520px;margin-top:8px;font-size:12px;color:var(--muted);text-align:center}
+.topo-span span{border-top:1.5px solid var(--ink);padding-top:3px;margin:0 2px}
+.topo-span span.prot{border-color:var(--accent);color:var(--accent);font-weight:700}
+.pkt{display:flex;flex-wrap:nowrap;overflow-x:auto;border:1.5px solid var(--ink);border-radius:4px;width:max-content;max-width:100%}
+.pkt span{padding:6px 10px;font-size:12.5px;border-right:1px solid var(--line);white-space:nowrap;text-align:center}
+.pkt span:last-child{border-right:0}
+.pkt span.esp{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.perm{font-family:var(--f-mono);font-size:14px;letter-spacing:.04em}
+.perm b{background:var(--mark);color:var(--mark-ink);padding:0 2px;border-radius:2px}
+.model{border-left:3px solid var(--ok);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:8px}
+
+
+/* 단원 접기 */
+details.subject>summary{cursor:pointer;list-style:none;align-items:center}
+details.subject>summary::-webkit-details-marker{display:none}
+details.subject>summary::before{content:"";width:9px;height:9px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);margin:0 4px 4px 2px;transition:transform .15s;flex:none}
+details.subject:not([open])>summary::before{transform:rotate(-45deg);margin-bottom:0}
+details.subject:not([open])>summary{border-bottom-color:var(--line)}
+.fold-hint{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+.subject-body{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.fold-all{align-self:flex-end}
+
+/* 기출문제 */
+.qbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.qlist{display:flex;flex-direction:column;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.q-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.q-no{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.round{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--ink);color:var(--surface)}
+.q-text{font-weight:500}
+.q-box ul{gap:6px}
+.q-box.mono{font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.q-box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--muted);font-size:14.5px}
+.try{display:flex;flex-wrap:wrap;gap:8px}
+.try input{flex:1 1 180px;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.result{font-size:13.5px;font-weight:700;min-height:1.2em}
+.result.ok{color:var(--ok)}.result.no{color:var(--warn)}
+details{border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";}
+details[open] summary::before{content:"▾ ";}
+.ans{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.ans .answer{font-family:var(--f-display);font-size:17px;font-weight:700}
+.answer-list{list-style:none;padding:0;font-weight:700}
+.answer-list mark,.ans .answer mark{background:var(--mark);color:var(--mark-ink);padding:0 6px;border-radius:3px}
+.ans a{color:var(--accent)}
+
+footer{font-size:12.5px;color:var(--muted);text-align:center}
+@media (max-width:480px){header h1{font-size:23px}.concept,.q{padding:16px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">정보보안기사 실기 · 5과목 정보보안 일반</span>
+    <h1><span class="ch">CHAPTER 01</span> 암호학</h1>
+    <div class="meta">
+      <span>마지막 추가 2026-10-09</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="목차">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#alg">01 암호 알고리즘</a>
+        <div class="sub"><a href="#t-alg">핵심 용어</a> · <a href="#q-alg">기출문제</a></div>
+      </li>
+      <li><a href="#hash">02 해시함수</a>
+        <div class="sub"><a href="#t-hash">핵심 용어</a> · <a href="#q-hash">기출문제</a></div>
+      </li>
+    </ol>
+  </nav>
+  <button type="button" class="fold-all" id="fold-all">단원 모두 접기</button>
+
+  <details class="subject" id="alg" open>
+    <summary class="subject-head"><span class="no">01</span><h2>암호 알고리즘</h2><span class="fold-hint">기출 1</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-alg">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">Diffie-Hellman 키 교환</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 기출문제 (교재에 단답형/서술형 구분 없음) -->
+      <div class="qbar" id="q-alg">
+        <span class="qtype"><span class="label essay">기출문제</span><span class="note">교재에 단답·서술 구분 없음 · 직접 써 보고 답과 비교</span></span>
+        <button type="button" data-toggle="alg">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="alg">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">3회</span></div>
+          <p class="q-text">다음은 Diffie-Hellman 알고리즘을 통한 키 교환 과정이다. 빈칸에 알맞은 식을 쓰시오.</p>
+          <div class="q-box">
+            <ol>
+              <li>Alice가 소수 <i>p</i>를 선택하고, <i>p</i>보다 작은 정수 <i>g</i>를 선택한다.</li>
+              <li>Alice가 정수 <i>a</i>를 선택하고, Alice가 공개키 ( &#9312; )을/를 계산한다.</li>
+              <li>Bob이 정수 <i>b</i>를 선택하고, Bob이 공개키 ( &#9313; )을/를 계산한다.</li>
+              <li>Alice와 Bob이 서로에게 ( &#9312; ), ( &#9313; )을/를 전송한다.</li>
+              <li>Alice와 Bob은 ( &#9312; ), ( &#9313; )을/를 이용해 공유키인 ( &#9314; )을/를 가지게 된다.</li>
+            </ol>
+          </div>
+          <div class="essay-in">
+            <label for="alg1-a">&#9312;<textarea id="alg1-a" placeholder="예: g^a mod p 처럼 써 보세요"></textarea></label>
+            <label for="alg1-b">&#9313;<textarea id="alg1-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="alg1-c">&#9314;<textarea id="alg1-c" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">답</span>
+              <div class="model">
+                <p><b>&#9312;</b> <i>g</i><sup><i>a</i></sup> mod <i>p</i>&#12288;<b>&#9313;</b> <i>g</i><sup><i>b</i></sup> mod <i>p</i>&#12288;<b>&#9314;</b> <i>g</i><sup><i>ab</i></sup> mod <i>p</i></p>
+              </div>
+              <span class="sub-title">해설</span>
+              <ul>
+                <li>Alice와 Bob은 <i>g</i><sup><i>ab</i></sup> mod <i>p</i> 값을 공유키로 가짐</li>
+              </ul>
+              <ol class="steps">
+                <li><div><b>소수, 원시근 선택 (Alice)</b>소수 <i>p</i>를 선택 / 원시근(Primitive Root)를 선택하는데, <i>g</i>는 <i>p</i>보다 작아야 함</div></li>
+                <li><div><b>개인키 생성 (Alice)</b>개인키 <i>a</i>를 생성 / <i>g</i>, <i>p</i>, <i>a</i>를 이용해 공개키 <i>A</i>값을 계산<span class="ex-line"><i>A</i> = <i>g</i><sup><i>a</i></sup> mod <i>p</i></span></div></li>
+                <li><div><b>공개키 전송 (Alice → Bob)</b><i>g</i>, <i>p</i>, 공개키 <i>A</i>를 전달 / Alice는 <i>g, p, a, A</i> 값을 가지고 있음 / Bob은 <i>g, p, A</i> 값을 가지고 있음</div></li>
+                <li><div><b>개인키 생성 (Bob)</b>개인키 <i>b</i>를 생성 / <i>g</i>, <i>p</i>, <i>b</i>를 이용해 <i>B</i>값을 계산<span class="ex-line"><i>B</i> = <i>g</i><sup><i>b</i></sup> mod <i>p</i></span></div></li>
+                <li><div><b>공개키 전송 (Bob → Alice)</b>공개키 <i>B</i>를 전달 / Alice는 <i>g, p, a, A, B</i> 값을 가지고 있음 / Bob은 <i>g, p, b, A, B</i> 값을 가지고 있음</div></li>
+                <li><div><b>공유키 생성 (Alice)</b>Alice는 <i>B</i><sup><i>a</i></sup> mod <i>p</i>라는 공유키를 가짐<span class="ex-line"><i>B</i><sup><i>a</i></sup> mod <i>p</i> = (<i>g</i><sup><i>b</i></sup>)<sup><i>a</i></sup> mod <i>p</i> = <i>g</i><sup><i>ab</i></sup> mod <i>p</i></span></div></li>
+                <li><div><b>공유키 생성 (Bob)</b>Bob은 <i>A</i><sup><i>b</i></sup> mod <i>p</i>라는 공유키를 가짐<span class="ex-line"><i>A</i><sup><i>b</i></sup> mod <i>p</i> = (<i>g</i><sup><i>a</i></sup>)<sup><i>b</i></sup> mod <i>p</i> = <i>g</i><sup><i>ab</i></sup> mod <i>p</i></span></div></li>
+              </ol>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <details class="subject" id="hash" open>
+    <summary class="subject-head"><span class="no">02</span><h2>해시함수</h2><span class="fold-hint">기출 1</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-hash">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">Pass-the-Hash</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 기출문제 (교재에 단답형/서술형 구분 없음) -->
+      <div class="qbar" id="q-hash">
+        <span class="qtype"><span class="label essay">기출문제</span><span class="note">교재에 단답·서술 구분 없음 · 직접 써 보고 답과 비교</span></span>
+        <button type="button" data-toggle="hash">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="hash">
+
+        <article class="q essay" data-check="1" data-answers="pass-the-hash|passthehash|pass-the-hash공격|passthehash공격|pth|pth공격">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">17회</span></div>
+          <p class="q-text">공격자가 Mimikatz와 같은 도구를 활용하여 시스템 메모리에서 사용자 비밀번호의 NTLM 또는 LanMan 해시 값을 획득하고, 이 해시값 자체를 이용하여 원격 서버나 서비스에 인증을 시도하는 해킹 기법은 무엇인지 쓰시오.</p>
+          <div class="try"><input type="text" aria-label="Q1 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>Pass-the-Hash 공격</mark></p>
+              <ul>
+                <li>Pass-the-Hash 공격은 사용자 비밀번호 자체가 아닌 비밀번호의 해시값을 사용하여 원격 서버나 서비스에 대한 인증을 통과하는 해킹 기법</li>
+                <li>Pass-the-Hash 공격은 공격자가 Mimikatz와 같은 도구를 활용하여 시스템 메모리에서 사용자 비밀번호의 NTLM 또는 LanMan 해시 값을 획득하고, 이 해시값 자체를 이용하여 원격 서버나 서비스에 인증을 시도하는 해킹 기법</li>
+                <li>Pass-the-Hash 공격의 대응 방법
+                  <ul>
+                    <li><b>해시값 노출 금지</b> — 패스워드 해시값을 외부로 노출하지 않아야 함</li>
+                    <li><b>안전한 프로토콜 사용</b> — NTLM 프로토콜보다는 Kerberos 프로토콜을 사용하는 것이 안전</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <footer>교재 기출문제를 바탕으로 정리 · 자료를 받을 때마다 이 페이지에 이어서 추가</footer>
+</div>
+
+<script>
+(function(){
+  const norm = s => s.toLowerCase().replace(/\s+/g,'');
+  document.querySelectorAll('.q:not(.essay), .q.essay[data-check]').forEach(q=>{
+    const out = q.querySelector('.result');
+    const inputs = [...q.querySelectorAll('input')];
+    const answers = q.dataset.answers ? q.dataset.answers.split('|').map(norm) : null;
+    const check = ()=>{
+      const vals = inputs.map(i=>norm(i.value));
+      if(vals.every(v=>!v)){ out.textContent=''; out.className='result'; return; }
+      let ok;
+      if(q.dataset.multi){
+        const marks = inputs.map(i=>{const v=norm(i.value); if(i.dataset.keys) return !!v && i.dataset.keys.split('|').some(k=>v.includes(norm(k))); return v.replace(/^\./,'')===norm(i.dataset.answer).replace(/^\./,'');});
+        ok = marks.every(Boolean);
+        out.textContent = ok ? '모두 정답이에요.' : '맞은 칸: '+marks.filter(Boolean).length+' / '+marks.length+' — 막히면 아래 해설을 열어 보세요.';
+      } else {
+        ok = answers.includes(vals[0]);
+        out.textContent = ok ? '정답이에요.' : '다시 생각해 보세요. 막히면 아래 해설을 열어 보세요.';
+      }
+      out.className = 'result ' + (ok ? 'ok' : 'no');
+    };
+    q.querySelector('.check').addEventListener('click', check);
+    inputs.forEach(i=>i.addEventListener('keydown', e=>{ if(e.key==='Enter') check(); }));
+  });
+  document.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const list = document.querySelectorAll('[data-group="'+btn.dataset.toggle+'"] details');
+      const open = [...list].some(d=>!d.open);
+      list.forEach(d=>d.open = open);
+      btn.textContent = open ? '답 모두 접기' : '답 모두 펼치기';
+    });
+  });
+
+  // 단원 접기: 상태 기억 + 목차 링크로 이동 시 자동 펼치기
+  const units=[...document.querySelectorAll('details.subject')];
+  const KEY='fold-state';
+  let saved={};
+  try{ saved=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  units.forEach(d=>{
+    if(saved[d.id]===false) d.open=false;
+    d.addEventListener('toggle',()=>{
+      saved[d.id]=d.open;
+      try{ localStorage.setItem(KEY,JSON.stringify(saved)); }catch(e){}
+      syncAll();
+    });
+  });
+  const allBtn=document.getElementById('fold-all');
+  function syncAll(){ if(allBtn) allBtn.textContent = units.some(d=>d.open) ? '단원 모두 접기' : '단원 모두 펼치기'; }
+  if(allBtn) allBtn.addEventListener('click',()=>{ const open=!units.some(d=>d.open); units.forEach(d=>d.open=open); });
+  function openFor(hash){
+    if(!hash) return;
+    const el=document.getElementById(hash.slice(1)); if(!el) return;
+    const d=el.closest('details.subject'); if(d && !d.open) d.open=true;
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>openFor(a.getAttribute('href'))));
+  openFor(location.hash);
+  syncAll();
+})();
+</script>

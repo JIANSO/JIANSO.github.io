@@ -41,15 +41,36 @@
   </form>
 
   <script>
+    var MAX_FAILS = 3;
+    var LOCK_MS = 10 * 60 * 1000;
+
     document.getElementById('form').addEventListener('submit', function (e) {
       e.preventDefault();
       var input = document.getElementById('password');
-      if (input.value === '0627') {
+      var error = document.getElementById('error');
+      var value = input.value;
+      input.value = '';
+
+      if (Number(localStorage.getItem('lockUntil')) > Date.now()) {
+        error.textContent = '';
+        alert('10분 뒤에 다시 시도하세요');
+        return;
+      }
+      if (value === '0627') {
+        localStorage.removeItem('fails');
         sessionStorage.setItem('ok', '1');
         location.href = 'home.html';
+        return;
+      }
+      var fails = Number(localStorage.getItem('fails')) + 1;
+      if (fails >= MAX_FAILS) {
+        localStorage.removeItem('fails');
+        localStorage.setItem('lockUntil', Date.now() + LOCK_MS);
+        error.textContent = '';
+        alert('10분 뒤에 다시 시도하세요');
       } else {
-        document.getElementById('error').textContent = '암호가 틀렸습니다';
-        input.value = '';
+        localStorage.setItem('fails', fails);
+        error.textContent = '암호가 틀렸습니다';
         input.focus();
       }
     });
