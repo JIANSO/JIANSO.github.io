@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jianso</title>
+  <script>
+    if (sessionStorage.getItem('ok') !== '1') location.replace('index.html');
+  </script>
+  <link rel="stylesheet" href="krds/fonts.css">
+  <link rel="stylesheet" href="krds/css/component/output.css">
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    #header {
+      display: flex;
+      align-items: center;
+      gap: var(--krds-gap-3);
+      height: 5.6rem;
+      flex-shrink: 0;
+      padding: 0 var(--krds-padding-5);
+      border-bottom: 0.1rem solid var(--krds-light-color-divider-gray-light);
+    }
+    #menu {
+      display: none;
+    }
+    #back {
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    #current {
+      min-width: 0;
+      font-weight: var(--krds-font-weight-bold);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #body {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+    #sidebar {
+      width: 28rem;
+      flex-shrink: 0;
+      overflow-y: auto;
+      padding: var(--krds-padding-6) var(--krds-padding-5);
+      border-right: 0.1rem solid var(--krds-light-color-divider-gray-light);
+      background: var(--krds-light-color-background-white);
+    }
+    #list {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--krds-padding-6) var(--krds-padding-8);
+    }
+    #list a {
+      display: flex;
+      align-items: center;
+      gap: var(--krds-gap-4);
+      padding: var(--krds-padding-6) var(--krds-padding-3);
+      border-bottom: 0.1rem solid var(--krds-light-color-divider-gray-light);
+    }
+    #list a:hover {
+      background: var(--krds-light-color-action-secondary-hover);
+    }
+    #list .empty {
+      padding: var(--krds-padding-6) var(--krds-padding-3);
+      color: var(--krds-light-color-text-subtle);
+    }
+    #list .krds-badge {
+      flex-shrink: 0;
+    }
+    #content {
+      flex: 1;
+      border: 0;
+    }
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 767px) {
+      #menu {
+        display: inline-flex;
+      }
+      #sidebar {
+        display: none;
+        position: fixed;
+        top: 5.6rem;
+        bottom: 0;
+        left: 0;
+        z-index: 10;
+      }
+      #sidebar.open {
+        display: block;
+      }
+      #list {
+        padding: var(--krds-padding-3) var(--krds-padding-5);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header id="header">
+    <button type="button" id="menu" class="krds-btn icon" aria-label="메뉴"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    <span id="current"></span>
+    <a id="back" class="krds-btn small text" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg> 목록으로</a>
+  </header>
+  <div id="body">
+    <nav id="sidebar" class="krds-side-navigation">
+      <ul id="menu-list" class="lnb-list"></ul>
+    </nav>
+    <ul id="list"></ul>
+    <iframe id="content" hidden></iframe>
+  </div>
+
+  <script>
+    // 사이드바 항목 > 하위 메뉴 > 문서 목록. html 파일을 추가하면 pages에 한 줄씩 적습니다.
+    var categories = [
+      {
+        title: '정보보안기사 실기',
+        menus: [
+          {
+            title: '개념',
+            pages: [],
+          },
+          {
+            title: '기출',
+            pages: [
+              { group: '1. 운영체제 보안', title: 'Ch1. 정보시스템', file: 'static/1운영체제보안_ch1정보시스템.html' },
+              { group: '1. 운영체제 보안', title: 'Ch2. 취약점 점검', file: 'static/1운영체제보안_ch2취약점점검.html' },
+              { group: '2. 네트워크 보안', title: 'Ch1. 네트워크 일반', file: 'static/2네트워크보안_ch1네트워크일반.html' },
+              { group: '2. 네트워크 보안', title: 'Ch2. 네트워크 기반 공격 기술', file: 'static/2네트워크보안_ch2네트워크기반공격기술.html' },
+            ],
+          },
+        ],
+      },
+    ];
+
+    var sidebar = document.getElementById('sidebar');
+    var menuList = document.getElementById('menu-list');
+    var list = document.getElementById('list');
+    var back = document.getElementById('back');
+    var content = document.getElementById('content');
+
+    // 주소가 비어 있으면 문서가 들어 있는 첫 하위 메뉴를 엽니다.
+    function firstMenu() {
+      for (var c = 0; c < categories.length; c++) {
+        for (var m = 0; m < categories[c].menus.length; m++) {
+          if (categories[c].menus[m].pages.length) return [c, m];
+        }
+      }
+      return [0, 0];
+    }
+
+    // 주소의 #0/1 은 0번 항목 1번 하위 메뉴의 문서 목록, #0/1/2 는 그 안의 2번 문서
+    function show() {
+      var parts = location.hash.slice(1).split('/');
+      if (!categories[parts[0]] || !categories[parts[0]].menus[parts[1]]) parts = firstMenu();
+      var c = Number(parts[0]);
+      var m = Number(parts[1]);
+      var category = categories[c];
+      var menu = category.menus[m];
+      var page = menu.pages[parts[2]];
+      var here = '#' + c + '/' + m;
+
+      var links = menuList.querySelectorAll('a');
+      for (var i = 0; i < links.length; i++) {
+        var selected = links[i].getAttribute('href') === here;
+        links[i].className = selected ? 'lnb-btn lnb-link selected' : 'lnb-btn lnb-link';
+        if (selected) open(links[i].closest('.lnb-item'), true);
+      }
+      document.getElementById('current').textContent = page ? page.title : category.title + ' · ' + menu.title;
+      sidebar.classList.remove('open');
+
+      list.hidden = !!page;
+      content.hidden = !page;
+      back.hidden = !page;
+      back.href = here;
+      if (page) {
+        content.src = page.file;
+        return;
+      }
+
+      list.innerHTML = '';
+      if (!menu.pages.length) {
+        list.innerHTML = '<li class="empty">문서가 없습니다</li>';
+      }
+      menu.pages.forEach(function (p, i) {
+        var li = document.createElement('li');
+        li.innerHTML = '<a><span class="krds-badge bg-light-primary"></span><span class="title"></span></a>';
+        li.querySelector('.krds-badge').textContent = p.group;
+        li.querySelector('.title').textContent = p.title;
+        li.querySelector('a').href = here + '/' + i;
+        list.appendChild(li);
+      });
+    }
+
+    function open(item, expanded) {
+      item.classList.toggle('active', expanded);
+      item.querySelector('.lnb-toggle').setAttribute('aria-expanded', expanded);
+    }
+
+    categories.forEach(function (category, c) {
+      var li = document.createElement('li');
+      li.className = 'lnb-item';
+      li.innerHTML = '<button type="button" class="lnb-btn lnb-toggle" aria-expanded="false"></button>' +
+        '<div class="lnb-submenu"><ul></ul></div>';
+      var toggle = li.querySelector('.lnb-toggle');
+      toggle.textContent = category.title;
+      toggle.addEventListener('click', function () {
+        open(li, !li.classList.contains('active'));
+      });
+      category.menus.forEach(function (menu, m) {
+        var sub = document.createElement('li');
+        sub.className = 'lnb-subitem';
+        var a = document.createElement('a');
+        a.className = 'lnb-btn lnb-link';
+        a.href = '#' + c + '/' + m;
+        a.textContent = menu.title;
+        a.addEventListener('click', function () {
+          sidebar.classList.remove('open');
+        });
+        sub.appendChild(a);
+        li.querySelector('ul').appendChild(sub);
+      });
+      menuList.appendChild(li);
+    });
+
+    document.getElementById('menu').addEventListener('click', function () {
+      sidebar.classList.toggle('open');
+    });
+
+    window.addEventListener('hashchange', show);
+    show();
+  </script>
+</body>
+</html>

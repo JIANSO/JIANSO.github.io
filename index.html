@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jianso</title>
+  <link rel="stylesheet" href="krds/fonts.css">
+  <link rel="stylesheet" href="krds/css/component/output.css">
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #form {
+      width: 32rem;
+      max-width: calc(100% - 3.2rem);
+    }
+    #form .form-conts {
+      display: flex;
+      gap: var(--krds-gap-3);
+    }
+    #form .krds-btn {
+      flex-shrink: 0;
+    }
+    #error {
+      min-height: 2.4rem;
+      margin-top: var(--krds-gap-3);
+      color: var(--krds-light-color-text-danger);
+    }
+  </style>
+</head>
+<body>
+  <form id="form">
+    <div class="form-conts">
+      <input type="password" id="password" class="krds-input" placeholder="암호" aria-label="암호" autofocus>
+      <button type="submit" class="krds-btn primary">확인</button>
+    </div>
+    <p id="error" role="alert"></p>
+  </form>
+
+  <script>
+    document.getElementById('form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = document.getElementById('password');
+      if (input.value === '0627') {
+        sessionStorage.setItem('ok', '1');
+        location.href = 'home.html';
+      } else {
+        document.getElementById('error').textContent = '암호가 틀렸습니다';
+        input.value = '';
+        input.focus();
+      }
+    });
+  </script>
+</body>
+</html>

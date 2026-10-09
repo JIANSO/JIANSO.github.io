@@ -1,0 +1,1386 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>2네트워크보안_ch2네트워크기반공격기술</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: 한 줄 단, 위에 과목·단원 목차 → 단원마다 [개념 정리] 다음 [기출문제] 순서로 쌓아 가는 노트 */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#18212e; --muted:#5a6676; --line:#dde2ea;
+  --accent:#1f56b8; --accent-soft:#e6eefb; --mark:#fff1b8; --mark-ink:#5c4700;
+  --term-bg:#16202c; --term-ink:#d7e3f2; --ok:#1d7a4f; --warn:#b4541b; --warn-soft:#fbeee4;
+  --f-display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --f-body:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.7;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;line-height:1.35;margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+p{margin:0}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+ul ul{margin-top:4px}
+
+/* 머리 */
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+header h1{font-size:28px}
+header h1 .ch{display:block;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--accent);margin-bottom:2px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted)}
+.meta span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+
+/* 목차 */
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.toc h2{font-size:14px;color:var(--muted);letter-spacing:.06em;margin-bottom:8px}
+.toc ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover,.toc a:focus-visible{text-decoration:underline}
+.toc .sub{font-size:13.5px;color:var(--muted)}
+
+/* 과목 → 단원 */
+.subject{display:block;scroll-margin-top:16px}
+.subject-head{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.subject-head .no{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.subject-head h2{font-size:22px}
+.unit{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.unit>h3{font-size:19px}
+.label{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+
+/* 개념 카드 */
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.concept h4{font-size:18px}
+.concept h4 small{font-family:var(--f-mono);font-weight:500;font-size:13px;color:var(--muted);margin-left:6px}
+.block{display:flex;flex-direction:column;gap:8px}
+.block-title{font-size:14px;font-weight:700;color:var(--muted)}
+.why{background:var(--accent-soft);border-radius:8px;padding:12px 14px}
+.why .block-title{color:var(--accent)}
+
+/* 단계 */
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:10px;counter-increment:s}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-family:var(--f-mono);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.steps li>div{min-width:0}
+.steps b{display:block}
+.steps .bad::before{border-color:var(--warn);color:var(--warn)}
+
+/* 터미널 느낌 예시 */
+.term{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre}
+.term .c{opacity:.6}
+
+/* 시험 키워드 */
+.keys{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--mark);color:var(--mark-ink);border-radius:4px;padding:1px 8px;font-size:13.5px}
+.arrow{font-weight:700}
+
+.caution{background:var(--warn-soft);border-radius:8px;padding:12px 14px}
+.caution .block-title{color:var(--warn)}
+
+/* 표 */
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+thead th{background:var(--bg);font-size:13px;color:var(--muted);font-weight:700}
+td.dir{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+tr.extra td.dir{color:var(--muted)}
+tr.hit{background:var(--accent-soft)}
+.tag{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.tag.exam{background:var(--mark);color:var(--mark-ink)}
+.tag.add{border:1px solid var(--line);color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+
+/* 핵심 용어 */
+.terms{display:flex;flex-wrap:wrap;align-items:center;gap:10px;scroll-margin-top:16px}
+.terms-label{font-size:13px;font-weight:700;color:var(--muted)}
+.terms-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;justify-content:space-between}
+.terms-head h3{font-size:16px}
+.term-group{display:flex;flex-direction:column;gap:6px}
+.term-group h4{font-size:13.5px;color:var(--muted);font-weight:700}
+.term-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.term-list li{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.term-list .name{font-weight:700}
+.term-list .name code{color:var(--accent);font-weight:700}
+.term-list .name small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.term-list .desc{min-width:0}
+.term-list .desc .ex{display:block;font-size:13px;color:var(--muted)}
+.term-list .src{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;background:var(--mark);color:var(--mark-ink);white-space:nowrap}
+@media (max-width:480px){.term-list li{grid-template-columns:1fr;gap:2px}}
+
+
+/* 코드 · 다중 빈칸 */
+.code{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:10px 0;font-family:var(--f-mono);font-size:13px;line-height:1.7;overflow-x:auto}
+.code ol{margin:0;padding:0;list-style:none;counter-reset:ln;min-width:max-content}
+.code li{counter-increment:ln;white-space:pre;padding-right:14px}
+.code li::before{content:counter(ln,decimal-leading-zero);display:inline-block;width:2.6em;padding-right:.9em;text-align:right;opacity:.45}
+.out{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.blank{display:inline-block;min-width:2.2em;border-bottom:1.5px solid var(--ink);text-align:center;font-weight:700}
+.sub-title{font-size:13.5px;font-weight:700;color:var(--muted)}
+.multi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.multi label{display:flex;align-items:center;gap:6px;font-weight:700;min-width:0}
+.multi input{flex:1;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.mini{width:100%;border-collapse:collapse;min-width:460px;font-size:14px}
+.mini th,.mini td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.mini thead th{background:var(--bg);color:var(--muted);font-size:12.5px}
+.mini td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+@media (max-width:480px){.multi{grid-template-columns:1fr}}
+
+
+.shadow{border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;justify-content:center;overflow-x:auto}
+.shadow .seg{display:inline-flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--f-mono);font-size:15px;margin:0 6px}
+.shadow .seg u{text-underline-offset:4px}
+.shadow .seg span{font-size:13px;color:var(--muted)}
+.cmd{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.ex-line{display:block;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.multi.cols1{grid-template-columns:1fr}
+
+
+/* 문제 유형 구분 */
+.qtype{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.label.essay{background:var(--warn-soft);color:var(--warn)}
+.qsep{border-top:2px dashed var(--line);margin-top:10px}
+.q.essay{border-left:4px solid var(--warn)}
+.q.essay .q-no{color:var(--warn)}
+.q.essay textarea{width:100%;min-height:96px;font:inherit;font-size:14.5px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);resize:vertical}
+.essay-in{display:flex;flex-direction:column;gap:10px}
+.essay-in label{display:flex;flex-direction:column;gap:4px;font-weight:700}
+.q.essay textarea.mono-in{font-family:var(--f-mono);min-height:56px}
+.sub-qs{font-size:14.5px;gap:6px}
+.cfg{border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.75;white-space:pre;overflow-x:auto}
+.cfg u{text-decoration:none;background:var(--mark);color:var(--mark-ink);border-radius:2px;padding:0 3px}
+.perm-table th,.perm-table td{text-align:center}
+.perm-table td:first-child{color:inherit;font-family:inherit;font-weight:400}
+.mono-cell{font-family:var(--f-mono);font-size:13px;line-height:1.8;white-space:nowrap}
+.mini td ul{padding-left:1.1em;gap:2px}
+.uac{max-width:420px;width:100%;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+.uac-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.uac-q{font-size:16px;line-height:1.5}
+.uac-app{display:flex;align-items:center;gap:10px;font-size:15px}
+.uac-ico{background:var(--term-bg);color:var(--term-ink);font-family:var(--f-mono);font-size:10px;padding:6px 5px;border-radius:2px}
+.uac-meta{font-size:12.5px;color:var(--muted);line-height:1.6}
+.uac-btns{display:flex;justify-content:flex-end}
+.uac-no{border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:4px 40px;font-size:13px}
+.hs{border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;font-size:13.5px;overflow-x:auto}
+.hs .node{grid-row:1 / span 3;border:1.5px solid var(--ink);border-radius:4px;padding:28px 10px;text-align:center;font-weight:700}
+.hs .msg{display:flex;flex-direction:column;align-items:center;font-family:var(--f-mono);font-size:12.5px;min-width:200px}
+.hs .line{width:100%;height:0;border-top:1.5px solid var(--ink);position:relative;margin-top:4px}
+.hs .line.r::after,.hs .line.l::after{content:"";position:absolute;top:-5px;border:4.5px solid transparent}
+.hs .line.r::after{right:-1px;border-left:7px solid var(--ink)}
+.hs .line.l::after{left:-1px;border-right:7px solid var(--ink)}
+.bin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bin-grid>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.steps ul{margin-top:2px}
+.perm{font-family:var(--f-mono);font-size:14px;letter-spacing:.04em}
+.perm b{background:var(--mark);color:var(--mark-ink);padding:0 2px;border-radius:2px}
+.model{border-left:3px solid var(--ok);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:8px}
+
+
+/* 단원 접기 */
+details.subject>summary{cursor:pointer;list-style:none;align-items:center}
+details.subject>summary::-webkit-details-marker{display:none}
+details.subject>summary::before{content:"";width:9px;height:9px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);margin:0 4px 4px 2px;transition:transform .15s;flex:none}
+details.subject:not([open])>summary::before{transform:rotate(-45deg);margin-bottom:0}
+details.subject:not([open])>summary{border-bottom-color:var(--line)}
+.fold-hint{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+.subject-body{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.fold-all{align-self:flex-end}
+
+/* 기출문제 */
+.qbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.qlist{display:flex;flex-direction:column;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.q-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.q-no{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.round{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--ink);color:var(--surface)}
+.q-text{font-weight:500}
+.q-box ul{gap:6px}
+.q-box.mono{font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.q-box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--muted);font-size:14.5px}
+.try{display:flex;flex-wrap:wrap;gap:8px}
+.try input{flex:1 1 180px;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.result{font-size:13.5px;font-weight:700;min-height:1.2em}
+.result.ok{color:var(--ok)}.result.no{color:var(--warn)}
+details{border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";}
+details[open] summary::before{content:"▾ ";}
+.ans{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.ans .answer{font-family:var(--f-display);font-size:17px;font-weight:700}
+.answer-list{list-style:none;padding:0;font-weight:700}
+.answer-list mark,.ans .answer mark{background:var(--mark);color:var(--mark-ink);padding:0 6px;border-radius:3px}
+.ans a{color:var(--accent)}
+
+footer{font-size:12.5px;color:var(--muted);text-align:center}
+@media (max-width:480px){header h1{font-size:23px}.concept,.q{padding:16px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">정보보안기사 실기 · 2과목 네트워크 보안</span>
+    <h1><span class="ch">CHAPTER 02</span> 네트워크 기반 공격기술</h1>
+    <div class="meta">
+      <span>마지막 추가 2026-10-09</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="목차">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#atk">01 네트워크 기반 공격기술</a>
+        <div class="sub"><a href="#t-atk">핵심 용어</a> · <a href="#q-atk">단답형</a> · <a href="#q-atk-essay">서술형 · 실무형</a></div>
+      </li>
+      <li><a href="#scan">02 스캐닝</a>
+        <div class="sub"><a href="#t-scan">핵심 용어</a> · <a href="#q-scan">단답형</a> · <a href="#q-scan-essay">서술형 · 실무형</a></div>
+      </li>
+      <li><a href="#spoof">03 스푸핑 공격, 스니핑 공격</a>
+        <div class="sub"><a href="#t-spoof">핵심 용어</a> · <a href="#q-spoof">단답형</a> · <a href="#q-spoof-essay">서술형 · 실무형</a></div>
+      </li>
+    </ol>
+  </nav>
+  <button type="button" class="fold-all" id="fold-all">단원 모두 접기</button>
+
+  <!-- ========== 과목 1: 시스템 보안 ========== -->
+  <details class="subject" id="atk" open>
+    <summary class="subject-head"><span class="no">01</span><h2>네트워크 기반 공격기술</h2><span class="fold-hint">단답 11 · 서술 7</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-atk">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">스머프(Smurf) 공격</span><span class="chip">Directed Broadcast</span><span class="chip">티어드롭(Teardrop) 공격</span><span class="chip">Slowloris 공격</span><span class="chip">HTTP 응답 분할(CR · LF)</span><span class="chip">멤캐시드(Memcached) 반사 공격</span><span class="chip">랜드 어택</span><span class="chip">SYN Flooding</span><span class="chip">SSDP 반사 공격</span><span class="chip">DGA</span><span class="chip">HTTP Request Smuggling</span><span class="chip">Slow Read Attack</span><span class="chip">Cache-Control 공격</span><span class="chip">HTTP 헤더(Referer · Cache-Control)</span><span class="chip">HTTP GET Flooding</span><span class="chip">ndd 명령어</span><span class="chip">NTP 증폭 공격(monlist)</span><span class="chip">Billion Laughs Attack</span><span class="chip">NTP DDoS 대응</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-atk">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="atk">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="atk">
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">2회</span><span class="round">28회</span></div>
+          <p class="q-text">다음은 네트워크 기반 공격에 대한 설명이다. 괄호 (　) 안에 들어갈 알맞은 용어를 쓰시오.</p>
+          <div class="q-box">( ① ) 공격은 공격자가 출발지 IP 주소를 피해자의 IP 주소로 위조한 후, 브로드캐스트 주소를 목적지로 하여 ( ③ ) 패킷을 전송함으로써, 해당 네트워크에 존재하는 다수의 호스트로부터 ICMP Echo Reply를 피해자에게 집중시키는 공격 기법이다. 이러한 공격에 대응하기 위해서는, 라우터에서 외부 네트워크로부터 유입되는 ( ② ) 트래픽을 차단하고, 각 호스트는 IP Broadcast Address로 전송된 ( ③ ) 패킷에 대해 응답하지 않도록 설정해야 한다.</div>
+          <div class="multi">
+            <label for="a1-a">①<input id="a1-a" type="text" data-keys="smurf|스머프" aria-label="Q1 빈칸 1"></label>
+            <label for="a1-b">②<input id="a1-b" type="text" data-keys="directedbroadcast" aria-label="Q1 빈칸 2"></label>
+            <label for="a1-c">③<input id="a1-c" type="text" data-keys="echorequest" aria-label="Q1 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>Smurf</mark>　② <mark>Directed Broadcast</mark>　③ <mark>ICMP Echo Request</mark></p>
+              <ul>
+                <li>스머프 공격은 출발지 주소를 공격 대상의 IP로 설정하여 네트워크 전체에게 ICMP Echo 패킷을 직접 브로드캐스팅하여 목표 시스템을 마비시키는 공격 기법</li>
+              </ul>
+              <span class="sub-title">스머프 공격 대응 방법</span>
+              <ul>
+                <li>중간 매개자로 쓰이는 것을 막기 위해서 라우터에서 다른 네트워크로부터 자신의 네트워크로 들어오는 브로드캐스트 패킷을 막도록 설정</li>
+                <li>호스트는 브로드캐스트 주소로 전송된 ICMP Echo Request 패킷에 대해 응답하지 않도록 시스템을 설정</li>
+                <li>침입 차단 시스템(IPS)을 통해서 많은 수의 같은 ICMP Echo Reply 패킷이 전송되면 차단되도록 설정</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="티어드롭|티어드롭공격|teardrop|teardropattack|티어드롭공격(teardropattack)">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">3회</span></div>
+          <p class="q-text">다음이 설명하는 공격 기법을 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>IP 패킷의 재조합 과정에서 잘못된 Fragment 오프셋 정보로 인해 수신시스템이 문제를 발생하도록 만드는 DoS 공격이다.</li>
+              <li>공격자는 IP Fragment 오프셋 값을 서로 중첩되도록 조작하여 전송하고, 이를 수신한 시스템이 재조합하는 과정에서 오류가 발생, 시스템의 기능을 마비시키는 공격방식이다.</li>
+            </ul>
+          </div>
+          <div class="try">
+            <input id="a2-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q2 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>티어드롭 공격(Teardrop Attack)</mark></p>
+              <ul>
+                <li>티어드롭 공격은 IP 패킷의 재조합 과정에서 잘못된 Fragment 오프셋 정보로 인해 수신시스템이 문제를 발생하도록 만드는 DoS 공격</li>
+                <li>공격자는 IP Fragment 오프셋 값을 서로 중첩되도록 조작하여 전송하고, 이를 수신한 시스템이 재조합하는 과정에서 오류가 발생, 시스템의 기능을 마비시키는 공격방식</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">9회</span></div>
+          <p class="q-text">다음 괄호 (　) 안에 들어갈 용어를 쓰시오.</p>
+          <div class="q-box">스머프 공격(Smurf Attack)은 공격 대상의 IP를 출발지 주소(Source IP)로 위조(Spoofing)한 후, 네트워크 내의 불특정 다수 시스템에 ICMP ( ① ) 패킷을 브로드캐스트로 전송한다. 이를 수신한 다수의 호스트는 위조된 출발지 주소(공격 대상 서버)로 ICMP ( ② ) 패킷을 동시다발적으로 응답하게 되어, 대상 서버의 가용성을 저하시키고 시스템 마비를 초래한다.<br>이러한 공격의 매개체로 악용되는 것을 방지하기 위해, 네트워크 경계에 위치한 라우터에서 다른 네트워크로부터 유입되는 ( ③ ) 패킷을 차단하도록 설정해야 한다. 또한 각 호스트는 브로드캐스트 주소로 전송된 ICMP ( ① ) 패킷에 대해 응답하지 않도록 커널 파라미터나 방화벽 설정을 변경해야 한다.</div>
+          <div class="multi">
+            <label for="a3-a">①<input id="a3-a" type="text" data-keys="echorequest" aria-label="Q3 빈칸 1"></label>
+            <label for="a3-b">②<input id="a3-b" type="text" data-keys="echoreply" aria-label="Q3 빈칸 2"></label>
+            <label for="a3-c">③<input id="a3-c" type="text" data-keys="directedbroadcast" aria-label="Q3 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>Echo Request</mark>　② <mark>Echo Reply</mark>　③ <mark>Directed Broadcast</mark></p>
+              <ul>
+                <li>공격자는 공격 대상 호스트의 IP 주소로 위장하여 ICMP Echo Request를 특정 IP 브로드캐스트(Broadcast) 주소로 보내게 됨</li>
+                <li>공격 대상 IP 주소로 출발지 IP 주소를 설정하고 ICMP Echo Request 패킷을 브로드캐스트로 다수의 시스템에 전송하면, 공격 대상 서버는 ICMP Echo Reply 패킷들을 동시다발적으로 수신하여 시스템 성능에 문제를 일으키게 됨</li>
+                <li>중간 매개자로 쓰이는 것을 막기 위해서 라우터에서 다른 네트워크로부터 자신의 네트워크로 들어오는 직접 브로드캐스트(Directed Broadcast) 패킷을 막도록 설정</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="slowloris|slowloris공격|slowlorisattack|slowhttpheaderdosattack|slowloris공격(slowlorisattack;slowhttpheaderdosattack)">
+          <div class="q-head"><span class="q-no">Q4</span><span class="round">11회</span><span class="round">18회</span></div>
+          <p class="q-text">HTTP GET 메서드를 사용하여 헤더의 최종 끝을 알리는 개행 문자열인 (16진수: 0D 0A 0D 0A)을 전송하지 않고, (16진수: 0D 0A)만 전송하여 대상 웹 서버와 연결 상태를 장시간 지속시키고 연결 자원을 모두 소진하게 시키는 공격은 무엇인지 쓰시오.</p>
+          <div class="try">
+            <input id="a4-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q4 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>Slowloris 공격(Slowloris Attack; Slow HTTP Header DoS Attack)</mark></p>
+              <ul>
+                <li>정상적인 HTTP 메시지의 경우 헤더 정보가 '0D0A0D0A'로 종료되지만, Slowloris 공격 메시지는 '0D0A0D0A'가 없으므로 공격 대상이 되는 웹 서버는 헤더가 모두 도착하지 않은 것으로 간주하고 연결을 유지하고 서버의 자원을 잠식함</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q5</span><span class="round">12회</span><span class="round">22회</span><span class="round">28회</span></div>
+          <p class="q-text">다음은 HTTP 프로토콜의 특성을 악용한 공격에 대한 설명이다. 괄호 (　) 안에 알맞은 문자를 쓰시오.</p>
+          <div class="q-box">웹 애플리케이션이 사용자로부터 입력받은 파라미터를 HTTP 응답 헤더(Response Header)에 포함할 때, 입력값에 대한 적절한 필터링이 이루어지지 않아 ( ① ) 또는 ( ② )이/가 포함되어 있으면 응답이 여러 개로 나누어질 수 있다. 이를 통해 사용자 브라우저에 악성 스크립트를 실행시키는 XSS 공격을 수행하거나, 웹 캐시를 오염(Poisoning)시켜 다른 사용자에게 조작된 페이지를 전달할 수 있다.</div>
+          <div class="multi">
+            <label for="a5-a">①<input id="a5-a" type="text" data-keys="cr|%0d" aria-label="Q5 빈칸 1"></label>
+            <label for="a5-b">②<input id="a5-b" type="text" data-keys="lf|%0a" aria-label="Q5 빈칸 2"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>CR(%0D)</mark>　② <mark>LF(%0A)</mark></p>
+              <ul>
+                <li>HTTP 응답 분할은 HTTP 요청 파라미터(입력 값)에 개행 문자인 CR(%0D)과 LF(%0A)가 포함되어 있을 때, HTTP 응답이 여러 개로 분리되어 공격할 수 있는 취약점</li>
+                <li>공격자가 CR(%0D)과 LF(%0A)를 포함시켜 첫 응답을 종료시킨 후, 이후 응답에 악의적 코드를 삽입, 실행</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="멤캐시드|memcached|멤캐시드(memcached)">
+          <div class="q-head"><span class="q-no">Q6</span><span class="round">13회</span></div>
+          <p class="q-text">다음은 DDoS 관련 설명이다. 괄호 (　) 안에 공통으로 들어갈 알맞은 용어를 쓰시오.</p>
+          <div class="q-box">2018년 2월, 깃허브는 사상 최대 규모의 DDoS 공격을 받아 약 10분간 운영 장애를 겪었다. 공격은 (　　) 기반 증폭 공격 방식으로, 초당 1억 2,690만 패킷과 최대 1.35Tbps 트래픽을 발생시켰다. 대규모 봇넷 대신 수만 개 엔드포인트를 포함한 1,000여 개 자동화 시스템을 통해 이루어졌다.<br>공격자는 희생자 IP 주소로 위장된 UDP 패킷을 (　　) 서버의 기본 포트인 11211번 포트로 전송한다. 그러면 (　　) 서버는 스푸핑 된 피해자의 IP로 대규모 응답을 전송하며, 증폭률은 최대 51,000배에 달할 수 있다.</div>
+          <div class="try">
+            <input id="a6-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q6 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>멤캐시드(Memcached)</mark></p>
+              <ul>
+                <li>멤캐시드 반사 공격은 공개되어 있는 대량의 멤캐시드 서버(분산식 캐시 시스템)에 존재하는 인증과 설계의 취약점을 이용하는 공격</li>
+                <li>저장된 캐싱 데이터(특정 Key 값에 대한 Data)를 가능한 한 많이 요청하여, 스푸핑된 피해자의 IP로 대규모 응답을 전송(증폭률은 최대 51,000배)하도록 만듦</li>
+                <li>멤캐시드는 내부에서만 사용하도록 설계되기 때문에 멤캐시드 반사 공격을 방지하기 위해서는 외부로부터 들어오는 멤캐시드 응답 패킷(출발지 Port가 11211(UDP)인 패킷)을 차단해야 함</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q7</span><span class="round">15회</span></div>
+          <p class="q-text">다음은 DoS 공격이다. 괄호 (　) 안에 들어갈 공격 기법을 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>( ① )은/는 출발지 IP와 목적지 IP를 같은 패킷 주소로 만들어 보냄으로써 수신자가 자기 자신에게 응답을 보내게 하여 시스템의 가용성을 침해하는 공격 기법이다.</li>
+              <li>( ② )은/는 출발지 주소를 공격 대상의 IP로 설정하여 네트워크 전체에게 ICMP Echo 패킷을 Directed Broadcast하여 목표 시스템을 마비시키는 공격 기법이다.</li>
+              <li>( ③ )은/는 TCP 프로토콜의 3-Way Handshake를 악용한 공격 기법으로 대표적인 자원 소진 공격이다.</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="a7-a">①<input id="a7-a" type="text" data-keys="랜드|land" aria-label="Q7 빈칸 1"></label>
+            <label for="a7-b">②<input id="a7-b" type="text" data-keys="스머프|smurf" aria-label="Q7 빈칸 2"></label>
+            <label for="a7-c">③<input id="a7-c" type="text" data-keys="synflooding|synflood|syn플러딩" aria-label="Q7 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>랜드 어택(Land Attack)</mark>　② <mark>스머프 공격(Smurf Attack)</mark>　③ <mark>SYN Flooding 공격</mark></p>
+              <ul>
+                <li><b>랜드 어택</b> — 출발지 IP와 목적지 IP를 같은 패킷 주소로 만들어 보냄으로써 수신자가 자기 자신에게 응답을 보내게 하여 시스템의 가용성을 침해하는 공격 기법</li>
+                <li><b>스머프 공격</b> — 출발지 주소를 공격 대상의 IP로 설정하여 네트워크 전체에게 ICMP Echo 패킷을 직접 브로드캐스팅(Directed Broadcast)하여 목표 시스템을 마비시키는 공격 기법</li>
+                <li><b>SYN Flooding</b>
+                  <ul>
+                    <li>TCP 프로토콜의 3-Way Handshake를 악용한 공격 기법으로 대표적인 자원 소진 공격</li>
+                    <li>SYN Flag만 지속해서 전달하고 돌아오는 SYN/ACK 패킷에 대한 응답을 주지 않아서 피해 서버의 자원을 소모하게 만드는 공격 기법</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="ssdp반사공격|ssdp반사|ssdpreflectionattack|ssdp반사공격(ssdpreflectionattack)|ssdp반사공격(ssdpreflection)">
+          <div class="q-head"><span class="q-no">Q8</span><span class="round">15회</span></div>
+          <p class="q-text">다음이 설명하는 공격 기법을 쓰시오.</p>
+          <div class="q-box">SSDP 기능을 악용하여 가능한 한 많은 데이터를 요청하는 ssdp:all 또는 ssdp:rootdevice 값이 포함된 Search 명령을 보내서, 스푸핑 된 피해자의 서버 IP로 대규모 응답 패킷(증폭률 최대 30배)이 전송되도록 만드는 공격</div>
+          <div class="try">
+            <input id="a8-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q8 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>SSDP 반사 공격(SSDP Reflection Attack)</mark></p>
+              <ul>
+                <li>SSDP 반사 공격은 SSDP 기능을 악용하여 가능한 한 많은 데이터를 요청하는 ssdp:all 또는 ssdp:rootdevice 값이 포함된 Search 명령을 보내서, 스푸핑 된 피해자의 서버 IP로 대규모 응답 패킷(증폭률 최대 30배)이 전송되도록 만드는 공격 기법</li>
+                <li>SSDP Reflection Attack을 방어하기 위해서는, SSDP 프로토콜은 내부에서만 사용하도록 설정되기 때문에 외부로부터 들어오는 SSDP Response 패킷(출발지 Port가 1900(UDP) 패킷)을 차단해야 함</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="dga|dga(domaingenerationalgorithm)|domaingenerationalgorithm">
+          <div class="q-head"><span class="q-no">Q9</span><span class="round">18회</span></div>
+          <p class="q-text">다음은 악성코드의 C&amp;C(Command &amp; Control) 통신 기법에 대한 설명이다. 괄호 (　) 안에 들어갈 올바른 용어를 쓰시오.</p>
+          <div class="q-box">공격자는 보안 장비의 IP 차단 및 도메인 필터링 정책을 우회하기 위해, 고정된 주소를 사용하지 않고 시간(Time)이나 특정 값(Seed)을 기반으로 수많은 도메인 주소를 주기적으로 무작위 생성하는 기법을 사용한다. 공격자와 악성코드 감염 PC가 같은 (　　)을/를 사용하여 생성된 도메인 중 하나를 선택해서 통신하기 때문에 탐지가 어렵다.</div>
+          <div class="try">
+            <input id="a9-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q9 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>DGA(Domain Generation Algorithm)</mark></p>
+              <ul>
+                <li>DGA는 악성코드(Bot)가 C&amp;C 서버와 통신하기 위해, 정해진 알고리즘을 통해 수많은 도메인 이름을 주기적으로 자동 생성하는 기법</li>
+                <li>DGA는 보안 장비(방화벽, IPS 등)의 IP/도메인 차단(Blacklist) 정책을 우회하기 위한 기법</li>
+              </ul>
+              <span class="sub-title">DGA의 특징</span>
+              <ul>
+                <li><b>IP/Domain 차단 회피</b> — 고정된 C&amp;C 주소를 사용하지 않고 계속 변경하므로, 하나의 도메인을 차단해도 다음 생성된 도메인으로 접속</li>
+                <li><b>대량의 도메인 생성</b> — 하루에 수백 개에서 수만 개의 도메인을 생성하지만, 실제로는 그중 1~2개만 등록하여 사용함</li>
+                <li><b>시간 의존성</b> (Time-based) — 날짜, 시간 등을 시드(Seed)값으로 사용하여 매일 다른 도메인을 생성</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="httprequestsmuggling|http요청스머글링">
+          <div class="q-head"><span class="q-no">Q10</span><span class="round">26회</span></div>
+          <p class="q-text">서버 간 요청 처리 방식의 차이를 악용하여, 악의적인 요청을 정상 요청 속에 숨겨 전송하는 웹 공격 기법으로 프론트엔드 서버와 백엔드 서버 간의 HTTP 요청의 파싱 방식(Content-Length, Transfer-Encoding: chunked)이 다를 때 발생하는 공격 기법은 무엇인지 [보기]에서 골라서 쓰시오.</p>
+          <div class="q-box mono"><b>[보기]</b>　XSS, CSRF, SQL Injection, HTTP Request Smuggling</div>
+          <div class="try">
+            <input id="a10-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q10 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>HTTP Request Smuggling</mark></p>
+              <ul>
+                <li>HTTP 요청 스머글링은 서버 간 요청 처리 방식의 차이를 악용하여, 악의적인 요청을 정상 요청 속에 숨겨 전송하는 웹 공격 기법</li>
+                <li>주로 프론트엔드 서버와 백엔드 서버 간의 HTTP 요청 파싱 방식이 다를 때 발생</li>
+              </ul>
+              <span class="sub-title">HTTP 요청 스머글링 유형</span>
+              <ul>
+                <li><b>CL.TE</b> (Content-Length to Transfer-Encoding) — 프론트엔드 서버가 Content-Length를 기준으로 요청을 해석하고, 백엔드 서버가 Transfer-Encoding: chunked를 기준으로 해석하는 경우 발생</li>
+                <li><b>TE.CL</b> (Transfer-Encoding to Content-Length) — 프론트엔드 서버는 Transfer-Encoding: chunked 헤더를 우선적으로 처리하고, 백엔드 서버는 Content-Length 헤더를 우선적으로 처리하여 발생</li>
+                <li><b>TE.TE</b> (Transfer-Encoding to Transfer-Encoding) — HTTP 요청 헤더에 Transfer-Encoding: chunked 헤더가 중복되어 사용될 때 발생</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="slowreadattack|slowread|slowread공격">
+          <div class="q-head"><span class="q-no">Q11</span><span class="round">26회</span></div>
+          <p class="q-text">TCP 윈도우 크기(Windows Size)를 낮게 설정하여 서버로 전달하고, 해당 윈도우 크기를 기준으로 통신하면서 데이터 전송이 완료될 때까지 연결을 유지하게 만들어 서버의 연결 자원을 고갈시키는 공격 기법을 무엇이라 하는지 쓰시오.</p>
+          <div class="try">
+            <input id="a11-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q11 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>Slow Read Attack</mark></p>
+              <ul>
+                <li>Slow Read Attack은 TCP 윈도우 크기(Windows Size)를 낮게 설정하여 서버로 전달하고, 해당 윈도우 크기를 기준으로 통신하면서 데이터 전송이 완료될 때까지 연결을 유지하게 만들어 서버의 연결 자원을 고갈시키는 공격</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+
+      <!-- 서술형 · 실무형 -->
+      <div class="qsep"></div>
+      <div class="qbar" id="q-atk-essay">
+        <span class="qtype"><span class="label essay">서술형 · 실무형</span><span class="note">문장으로 설명하는 문제 · 직접 써 보고 모범 답안과 비교</span></span>
+        <button type="button" data-toggle="atk-essay">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="atk-essay">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">3회</span><span class="round">23회</span></div>
+          <p class="q-text">네트워크 관리자는 웹 서버의 응답 지연 현상을 분석하던 중, 특정 클라이언트로부터 동일한 HTTP 요청이 초당 수천 건씩 반복적으로 유입되는 것을 확인하였다. 해당 요청은 모두 동일한 웹 페이지를 대상으로 하며, 요청 헤더에는 다음과 같은 정보가 포함되어 있었다. 다음 질문에 답하시오.</p>
+          <div class="cfg">GET /index.jsp
+Host: 192.168.0.10
+User Agent: chrome
+<u>Referer</u>: http://www.soojebi.com/index.jsp
+  ①
+Cache-Control: <u>max-age=0</u>
+               ②</div>
+          <ul class="sub-qs">
+            <li>① Referer이 의미하는 것을 서술하시오.</li>
+            <li>② Cache-Control 헤더에서 max-age=0이 의미하는 것을 서술하시오.</li>
+            <li>③ 위와 같은 트래픽 패턴과 HTTP 헤더 설정을 이용한 공격 기법을 쓰시오.</li>
+            <li>④ 해당 공격으로 인해 서버에 발생할 수 있는 영향을 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="ae1-a">①<textarea id="ae1-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae1-b">②<textarea id="ae1-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae1-c">③<textarea id="ae1-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae1-d">④<textarea id="ae1-d" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> 이전 페이지의 URL 주소를 알려주는 필드</p>
+                <p><b>②</b> 캐시된 콘텐츠의 유효 시간이 0초이므로, 요청마다 서버의 확인을 거치도록 하는 설정</p>
+                <p><b>③</b> Cache-Control 공격</p>
+                <p><b>④</b> max-age=0으로 설정하면 서버는 부하를 감소시켜 주는 캐싱 서버를 이용하지 못하게 되어 서버에 부하가 발생</p>
+              </div>
+              <span class="sub-title">HTTP 헤더 구조</span>
+              <ul>
+                <li><b>Cache-Control</b>
+                  <ul>
+                    <li>웹 서버의 부하를 감소시키기 위해 사용하는 캐싱 서버를 제어하는 필드</li>
+                    <li>캐시 값을 지정하지 않았을 경우 특정 웹 리소스의 모든 캐싱이 되지 않게 하며, 악용되어 사용될 경우 서버에 부하를 발생하는 공격으로도 사용될 수 있음</li>
+                    <li><code>max-age</code> — 캐시된 데이터의 유효시간을 설정하는 옵션 (max-age=30이면 30초 동안 유효함)</li>
+                    <li><code>no-store</code> — 데이터의 캐시를 허용하지 않는 옵션</li>
+                    <li><code>no-cache</code> — 데이터 캐시는 허용하지만, 사용하기 전에 반드시 서버에 재검증을 요청하여 데이터의 유효성을 확인해야 하는 옵션 (max-age=0과 같음)</li>
+                    <li><code>must-revalidate</code> — 캐시된 데이터의 유효시간이 만료되면 반드시 서버에 새로운 응답을 사용하는 옵션</li>
+                  </ul></li>
+                <li><b>Connection</b> — 해당 요청이 끝난 후에 클라이언트와 서버가 계속해서 네트워크 연결을 유지할 것인지 끊을 것인지에 대해 지시하는 필드</li>
+                <li><b>Content-Type</b> — 해당 요청이 보내는 본문(Body)의 데이터 타입을 나타내는 필드</li>
+                <li><b>Content-Length</b>
+                  <ul>
+                    <li>본문(Body)의 길이를 나타내는 필드 (바이트 단위)</li>
+                    <li>POST 방식을 사용할 때 동봉되는 데이터의 크기</li>
+                  </ul></li>
+                <li><b>Host</b>
+                  <ul>
+                    <li>요청을 받는 서버의 URL을 나타내는 필드</li>
+                    <li>요청 대상 서버의 도메인명</li>
+                  </ul></li>
+                <li><b>User-Agent</b>
+                  <ul>
+                    <li>요청을 보내는 클라이언트에 대한 정보를 나타내는 필드</li>
+                    <li>클라이언트의 웹 브라우저 및 OS 정보</li>
+                  </ul></li>
+                <li><b>Referer</b>
+                  <ul>
+                    <li>이전 페이지의 URL 주소를 알려주는 필드</li>
+                    <li>요청을 보낸 페이지의 절대 혹은 부분 주소를 포함</li>
+                  </ul></li>
+              </ul>
+              <ul>
+                <li>Cache-Control 필드에 no-cache, no-store, must-revalidate를 포함한 메시지를 계속 보내면 서버에 부하가 많이 가게 되는데, 이러한 공격을 CC(Cache-Control) 공격이라고 함</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">3회</span></div>
+          <p class="q-text">다음은 HTTP 요청 헤더이다. [보기]와 같은 상황일 때 질문에 답하시오.</p>
+          <span class="sub-title">[HTTP 요청 헤더]</span>
+          <div class="cfg">GET / HTTP/1.1
+Host: 10.10.10.25
+User-Agent: Mozilla/5.0
+Connection: keep-alive</div>
+          <span class="sub-title">[보기]</span>
+          <div class="q-box">
+            <ul>
+              <li>HTTP 웹 서버에 접속하려고 했으나 로그인이 되지 않는다.</li>
+              <li>같은 출발지 IP를 가지는 트래픽이 짧은 시간 동안 대량으로 발생하고 있다.</li>
+            </ul>
+          </div>
+          <ul class="sub-qs">
+            <li>① 어떤 공격 기법인지 쓰시오.</li>
+            <li>② 해당 공격으로 어떤 영향을 받는지 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="ae2-a">①<textarea id="ae2-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae2-b">②<textarea id="ae2-b" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> HTTP Get Flooding</p>
+                <p><b>②</b> 대량의 GET 요청을 지속적으로 전송하므로 서버의 세션을 모두 소진하여 정상적인 사용자가 접속 요청 시 접속이 불가능</p>
+              </div>
+              <ul>
+                <li>GET Flooding 공격은 공격자가 TCP Protocol의 3-Way Handshake를 통해 서버와 세션을 맺은 후, HTTP GET 메서드 요청을 통해 웹 서버의 자원을 소진함과 동시에 DB 서버까지 자원을 소진해서 정상적인 사용자의 웹 서비스 이용을 차단하는 공격</li>
+                <li>정상 요청과 유사한 요청을 보이기 때문에 사전 대비가 어렵고 적은 개수의 좀비 PC/단말로도 서비스 장애를 유도할 수 있는 특징이 있음</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">7회</span></div>
+          <p class="q-text">스머프 공격(Smurf Attack)에 대한 질문에 답하시오.</p>
+          <ul class="sub-qs">
+            <li>① 스머프 공격의 원리를 서술하시오.</li>
+            <li>② 방화벽, IDS, IPS 등의 보안 솔루션 없이 스머프 공격을 막는 방법에 대해 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="ae3-a">①<textarea id="ae3-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae3-b">②<textarea id="ae3-b" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> 공격 대상 IP 주소로 출발지 IP 주소를 설정하고 ICMP Echo Request 패킷을 브로드캐스트로 다수의 시스템에 전송하면 공격 대상 서버는 ICMP Echo Reply 패킷들을 동시다발적으로 수신하여 시스템 성능에 문제를 일으키게 됨</p>
+                <p><b>②</b> 중간 매개자로 쓰이는 것을 막기 위해서 라우터에서 다른 네트워크로부터 자신의 네트워크로 들어오는 직접 브로드캐스트(Directed Broadcast) 패킷을 막도록 설정</p>
+              </div>
+              <span class="sub-title">스머프 공격 원리 및 대응 방법</span>
+              <ul>
+                <li><b>공격 원리</b>
+                  <ul>
+                    <li>공격자는 공격 대상 호스트의 IP 주소로 위장하여 ICMP Echo Request를 특정 IP 브로드캐스트(Broadcast) 주소로 보내게 됨</li>
+                    <li>공격 대상 IP 주소로 출발지 IP 주소를 설정하고 ICMP Echo Request 패킷을 브로드캐스트로 다수의 시스템에 전송하면, 공격 대상 서버는 ICMP Echo Reply 패킷들을 동시다발적으로 수신하여 시스템 성능에 문제를 일으키게 됨</li>
+                  </ul></li>
+                <li><b>대응 방법</b>
+                  <ul>
+                    <li>중간 매개자로 쓰이는 것을 막기 위해서 라우터에서 다른 네트워크로부터 자신의 네트워크로 들어오는 직접 브로드캐스트(Directed Broadcast) 패킷을 막도록 설정</li>
+                    <li>호스트는 브로드캐스트 주소로 전송된 ICMP Echo Request 패킷에 대해 응답하지 않도록 시스템을 설정</li>
+                    <li>침입 차단 시스템(IPS)을 통해서 많은 수의 같은 ICMP Echo Reply 패킷이 전송되면 차단되도록 설정</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q4</span><span class="round">9회</span></div>
+          <p class="q-text">다음은 유닉스(Solaris) 시스템의 커널 보안 설정을 위해 ndd 명령어를 사용한 예시이다. 아래 제시된 (1), (2) 두 가지 설정 명령어에 대하여, 각각 방어하고자 하는 공격 기법의 명칭과 해당 명령어의 의미를 서술하시오.</p>
+          <div class="cfg">(1) ndd -set /dev/ip ip_forward_directed_broadcasts 0
+(2) ndd -set /dev/tcp tcp_conn_req_max_q0 512</div>
+          <div class="essay-in">
+            <label for="ae4-a">(1) ① 공격 기법의 명칭<textarea id="ae4-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae4-b">(1) ② 명령어의 의미<textarea id="ae4-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae4-c">(2) ① 공격 기법의 명칭<textarea id="ae4-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae4-d">(2) ② 명령어의 의미<textarea id="ae4-d" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>(1)</b> ① 스머프 공격(Smurf Attack)　② 직접 브로드캐스트(Directed Broadcast)의 ip 패킷의 포워딩을 차단하는 명령어</p>
+                <p><b>(2)</b> ① TCP SYN 플러딩 공격(TCP SYN Flooding Attack)　② TCP 3-Way Handshake 과정 중 SYN 수신 후 아직 완료되지 않은 TCP 연결 큐의 최대 크기를 확장하는 명령어</p>
+              </div>
+              <ul>
+                <li>ndd 명령어는 Solaris 및 HP-UX 등 유닉스 계열 운영체제에서 실행 중인 커널의 네트워크 관련 파라미터(TCP/IP 설정값)를 확인하거나 동적으로 변경할 때 사용하는 명령어</li>
+              </ul>
+              <span class="sub-title">ndd 주요 파라미터</span>
+              <ul>
+                <li><code>ip_forward_directed_broadcasts</code> — Directed Broadcast 패킷을 포워딩할지 여부를 설정
+                  <ul><li>/dev/ip 모듈에서 사용</li><li><code>0</code> 차단, <code>1</code> 허용</li></ul></li>
+                <li><code>ip_forwarding</code> — IP 전달 기능이 켜져있는지 확인
+                  <ul><li>/dev/ip 모듈에서 사용</li><li><code>0</code> 차단, <code>1</code> 허용</li></ul></li>
+                <li><code>tcp_conn_req_max_q0</code> — SYN 수신 후 아직 완료되지 않은 TCP 연결 큐의 크기
+                  <ul><li>/dev/tcp 모듈에서 사용</li></ul></li>
+                <li><code>tcp_conn_req_max_q</code> — 3-Way 핸드쉐이킹 완료 후, accept 대기 중인 TCP 연결 큐의 최대 크기
+                  <ul><li>/dev/tcp 모듈에서 사용</li></ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q5</span><span class="round">12회</span></div>
+          <p class="q-text">다음은 최근 발생하고 있는 NTP(Network Time Protocol) 증폭 공격(NTP Amplification Attack)에 대한 설명과 이에 대응하기 위한 보안 조치 과정이다. 지문을 읽고, 다음 [보안 조치 과정]에 나열된 ①, ②, ③의 밑줄친 항목이 수행하는 구체적인 의미를 서술하시오.</p>
+          <span class="sub-title">[공격 개요]</span>
+          <div class="q-box">공격자는 출발지 IP를 피해자(Victim)의 IP로 위조(Spoofing)하여 취약한 NTP 서버에 monlist 명령을 전송한다. monlist 명령은 최근 해당 NTP 서버(192.168.0.1)에 접속한 클라이언트 목록(최대 600개)을 응답하므로, 작은 요청 패킷으로도 피해자에게 거대한 응답 트래픽을 유발하여 서비스를 마비시킨다.</div>
+          <span class="sub-title">[보안 조치 과정]</span>
+          <div class="q-box">관리자 A는 사내 NTP 서버가 공격의 반사체(Reflector)로 악용되는 것을 막기 위해 다음과 같은 순서로 점검 및 조치를 수행하였다.</div>
+          <div class="cfg">① # <u>ntpd --version</u>
+② # cat /etc/ntp.conf | grep 'monitor'
+     <u>disable monitor</u>
+③ # <u>ntpdc -c monlist 192.168.0.1</u></div>
+          <div class="essay-in">
+            <label for="ae5-a">①<textarea id="ae5-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae5-b">②<textarea id="ae5-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae5-c">③<textarea id="ae5-c" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> NTP 데몬의 버전을 확인하여 구 버전인지 식별하여 최신 버전으로 업그레이드 하기 위한 명령어</p>
+                <p><b>②</b> NTP 설정 파일(ntp.conf)에서 모니터링 기능을 비활성화하여, monlist 쿼리에 대한 응답을 원천적으로 차단하기 위한 설정</p>
+                <p><b>③</b> NTP 서버에 실제 monlist 명령을 전송하여 응답 값 리스트를 점검하여 취약점이 조치되었는지를 점검하는 명령어</p>
+              </div>
+              <span class="sub-title">NTP 반사 공격 점검 및 조치 방법</span>
+              <ul>
+                <li>NTP 버전이 구 버전인지 확인
+                  <span class="ex-line"># ntpd --version</span></li>
+                <li>NTP 설정 파일(ntp.conf)에서 모니터링 기능을 비활성화
+                  <span class="ex-line"># disable monitor</span></li>
+                <li>NTP 서버에 접속했던 클라이언트 목록을 조회하는 기능이 동작하는지 확인
+                  <span class="ex-line"># ntpdc -c monlist &lt;서버IP&gt;</span></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q6</span><span class="round">16회</span></div>
+          <p class="q-text">다음 XML에 대한 공격 원리를 서술하시오.</p>
+          <div class="code"><ol><li>&lt;?xml version=&quot;1.0&quot;?&gt;</li><li>&lt;!DOCTYPE lolz [</li><li> &lt;!ENTITY lol &quot;lol&quot;&gt;</li><li> &lt;!ELEMENT lolz (#PCDATA)&gt;</li><li> &lt;!ENTITY lol1 &quot;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&quot;&gt;</li><li> &lt;!ENTITY lol2 &quot;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&quot;&gt;</li><li> &lt;!ENTITY lol3 &quot;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&quot;&gt;</li><li> &lt;!ENTITY lol4 &quot;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&amp;lol3;&quot;&gt;</li><li> &lt;!ENTITY lol5 &quot;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&amp;lol4;&quot;&gt;</li><li> &lt;!ENTITY lol6 &quot;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&amp;lol5;&quot;&gt;</li><li> &lt;!ENTITY lol7 &quot;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&amp;lol6;&quot;&gt;</li><li> &lt;!ENTITY lol8 &quot;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&amp;lol7;&quot;&gt;</li><li> &lt;!ENTITY lol9 &quot;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&quot;&gt;</li><li>]&gt;</li><li>&lt;lolz&gt;&amp;lol9;&lt;/lolz&gt;</li></ol></div>
+          <div class="essay-in">
+            <label for="ae6-a">답<textarea id="ae6-a" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model"><p>XML 파서의 재귀적 확장 기능을 악용하여 시스템의 메모리를 과도하게 소모시킴</p></div>
+              <ul>
+                <li>Billion Laughs Attack은 XML 파서의 재귀적 확장 기능을 악용하여 시스템의 자원을 과도하게 소모시키는 DoS 공격</li>
+                <li>XML 블록에는 실제로 10억 개의 "lol"이 포함되어 거의 3GB의 메모리를 차지함</li>
+              </ul>
+              <span class="sub-title">줄별 풀이</span>
+              <div class="table-scroll"><table class="mini">
+                <thead><tr><th>줄</th><th>설명</th></tr></thead>
+                <tbody>
+                  <tr><td>01</td><td>문서는 XML 1.0 버전</td></tr>
+                  <tr><td>02</td><td>lolz라는 루트 요소에 대한 DTD(문서 형식 정의)를 작성</td></tr>
+                  <tr><td>03</td><td>&amp;lol;을 사용하면 "lol" 문자열로 치환</td></tr>
+                  <tr><td>04</td><td>루트 요소 &lt;lolz&gt;는 PCDATA(문자 데이터, 텍스트)를 포함할 수 있음을 정의</td></tr>
+                  <tr><td>05</td><td>&amp;lol;은 "lol"이라는 문자열이므로 &amp;lol1;에서 &amp;lol;을 10번 반복하면 "lol" 문자열 10개를 작성한 것과 같음</td></tr>
+                  <tr><td>06</td><td>&amp;lol1;은 "lol" 문자열 10개이므로 &amp;lol2;에서 &amp;lol1;을 10번 반복하면 "lol" 문자열 100개를 작성한 것과 같음</td></tr>
+                  <tr><td>07</td><td>&amp;lol2;는 "lol" 문자열 100개이므로 &amp;lol3;에서 &amp;lol2;을 10번 반복하면 "lol" 문자열 1000개를 작성한 것과 같음</td></tr>
+                  <tr><td>…</td><td>…</td></tr>
+                  <tr><td>13</td><td>&amp;lol8;은 "lol" 문자열 1억개이므로 &amp;lol9;에서 &amp;lol8;을 10번 반복하면 "lol" 문자열 10억개를 작성한 것과 같음</td></tr>
+                  <tr><td>14</td><td>DTD 종료</td></tr>
+                  <tr><td>15</td><td>&lt;lolz&gt; 안에 &amp;lol9;를 넣어, 파서는 10억 개의 "lol" 문자열을 메모리에 로드하려고 시도</td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q7</span><span class="round">27회</span></div>
+          <p class="q-text">NTP 서비스 취약점을 이용한 한 DDoS 공격 대응 방안 4가지를 서술하시오.</p>
+          <div class="essay-in">
+            <label for="ae7-a">①<textarea id="ae7-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae7-b">②<textarea id="ae7-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae7-c">③<textarea id="ae7-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ae7-d">④<textarea id="ae7-d" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> NTP 서버 버전 업그레이드</p>
+                <p><b>②</b> NTP 서버 버전 업그레이드 불가시 monlist 기능 비활성화</p>
+                <p><b>③</b> 방화벽으로 인가되지 않은 외부 트래픽 유입 차단</p>
+                <p><b>④</b> 방화벽에서 비정상 NTP 패킷 차단</p>
+              </div>
+              <ul>
+                <li>NTP 버전을 업데이트 후, 최신 버전인지 확인
+                  <span class="ex-line"># ntpd --version</span></li>
+                <li>NTP 설정 파일(ntp.conf)에서 모니터링 기능을 비활성화
+                  <span class="ex-line"># vi /etc/ntp.conf</span>
+                  <span class="ex-line">disable monitor</span></li>
+                <li>외부에서 들어오는 불필요한 UDP 123번 포트 트래픽을 차단하거나, 임계치(Threshold)를 설정하여 비정상적인 트래픽 유입을 막아서 대응할 수 있음</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <details class="subject" id="scan" open>
+    <summary class="subject-head"><span class="no">02</span><h2>스캐닝</h2><span class="fold-hint">단답 2 · 서술 2</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-scan">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">스텔스 스캔(FIN · NULL · Xmas)</span><span class="chip">TCP Open · Half-Open Scan</span><span class="chip">TCP ACK Scan</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-scan">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="scan">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="scan">
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">4회</span><span class="round">10회</span><span class="round">27회</span></div>
+          <p class="q-text">TCP 포트가 닫혀있을 때 응답이 오는 스텔스 스캔(Stealth Scan)의 종류 3가지를 쓰시오.</p>
+          <div class="multi">
+            <label for="s1-a">①<input id="s1-a" type="text" data-keys="fin|null|xmas" aria-label="Q1 빈칸 1"></label>
+            <label for="s1-b">②<input id="s1-b" type="text" data-keys="fin|null|xmas" aria-label="Q1 빈칸 2"></label>
+            <label for="s1-c">③<input id="s1-c" type="text" data-keys="fin|null|xmas" aria-label="Q1 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>FIN Scan</mark>　② <mark>NULL Scan</mark>　③ <mark>Xmas Scan</mark></p>
+              <ul>
+                <li>포트가 Close 상태이면 RST 패킷을 되돌려 보내고(RFC 793), Open 상태이면 패킷을 무시함</li>
+                <li><b>FIN Scan</b>
+                  <ul>
+                    <li>TCP Flag의 FIN 제어비트만을 활성화하여 대상 포트로 패킷을 전송하는 기법</li>
+                    <li>Windows 계열의 시스템에 대한 포트 스캐닝을 할 수 없음 (주로 UNIX 계열 OS 시스템에 대해서만 사용할 수 있음)</li>
+                  </ul></li>
+                <li><b>NULL Scan</b> — TCP Flag를 모두 비활성화하여 대상 포트로 패킷을 전송</li>
+                <li><b>Xmas Scan</b> — TCP Flag의 FIN, URG, PSH를 활성화하여 대상 포트로 패킷을 전송</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">6회</span></div>
+          <p class="q-text">다음은 TCP 포트 스캔 기법을 수행하는 과정이다. 괄호 (　) 안에 알맞은 Flag를 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>TCP Open Scan 시 포트가 닫혀있는 상태에서 공격자는 목표 시스템의 대상 포트로 ( ① ) Flag 패킷을 전송하면 포트가 닫혀있으므로 목표 시스템이 연결 요청을 받지 못하고 ( ② ) Flag 패킷을 전송한다.</li>
+              <li>TCP Half-Open Scan 시 포트가 열려있는 경우 공격자는 목표 시스템의 대상 포트로 ( ③ ) Flag 패킷을 전송하면 목표 시스템으로부터 ( ④ ) Flag 패킷을 수신하고, 공격자의 목적인 포트 오픈 여부를 확인했으므로 연결 중단을 위해 ( ⑤ ) Flag 패킷을 전송하여 연결을 끊고 연결 시도 세션에 대한 로그를 남기지 않는다.</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="s2-a">①<input id="s2-a" type="text" data-answer="SYN" aria-label="Q2 빈칸 1"></label>
+            <label for="s2-b">②<input id="s2-b" type="text" data-answer="RST+ACK" aria-label="Q2 빈칸 2"></label>
+            <label for="s2-c">③<input id="s2-c" type="text" data-answer="SYN" aria-label="Q2 빈칸 3"></label>
+            <label for="s2-d">④<input id="s2-d" type="text" data-answer="SYN+ACK" aria-label="Q2 빈칸 4"></label>
+            <label for="s2-e">⑤<input id="s2-e" type="text" data-answer="RST" aria-label="Q2 빈칸 5"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: ① <mark>SYN</mark>　② <mark>RST + ACK</mark>　③ <mark>SYN</mark>　④ <mark>SYN + ACK</mark>　⑤ <mark>RST</mark></p>
+              <span class="sub-title">TCP Full Open Scan</span>
+              <ul>
+                <li>일반 사용자 권한으로 TCP 포트 오픈 여부를 확인하기 위해 connect() 시스템 호출을 이용하는 방식</li>
+                <li><b>포트가 열려있는 상태</b> (Open Port)
+                  <ol class="steps">
+                    <li><div>공격자는 목표 시스템의 대상 포트로 SYN 패킷을 전송</div></li>
+                    <li><div>목표 시스템으로부터 SYN+ACK 패킷을 수신한 후 ACK 패킷을 전송하여 TCP 연결 설정 완료</div></li>
+                    <li><div>공격자의 목적인 포트 오픈 여부를 확인했으므로 연결 중단을 위해 RST+ACK 패킷을 전송하여 연결 종료</div></li>
+                  </ol></li>
+                <li><b>포트가 닫혀있는 상태</b> (Closed Port)
+                  <ol class="steps">
+                    <li><div>공격자는 목표 시스템의 대상 포트로 SYN 패킷을 전송</div></li>
+                    <li><div>포트가 닫혀있으므로 목표 시스템이 연결 요청을 받지 못하고 RST+ACK 패킷을 전송</div></li>
+                  </ol></li>
+              </ul>
+              <span class="sub-title">TCP Half Open Scan</span>
+              <ul>
+                <li>관리자 권한으로 TCP 패킷을 조작하여 TCP 포트 오픈 여부를 판단하는 스캔 방식</li>
+                <li><b>포트가 열려있는 상태</b> (Open Port)
+                  <ol class="steps">
+                    <li><div>공격자는 목표 시스템의 대상 포트로 SYN 패킷을 전송</div></li>
+                    <li><div>목표 시스템으로부터 SYN+ACK 패킷을 수신</div></li>
+                    <li><div>공격자의 목적인 포트 오픈 여부를 확인했으므로 연결 중단을 위해 RST 패킷을 전송하여 연결을 끊고 연결 시도 세션에 대한 로그를 남기지 않음</div></li>
+                  </ol></li>
+                <li><b>포트가 닫혀있는 상태</b> (Closed Port)
+                  <ol class="steps">
+                    <li><div>공격자는 목표 시스템의 대상 포트로 SYN 패킷을 전송</div></li>
+                    <li><div>포트가 닫혀있으므로 목표 시스템이 연결 요청을 받지 못하고 RST+ACK 패킷을 전송</div></li>
+                  </ol></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+
+      <!-- 서술형 · 실무형 -->
+      <div class="qsep"></div>
+      <div class="qbar" id="q-scan-essay">
+        <span class="qtype"><span class="label essay">서술형 · 실무형</span><span class="note">문장으로 설명하는 문제 · 직접 써 보고 모범 답안과 비교</span></span>
+        <button type="button" data-toggle="scan-essay">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="scan-essay">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">11회</span></div>
+          <p class="q-text">다음은 포트 스캔에 대한 설명이다. 질문에 답하시오.</p>
+          <span class="sub-title">①</span><div class="table-scroll"><table class="mini"><thead><tr><th>전송 방향</th><th>TCP Flag</th><th>Port 번호</th></tr></thead><tbody><tr><td>Client → Server</td><td>SYN</td><td>25</td></tr><tr><td>Server → Client</td><td>SYN+ACK</td><td>25</td></tr><tr><td>Client → Server</td><td>RST</td><td>25</td></tr></tbody></table></div>
+          <span class="sub-title">②</span><div class="table-scroll"><table class="mini"><thead><tr><th>전송 방향</th><th>TCP Flag</th><th>Port 번호</th></tr></thead><tbody><tr><td>Client → Server</td><td>SYN</td><td>443</td></tr><tr><td>Server → Client</td><td>RST+ACK</td><td>443</td></tr></tbody></table></div>
+          <span class="sub-title">③</span><div class="table-scroll"><table class="mini"><thead><tr><th>전송 방향</th><th>TCP Flag</th><th>Port 번호</th></tr></thead><tbody><tr><td>Client → Server</td><td>SYN</td><td>110</td></tr><tr><td>Client → Server</td><td>SYN</td><td>110</td></tr></tbody></table></div>
+          <ul class="sub-qs">
+            <li>(1) Client는 Server에 대해서 어떤 포트 스캔 방식을 시도하고 있는지 쓰시오.</li>
+            <li>(2) ①, ②, ③은 어떤 서비스를 스캔하는지 서비스명을 쓰시오.</li>
+            <li>(3) ①, ②, ③을 통해 파악할 수 있는 정보와 그 정보를 파악할 수 있는 근거를 쓰시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="se1-a">(1)<textarea id="se1-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se1-b">(2) ① ② ③<textarea id="se1-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se1-c">(3) ①<textarea id="se1-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se1-d">(3) ②<textarea id="se1-d" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se1-e">(3) ③<textarea id="se1-e" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>(1)</b> TCP Half Open Scan</p>
+                <p><b>(2)</b> ① SMTP　② HTTPS　③ POP3</p>
+                <p><b>(3)</b></p>
+                <ul>
+                  <li>① SMTP는 열려있음, 목표 시스템으로부터 SYN+ACK을 수신받았으므로 25번 포트는 열려있음</li>
+                  <li>② HTTPS는 닫혀있음, 목표 시스템으로부터 RST+ACK을 수신받았으므로 443번 포트는 닫혀있음</li>
+                  <li>③ POP3는 방화벽 등에 의해서 필터링, TCP Half Open Scan을 시도했는데 아무 응답이 없는 경우는 방화벽 차단이나 ICMP 필터링 가능성이 있음</li>
+                </ul>
+              </div>
+              <ul>
+                <li>TCP Half Open Scan은 관리자 권한으로 TCP 패킷을 조작하여 TCP 포트 오픈 여부를 판단하는 스캔 방식</li>
+                <li>TCP 패킷 헤더의 제어비트를 조작하여 TCP 연결 설정 과정을 완전하게 수행하지 않기 때문에 Half-Open 스캔이라고 함</li>
+                <li>TCP Half Open Scan을 시도했는데, 아무 응답이 없는 경우는 방화벽 차단이나 ICMP 필터링 가능성이 있음</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">14회</span></div>
+          <p class="q-text">한 클라이언트가 대상 서버에 대해 포트 스캔을 수행하던 중, TCP 연결이 성립되지 않은 상태에서 ACK 플래그만 설정된 패킷을 3000번부터 3010번 포트까지 순차적으로 전송하였다. 그 결과, 3010번 포트에 대해서만 TCP RST 패킷이 응답되었고, 나머지 포트(3000~3009번)에 대해서는 응답이 없었다. 이와 같은 상황일 때 질문에 답하시오.</p>
+          <div class="hs" aria-label="문제 그림: ACK 패킷 전송과 RST 응답">
+            <div class="node">클라이언트</div>
+            <div class="msg">ACK, 포트번호 3000~3010번<span class="line r"></span></div>
+            <div class="node" style="grid-column:3">서버</div>
+            <div class="msg" style="grid-column:2">⋮</div>
+            <div class="msg" style="grid-column:2">RST, 포트번호 3010번<span class="line l"></span></div>
+          </div>
+          <ul class="sub-qs">
+            <li>① 클라이언트가 시도하고 있는 스캔의 명칭을 쓰시오.</li>
+            <li>② 해당 스캔을 사용하는 목적을 서술하시오.</li>
+            <li>③ 해당 스캔 결과를 통해 알 수 있는 대상 시스템의 상태를 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="se2-a">①<textarea id="se2-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se2-b">②<textarea id="se2-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="se2-c">③<textarea id="se2-c" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> TCP ACK Scan</p>
+                <p><b>②</b> 목표 시스템의 대상 포트로 ACK 제어비트만 설정한 패킷의 전송을 통해서 대상 방화벽이 상태 기반(Stateful)인지 아닌지, 대상 포트가 방화벽에 의해 필터링되는지를 확인하기 위해서 스캔</p>
+                <p><b>③</b> 3000~3009번 포트는 방화벽에 의해 차단된 상태이고, 3010번 포트는 방화벽에 의해 차단되지 않은 상태</p>
+              </div>
+              <ul>
+                <li>TCP ACK Scan은 목표 시스템의 포트 오픈 여부를 판단하는 것이 아니라 방화벽 필터링 정책(Rule Set)을 알아내기 위한 스캔 방식</li>
+                <li>공격자는 목표 시스템의 대상 포트로 ACK 제어비트만 설정한 패킷의 전송을 통해서 대상 방화벽이 상태 기반(Stateful)인지 아닌지, 대상 포트가 방화벽에 의해 필터링되는지를 확인할 수 있음</li>
+                <li><b>방화벽에 의해 차단된 상태</b> — 방화벽으로부터 응답이 없거나 ICMP 에러 메시지를 수신</li>
+                <li><b>방화벽에 의해 차단되지 않은 상태</b> — 목표 시스템의 포트 오픈 여부와는 무관하게 RST 응답을 수신</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <details class="subject" id="spoof" open>
+    <summary class="subject-head"><span class="no">03</span><h2>스푸핑 공격, 스니핑 공격</h2><span class="fold-hint">단답 3 · 서술 4</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-spoof">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">Switch Jamming</span><span class="chip">ARP 스푸핑</span><span class="chip">TCP 세션 하이재킹</span><span class="chip">정적 ARP(arp -s)</span><span class="chip">Promiscuous Mode</span><span class="chip">스니핑 대응</span><span class="chip">스니핑 탐지(ping · ARP)</span><span class="chip">ARP 리다이렉트</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-spoof">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="spoof">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="spoof">
+
+        <article class="q" data-answers="switchjamming|switchjamming공격|스위치재밍|스위치재밍공격">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">2회</span></div>
+          <p class="q-text">다음이 설명하는 공격은 무엇인지 쓰시오.</p>
+          <div class="q-box">일반적으로 스위치 장치는 MAC 주소 테이블이 가득 차면 모든 네트워크 세그먼트 트래픽을 브로드캐스팅한다. 공격자는 이러한 특성을 악용하여 위조된 MAC 주소를 지속적으로 네트워크에 흘려보냄으로써, 스위칭 허브의 주소 테이블을 오버플로우시킨다. 이로 인해 스위치가 더미 허브처럼 동작하게 되어 해당 네트워크 세그먼트의 데이터를 스니핑할 수 있다.</div>
+          <div class="try">
+            <input id="sp1-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q1 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>Switch Jamming 공격</mark></p>
+              <ul>
+                <li>Switch Jamming은 스위치가 받은 데이터를 특정 목적지에 전송하기 위한 MAC 주소 테이블에 대해 버퍼 오버플로우 공격을 수행하여 스위치가 더미 허브처럼 동작하게 만드는 공격</li>
+              </ul>
+              <span class="sub-title">공격 순서</span>
+              <ol class="steps">
+                <li><div>공격자가 스위치에 랜덤한 형태로 생성한 MAC을 대량으로 전송하여 스위치의 MAC 주소 테이블의 저장 용량을 초과시킴(오버플로우)</div></li>
+                <li><div>스위치의 원래 기능을 잃고 더미 허브(Dummy Hub)처럼 동작</div></li>
+                <li><div>스위치의 주소 테이블이 모두 차면 모든 네트워크에 패킷을 브로드캐스팅</div></li>
+                <li><div>브로드캐스팅 된 패킷 정보를 스니핑</div></li>
+              </ol>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="arp스푸핑|arpspoofing|arp스푸핑(arpspoofing)">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">13회</span><span class="round">19회</span></div>
+          <p class="q-text">다음이 설명하는 용어를 쓰시오.</p>
+          <div class="q-box">공격자가 특정 호스트의 MAC 주소를 자신의 MAC 주소로 위조한 ARP Reply를 만들어 희생자에게 지속해서 전송하여 희생자의 ARP 캐시 테이블에 특정 호스트의 MAC 정보를 공격자의 MAC 정보로 변경하는 기법이다.</div>
+          <div class="try">
+            <input id="sp2-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q2 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>ARP 스푸핑(ARP Spoofing)</mark></p>
+              <ul>
+                <li>ARP 스푸핑은 공격자가 특정 호스트의 MAC 주소를 자신의 MAC 주소로 위조한 ARP Reply를 만들어 희생자에게 지속해서 전송하여 희생자의 ARP 캐시 테이블에 특정 호스트의 MAC 정보를 공격자의 MAC 정보로 변경하는 기법</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="tcp세션하이재킹|tcpsessionhijacking|세션하이재킹|tcp세션하이재킹(tcpsessionhijacking)">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">19회</span><span class="round">25회</span></div>
+          <p class="q-text">TCP 통신 중에 RST 패킷(Reset)을 보내 일시적으로 TCP 세션을 끊고 시퀀스 넘버를 새로 생성하여, 세션을 탈취하고 인증을 회피하는 공격은 무엇인지 쓰시오.</p>
+          <div class="try">
+            <input id="sp3-input" type="text" placeholder="답을 직접 써 보세요" aria-label="Q3 답 입력">
+            <button type="button" class="check">확인</button>
+          </div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>TCP 세션 하이재킹</mark></p>
+              <ul>
+                <li>TCP 통신에서 세션을 유지하는 데 사용하는 패킷의 순서(시퀀스 번호, ACK 번호)를 조작하여 공격자가 통신 세션을 가로채는 공격 기법</li>
+              </ul>
+              <span class="sub-title">공격 순서</span>
+              <ol class="steps">
+                <li><div><b>세션의 시퀀스 번호 획득</b><ul><li>공격자는 ARP Spoofing을 통해 패킷이 공격자를 지나가게 함으로써 세션 정보를 확인(스니핑)하고 클라이언트의 시퀀스 넘버를 획득</li></ul></div></li>
+                <li><div><b>RST 패킷 전송</b><ul><li>공격자는 정상적인 클라이언트의 IP 주소로 위장하고 RST 패킷을 보내 클라이언트와 서버 쪽 연결을 단절시킴</li><li>서버는 잠시 Closed 상태가 되나 클라이언트는 그대로 Established 상태로 유지</li></ul></div></li>
+                <li><div><b>서버와 신규 세션 연결</b><ul><li>공격자는 새로운 시퀀스 넘버를 생성하고, 서버와 TCP 3-Way Handshaking을 수행</li></ul></div></li>
+                <li><div><b>공격자-서버 시퀀스 번호 사용</b><ul><li>서버는 신규 시퀀스 번호를 수신하고, 서버의 시퀀스 번호를 재생성하여 공격자에게 전달</li></ul></div></li>
+                <li><div><b>중간자 세션 생성</b><ul><li>클라이언트 - 공격자 - 서버의 서로 간의 세션 Established를 유지하여 2개의 다른 세션 관리</li></ul></div></li>
+                <li><div><b>통신 Relay 처리</b><ul><li>공격자가 TCP 연결의 중간자로 개입해 두 개의 시퀀스 번호를 사용해 통신을 중계</li><li>기존 연결을 가로채 패킷을 서버에 전달하고, 서버의 응답(ACK)이 공격자와 클라이언트 모두에 전달됨</li><li>클라이언트는 보낸 적 없는 데이터에 대한 ACK를 받고 이를 교정하려 다시 ACK를 보냄</li><li>서버도 다시 ACK를 보내면서 양측이 반복적으로 ACK를 주고받아 ACK 스톰 발생</li></ul></div></li>
+                <li><div><b>클라이언트 세션 종료</b><ul><li>RST 또는 FIN 플래그를 가진 패킷을 클라이언트에게 보내 피해자의 세션을 종료</li></ul></div></li>
+                <li><div><b>세션 조작</b><ul><li>세션이 가로채진 상태에서 공격자가 자신의 명령어 또는 요청을 서버에 전송하여 피해자의 권한으로 동작하게 만듦</li></ul></div></li>
+              </ol>
+            </div>
+          </details>
+        </article>
+
+      </div>
+
+      <!-- 서술형 · 실무형 -->
+      <div class="qsep"></div>
+      <div class="qbar" id="q-spoof-essay">
+        <span class="qtype"><span class="label essay">서술형 · 실무형</span><span class="note">문장으로 설명하는 문제 · 직접 써 보고 모범 답안과 비교</span></span>
+        <button type="button" data-toggle="spoof-essay">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="spoof-essay">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">1회</span><span class="round">6회</span></div>
+          <p class="q-text">네트워크 관리자(192.168.1.1)는 동료 직원 PC(192.168.1.75)와 통신을 하려고 하는데 연결이 간헐적으로 끊겨 ARP 캐시 테이블을 점검하였다. 이때 네트워크 관리자의 ARP 테이블을 확인한 결과는 다음과 같을 때 질문에 답하시오.</p>
+          <div class="table-scroll"><table class="mini">
+            <thead><tr><th>Internet Address</th><th>Physical Address</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td>192.168.1.65</td><td>22-33-44-55-66-77</td><td>dynamic</td></tr>
+              <tr><td>192.168.1.1</td><td>11-22-33-44-55-66</td><td>dynamic</td></tr>
+              <tr><td>192.168.1.75</td><td>22-33-44-55-66-77</td><td>dynamic</td></tr>
+              <tr><td>192.168.1.85</td><td>34-56-78-90-AB-CD</td><td>dynamic</td></tr>
+            </tbody>
+          </table></div>
+          <ul class="sub-qs">
+            <li>① 어떤 공격인지 쓰시오.</li>
+            <li>② 해당 공격이라고 추정하는 이유를 서술하시오.</li>
+            <li>③ 공격자로 추정되는 시스템의 IP 주소를 쓰시오.</li>
+            <li>④ 해당 공격을 방지하기 위한 대응 방안을 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="spe1-a">①<textarea id="spe1-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe1-b">②<textarea id="spe1-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe1-c">③<textarea id="spe1-c" class="mono-in" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe1-d">④<textarea id="spe1-d" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> ARP 스푸핑 (ARP Spoofing)</p>
+                <p><b>②</b> ARP 테이블을 확인한 결과, 공격자(192.168.1.65)와 일반 호스트(192.168.1.75)의 MAC 주소가 22-33-44-55-66-77로 동일한데, 이는 공격자가 자신을 192.168.1.75 호스트인 것처럼 MAC 주소를 위조하여 등록시킨 것이기 때문</p>
+                <p><b>③</b> <span class="perm">192.168.1.65</span></p>
+                <p><b>④</b> ARP 테이블을 정적(Static)으로 설정하여 변경되지 않도록 함</p>
+              </div>
+              <ul>
+                <li>ARP 스푸핑은 공격자가 특정 호스트의 MAC 주소를 자신의 MAC 주소로 위조한 ARP Reply를 만들어 희생자에게 지속해서 전송하여 희생자의 ARP 캐시 테이블에 특정 호스트의 MAC 정보를 공격자의 MAC 정보로 변경하는 기법</li>
+                <li>ARP 테이블을 확인한 결과, 공격자(192.168.1.65)와 동료 직원 PC(192.168.1.75)의 MAC 주소가 22-33-44-55-66-77로 동일함. 이는 공격자가 자신을 192.168.1.75 호스트인 것처럼 MAC 주소를 위조하여 등록시킨 것이므로 ARP 스푸핑 공격임</li>
+                <li>ARP 스푸핑에 대한 보안 대책으로 동일 네트워크 내의 시스템들에 대한 ARP 캐시 테이블을 관리자가 직접 정적(Static)으로 설정함으로써 대응할 수 있음</li>
+                <li>정적 ARP 테이블을 사용하는 시스템은 ARP Reply 메시지를 무시하므로 악의적인 전송 메시지를 방어할 수 있음
+                  <span class="ex-line">arp -s [IP 주소] [MAC 주소]</span></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">19회</span><span class="round">26회</span></div>
+          <p class="q-text">시스템 로그 점검 중 다음과 같은 로그가 발견되었다. 로그를 참고하여 질문에 답하시오.</p>
+          <div class="cfg"># cat /var/log/messages | grep 'promiscuous mode'
+Jan 01 12:00:00 soojebi kernel: device eth0 entered promiscuous mode</div>
+          <ul class="sub-qs">
+            <li>① 로그에 나타난 promiscuous mode의 의미를 서술하시오.</li>
+            <li>② promiscuous mode가 설정된 환경에서 발생할 수 있는 대표적인 공격 기법을 서술하시오.</li>
+            <li>③ 위와 같은 공격을 탐지하거나 대응하기 위한 보안 방안을 두 가지 이상 서술하시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="spe2-a">①<textarea id="spe2-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe2-b">②<textarea id="spe2-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe2-c">③<textarea id="spe2-c" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> 네트워크 인터페이스 카드(NIC)가 일반적으로 수신하지 않는 다른 호스트의 데이터 패킷을 수신할 수 있도록 설정된 모드</p>
+                <p><b>②</b> 네트워크상에 전송되는 모든 트래픽을 수신할 수 있는 Promiscuous Mode 설정을 통해 데이터를 도청할 수 있는 스니핑 공격이 발생할 수 있다.</p>
+                <p><b>③</b> 데이터를 암호화하여 스니핑을 통해 가로채더라도 해독할 수 없도록 보호, 스위치의 주소 테이블을 static하게 설정하여 MAC 주소를 특정 포트에 고정하여 공격을 방지</p>
+              </div>
+              <ul>
+                <li>Promiscuous Mode는 네트워크 인터페이스 카드(NIC)가 일반적으로 수신하지 않는 다른 호스트의 데이터 패킷을 수신할 수 있도록 하는 모드</li>
+                <li>이더넷 인터페이스는 자신의 MAC 주소를 갖지 않는 트래픽을 무시하는 특성이 있으나, 스니핑 공격을 통해 필터링을 무시하고 모든 트래픽을 볼 수 있는 Promiscuous Mode를 설정하여 트래픽을 도청함</li>
+                <li>/var/log/messages 로그 파일은 로그 발생 시간, 호스트 이름, 로그 출처(커널, 시스템 서비스 등), 메시지 내용이 출력됨</li>
+              </ul>
+              <span class="sub-title">스니핑 공격 대응 방안</span>
+              <ul>
+                <li><b>데이터 암호화</b>
+                  <ul>
+                    <li>데이터를 암호화하여 스니핑을 통해 가로채더라도 해독할 수 없도록 보호</li>
+                    <li>보안 프로토콜 및 VPN을 통한 데이터 보호</li>
+                  </ul></li>
+                <li><b>안전한 네트워크 구성 설정</b>
+                  <ul>
+                    <li>정적(Static) ARP 테이블 설정을 통해 ARP 스푸핑을 통한 스니핑 방지</li>
+                    <li>VLAN 구성을 통해 공격자가 같은 VLAN이 아니면 트래픽을 엿볼 수 없도록 구성</li>
+                    <li>스위치 포트에 지정된 MAC 주소만 접속을 허용하고, 미인가 장비 접속 시 자동 차단되도록 보안 설정</li>
+                  </ul></li>
+                <li><b>스니퍼 탐지 도구 사용</b>
+                  <ul>
+                    <li>NMAP 등의 도구를 이용해 네트워크에서 Promiscuous 모드로 동작하는 호스트를 탐지하여 스니핑 시도를 필터링 및 차단</li>
+                    <li>네트워크상의 ARP 트래픽을 감시하여 MAC 주소와 IP 주소의 매핑이 변경될 때 관리자에게 알려주는 ARP Watch 도구 활용</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">25회</span></div>
+          <p class="q-text">네트워크 스니핑 탐지 기법 중 하나인 ping 명령을 이용한 탐지 방법의 원리를 서술하시오.</p>
+          <div class="essay-in">
+            <label for="spe3-a">답<textarea id="spe3-a" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model"><p>의심되는 호스트에 대해 네트워크에 존재하지 않는 MAC 주소로 위장하여 Ping을 보내면 스니퍼를 탐지할 수 있음</p></div>
+              <span class="sub-title">스니핑 탐지 방법</span>
+              <ul>
+                <li><b>ping 활용</b>
+                  <ul>
+                    <li>의심되는 호스트에 대해 네트워크에 존재하지 않는 MAC 주소로 위장하여 Ping을 보내면 스니퍼를 탐지할 수 있음</li>
+                    <li>스니핑을 하지 않는 호스트라면 Ping Request를 볼 수 없음</li>
+                  </ul></li>
+                <li><b>ARP 활용</b> — 위조된 ARP Request를 전송했을 때 ARP Response가 도착하면 Promiscuous Mode로 설정된 것으로 탐지할 수 있음</li>
+                <li><b>프로그램 활용</b> — 스니핑 모니터링 프로그램인 Sentinel을 이용하여 스니퍼를 탐지</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q4</span><span class="round">25회</span></div>
+          <p class="q-text">네트워크 관리자는 인터넷 접속 속도가 현저히 저하되는 현상을 확인한 후, 원인을 분석하기 위해 PC의 ARP 캐시 테이블을 조회하였다. 조회 결과는 다음과 같다. 해당 정보를 참고하여 다음 질문에 답하시오. (단, 해당 네트워크의 정상적인 게이트웨이 IP 주소는 192.168.100.1이다.)</p>
+          <div class="table-scroll"><table class="mini">
+            <thead><tr><th>Internet Address</th><th>Physical Address</th><th>Type</th></tr></thead>
+            <tbody>
+              <tr><td>192.168.100.1</td><td>11-22-33-44-55-66</td><td>dynamic</td></tr>
+              <tr><td>192.168.100.5</td><td>11-22-33-44-55-66</td><td>dynamic</td></tr>
+              <tr><td>192.168.100.20</td><td>00-11-22-33-44-55</td><td>dynamic</td></tr>
+              <tr><td>192.168.100.21</td><td>AA-BB-CC-DD-EE-FF</td><td>dynamic</td></tr>
+              <tr><td>192.168.100.22</td><td>00-11-22-AA-BB-CC</td><td>dynamic</td></tr>
+            </tbody>
+          </table></div>
+          <ul class="sub-qs">
+            <li>① 현재 PC에서 ARP 캐시 테이블을 조회하기 위해 사용한 명령어를 쓰시오.</li>
+            <li>② 위와 같은 ARP 캐시 테이블 상태를 통해 추정할 수 있는 공격 기법의 명칭을 쓰시오.</li>
+            <li>③ 해당 공격으로 판단한 근거를 서술하시오.</li>
+            <li>④ 실제 게이트웨이(192.168.100.1)의 MAC 주소가 22-33-44-55-66-77인 경우, 해당 공격에 대응하기 위해 관리자가 입력해야 할 명령어를 쓰시오.</li>
+          </ul>
+          <div class="essay-in">
+            <label for="spe4-a">①<textarea id="spe4-a" class="mono-in" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe4-b">②<textarea id="spe4-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe4-c">③<textarea id="spe4-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="spe4-d">④<textarea id="spe4-d" class="mono-in" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>①</b> <span class="perm">arp -a</span></p>
+                <p><b>②</b> ARP 리다이렉트(ARP Redirect)</p>
+                <p><b>③</b> 게이트웨이 IP 주소(192.168.100.1)의 MAC 주소가 11-22-33-44-55-66으로 변경</p>
+                <p><b>④</b> <span class="perm">arp -s 192.168.100.1 22-33-44-55-66-77</span></p>
+              </div>
+              <ul>
+                <li>ARP 캐시 테이블을 조회할 때 arp -a를 이용하여 조회
+                  <span class="ex-line">arp -a</span></li>
+                <li>ARP 리다이렉트 공격은 공격자가 라우터의 MAC 주소로 변경하여 ARP Reply 패킷을 대상 시스템에 브로드캐스트하는 공격</li>
+                <li>ARP 스푸핑에 대한 보안 대책으로 동일 네트워크 내의 시스템들에 대한 ARP 캐시 테이블을 관리자가 직접 정적(Static)으로 설정하면, 정적 ARP 테이블을 사용하는 시스템은 ARP Reply 메시지를 무시하므로 악의적인 전송 메시지를 방어할 수 있음
+                  <span class="ex-line">arp -s [IP 주소] [MAC 주소]</span></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <footer>교재 기출문제를 바탕으로 정리 · 자료를 받을 때마다 이 페이지에 이어서 추가</footer>
+</div>
+
+<script>
+(function(){
+  const norm = s => s.toLowerCase().replace(/\s+/g,'');
+  document.querySelectorAll('.q:not(.essay)').forEach(q=>{
+    const out = q.querySelector('.result');
+    const inputs = [...q.querySelectorAll('input')];
+    const answers = q.dataset.answers ? q.dataset.answers.split('|').map(norm) : null;
+    const check = ()=>{
+      const vals = inputs.map(i=>norm(i.value));
+      if(vals.every(v=>!v)){ out.textContent=''; out.className='result'; return; }
+      let ok;
+      if(q.dataset.multi){
+        const marks = inputs.map(i=>{const v=norm(i.value); if(i.dataset.keys) return !!v && i.dataset.keys.split('|').some(k=>v.includes(norm(k))); return v.replace(/^\./,'')===norm(i.dataset.answer).replace(/^\./,'');});
+        ok = marks.every(Boolean);
+        out.textContent = ok ? '모두 정답이에요.' : '맞은 칸: '+marks.filter(Boolean).length+' / '+marks.length+' — 막히면 아래 해설을 열어 보세요.';
+      } else {
+        ok = answers.includes(vals[0]);
+        out.textContent = ok ? '정답이에요.' : '다시 생각해 보세요. 막히면 아래 해설을 열어 보세요.';
+      }
+      out.className = 'result ' + (ok ? 'ok' : 'no');
+    };
+    q.querySelector('.check').addEventListener('click', check);
+    inputs.forEach(i=>i.addEventListener('keydown', e=>{ if(e.key==='Enter') check(); }));
+  });
+  document.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const list = document.querySelectorAll('[data-group="'+btn.dataset.toggle+'"] details');
+      const open = [...list].some(d=>!d.open);
+      list.forEach(d=>d.open = open);
+      btn.textContent = open ? '답 모두 접기' : '답 모두 펼치기';
+    });
+  });
+
+  // 단원 접기: 상태 기억 + 목차 링크로 이동 시 자동 펼치기
+  const units=[...document.querySelectorAll('details.subject')];
+  const KEY='fold-state';
+  let saved={};
+  try{ saved=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  units.forEach(d=>{
+    if(saved[d.id]===false) d.open=false;
+    d.addEventListener('toggle',()=>{
+      saved[d.id]=d.open;
+      try{ localStorage.setItem(KEY,JSON.stringify(saved)); }catch(e){}
+      syncAll();
+    });
+  });
+  const allBtn=document.getElementById('fold-all');
+  function syncAll(){ if(allBtn) allBtn.textContent = units.some(d=>d.open) ? '단원 모두 접기' : '단원 모두 펼치기'; }
+  if(allBtn) allBtn.addEventListener('click',()=>{ const open=!units.some(d=>d.open); units.forEach(d=>d.open=open); });
+  function openFor(hash){
+    if(!hash) return;
+    const el=document.getElementById(hash.slice(1)); if(!el) return;
+    const d=el.closest('details.subject'); if(d && !d.open) d.open=true;
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>openFor(a.getAttribute('href'))));
+  openFor(location.hash);
+  syncAll();
+})();
+</script>
+
+</body></html>
