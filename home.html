@@ -51,10 +51,125 @@
       border-right: 0.1rem solid var(--krds-light-color-divider-gray-light);
       background: var(--krds-light-color-background-white);
     }
-    #list {
+    #main {
       flex: 1;
+      min-width: 0;
       overflow-y: auto;
       padding: var(--krds-padding-6) var(--krds-padding-8);
+    }
+    #dday {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--krds-gap-3) var(--krds-gap-5);
+      margin-bottom: var(--krds-gap-3);
+    }
+    #dday strong {
+      font-size: 2.4rem;
+      color: var(--krds-light-color-text-danger);
+    }
+    #legend {
+      margin-bottom: var(--krds-gap-6);
+    }
+    #legend ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--krds-gap-1) var(--krds-gap-5);
+    }
+    #calendar {
+      max-width: 128rem;
+    }
+    #calendar .month {
+      margin-bottom: var(--krds-gap-8);
+    }
+    #calendar .month > strong {
+      display: block;
+      padding-bottom: var(--krds-padding-3);
+    }
+    #calendar table {
+      width: 100%;
+    }
+    #calendar th {
+      padding: var(--krds-padding-2) 0;
+      color: var(--krds-light-color-text-subtle);
+      font-weight: var(--krds-font-weight-regular);
+      border-bottom: 0.1rem solid var(--krds-light-color-divider-gray-light);
+    }
+    #calendar td {
+      height: 12rem;
+      padding: var(--krds-padding-2);
+      vertical-align: top;
+      border-bottom: 0.1rem solid var(--krds-light-color-divider-gray-light);
+    }
+    #calendar .date {
+      display: inline-block;
+      width: 2.8rem;
+      line-height: 2.8rem;
+      text-align: center;
+    }
+    #calendar .sun {
+      color: var(--krds-light-color-text-danger);
+    }
+    #calendar .sat {
+      color: var(--krds-light-color-text-primary);
+    }
+    #calendar .today .date {
+      border-radius: var(--krds-radius-max);
+      background: var(--krds-light-color-surface-inverse);
+      color: var(--krds-light-color-text-basic-inverse);
+      font-weight: var(--krds-font-weight-bold);
+    }
+    .plan {
+      font-size: 1.5rem;
+      line-height: 1.6;
+    }
+    .plan li {
+      position: relative;
+      padding-left: 1.2rem;
+      word-break: keep-all;
+    }
+    .plan li::before {
+      content: '';
+      position: absolute;
+      top: 0.9rem;
+      left: 0.2rem;
+      width: 0.6rem;
+      height: 0.6rem;
+      border-radius: var(--krds-radius-max);
+      background: var(--krds-light-color-border-primary);
+    }
+    .plan .p2 {
+      color: #c2540a;
+    }
+    .plan .p2::before {
+      background: #f2711c;
+    }
+    .plan .p3::before {
+      background: var(--krds-light-color-border-point);
+    }
+    .plan .exam {
+      color: var(--krds-light-color-text-danger);
+      font-weight: var(--krds-font-weight-bold);
+    }
+    .plan .exam::before {
+      background: var(--krds-light-color-border-danger);
+    }
+    .plan .done {
+      color: var(--krds-light-color-text-success);
+    }
+    .plan .done::before {
+      content: '✓';
+      top: 0;
+      left: -0.1rem;
+      width: auto;
+      height: auto;
+      background: none;
+    }
+    .plan .code {
+      white-space: nowrap;
+    }
+    .plan a:hover {
+      text-decoration: underline;
     }
     #list a {
       display: flex;
@@ -96,8 +211,25 @@
       #sidebar.open {
         display: block;
       }
-      #list {
+      #main {
         padding: var(--krds-padding-3) var(--krds-padding-5);
+      }
+      #calendar td {
+        height: 6.4rem;
+        padding: var(--krds-padding-1);
+      }
+      .plan {
+        font-size: 1.3rem;
+      }
+      .plan li::before {
+        top: 0.7rem;
+      }
+      .plan .done::before {
+        top: 0;
+      }
+      #calendar .plan em,
+      #calendar .plan .name {
+        display: none;
       }
     }
   </style>
@@ -105,14 +237,21 @@
 <body>
   <header id="header">
     <button type="button" id="menu" class="krds-btn icon" aria-label="메뉴"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
-    <span id="current">JIANSO</span>
+    <a id="current" href="#">JIANSO</a>
     <a id="back" class="krds-btn small text" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg> 목록으로</a>
   </header>
   <div id="body">
     <nav id="sidebar" class="krds-side-navigation">
       <ul id="menu-list" class="lnb-list"></ul>
     </nav>
-    <ul id="list"></ul>
+    <div id="main">
+      <div id="home">
+        <div id="dday"></div>
+        <div id="legend"></div>
+        <div id="calendar"></div>
+      </div>
+      <ul id="list"></ul>
+    </div>
     <iframe id="content" hidden></iframe>
   </div>
 
@@ -152,30 +291,19 @@
 
     var sidebar = document.getElementById('sidebar');
     var menuList = document.getElementById('menu-list');
+    var main = document.getElementById('main');
+    var home = document.getElementById('home');
     var list = document.getElementById('list');
     var back = document.getElementById('back');
     var content = document.getElementById('content');
 
-    // 주소가 비어 있으면 문서가 들어 있는 첫 하위 메뉴를 엽니다.
-    function firstMenu() {
-      for (var c = 0; c < categories.length; c++) {
-        for (var m = 0; m < categories[c].menus.length; m++) {
-          if (categories[c].menus[m].pages.length) return [c, m];
-        }
-      }
-      return [0, 0];
-    }
-
-    // 주소의 #0/1 은 0번 항목 1번 하위 메뉴의 문서 목록, #0/1/2 는 그 안의 2번 문서
+    // 주소가 비어 있으면 달력, #0/1 은 0번 항목 1번 하위 메뉴의 문서 목록, #0/1/2 는 그 안의 2번 문서
     function show() {
       var parts = location.hash.slice(1).split('/');
-      if (!categories[parts[0]] || !categories[parts[0]].menus[parts[1]]) parts = firstMenu();
-      var c = Number(parts[0]);
-      var m = Number(parts[1]);
-      var category = categories[c];
-      var menu = category.menus[m];
-      var page = menu.pages[parts[2]];
-      var here = '#' + c + '/' + m;
+      var category = categories[parts[0]];
+      var menu = category && category.menus[parts[1]];
+      var page = menu && menu.pages[parts[2]];
+      var here = menu ? '#' + Number(parts[0]) + '/' + Number(parts[1]) : '';
 
       var links = menuList.querySelectorAll('a');
       for (var i = 0; i < links.length; i++) {
@@ -185,7 +313,9 @@
       }
       sidebar.classList.remove('open');
 
-      list.hidden = !!page;
+      main.hidden = !!page;
+      home.hidden = !!menu;
+      list.hidden = !menu;
       content.hidden = !page;
       back.hidden = !page;
       back.href = here;
@@ -193,6 +323,7 @@
         content.src = page.file;
         return;
       }
+      if (!menu) return;
 
       list.innerHTML = '';
       if (!menu.pages.length) {
@@ -238,6 +369,142 @@
       });
       menuList.appendChild(li);
     });
+
+    // 공부 계획. 시작일부터 하루씩 새 단원을 채우고, 단원을 끝낸 날 기준으로 복습 날짜를 자동으로 잡습니다.
+    var PLAN_MENU = [0, 1];
+    var EXAM = new Date(2026, 10, 14);
+    var REVIEW = [1, 3, 7, 14]; // 망각곡선 복습 간격(일)
+    var day = new Date(2026, 9, 10);
+    var plan = {};
+    // 끝낸 일 기록. '월-일': [[번호, 내용], ...]
+    var log = {
+      '10-10': [['26년2회 기출', '인강 1회 완강']],
+    };
+
+    function key(date) {
+      return (date.getMonth() + 1) + '-' + date.getDate();
+    }
+
+    // 같은 날 같은 문서가 겹치면 나중 것만 남깁니다.
+    function put(date, stage, item) {
+      var items = (plan[key(date)] || []).filter(function (x) {
+        return x.page === undefined || x.page !== item.page;
+      });
+      items.push({ stage: stage, page: item.page, code: item.code, text: item.text });
+      plan[key(date)] = items;
+    }
+
+    // days일 동안 새로 공부하고, 마지막 날에서 REVIEW 간격만큼 뒤에 복습을 넣습니다.
+    function study(item, days) {
+      for (var k = 0; k < days; k++) {
+        put(day, 'p1', item);
+        day.setDate(day.getDate() + 1);
+      }
+      review(item, new Date(day.getFullYear(), day.getMonth(), day.getDate() - 1));
+    }
+
+    function review(item, last) {
+      REVIEW.forEach(function (n) {
+        var date = new Date(last.getFullYear(), last.getMonth(), last.getDate() + n);
+        if (date < EXAM) put(date, 'p2', item);
+      });
+    }
+
+    // 인강은 10/9에 시작해 10/10에 끝냈으므로 복습은 10/10 기준
+    var lecture = { code: '26년2회 기출', text: '인강' };
+    put(new Date(2026, 9, 9), 'p1', lecture);
+    review(lecture, new Date(2026, 9, 10));
+    // 새로 공부: 문서(0부터)마다 며칠씩 볼지 (10/10 ~ 11/1)
+    [2, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 4, 1, 1, 1].forEach(function (days, i) {
+      study({ page: i }, days);
+    });
+    // 마무리: 시험 전 5일 동안 과목별로 전체를 한 번 더 (11/9 ~ 11/13)
+    [[0, 1], [2, 3, 4, 5], [6, 7, 8, 9], [10, 11], [12, 13, 14]].forEach(function (pages, i) {
+      pages.forEach(function (page) {
+        put(new Date(2026, 10, 9 + i), 'p3', { page: page });
+      });
+    });
+    put(EXAM, 'exam', { text: '실기 시험' });
+
+    function code(item) {
+      if (item.page === undefined) return item.code;
+      var p = categories[PLAN_MENU[0]].menus[PLAN_MENU[1]].pages[item.page];
+      return '<span class="code">' + parseInt(p.group) + '-' + p.title.split('. ')[0].slice(2) + '</span>';
+    }
+
+    function name(item) {
+      if (item.page === undefined) return item.text;
+      return categories[PLAN_MENU[0]].menus[PLAN_MENU[1]].pages[item.page].title.split('. ')[1];
+    }
+
+    function link(item, html) {
+      if (item.page === undefined) return html;
+      return '<a href="#' + PLAN_MENU.join('/') + '/' + item.page + '">' + html + '</a>';
+    }
+
+    // 그날 할 일 목록. 새로 공부는 한 줄씩, 복습과 마무리는 번호만 한 줄에 모읍니다.
+    function planHtml(date) {
+      var items = plan[key(date)] || [];
+      var html = '';
+      (log[key(date)] || []).forEach(function (entry) {
+        html += '<li class="done"><b>' + entry[0] + '</b><span class="name"> ' + entry[1] + '</span></li>';
+      });
+      items.forEach(function (item) {
+        if (item.stage === 'exam') html += '<li class="exam">' + item.text + '</li>';
+        if (item.stage === 'p1') {
+          html += '<li class="p1">' + link(item, '<b>' + code(item) + '</b><span class="name"> ' + name(item) + '</span>') + '</li>';
+        }
+      });
+      [['p2', '복습'], ['p3', '마무리']].forEach(function (stage) {
+        var codes = items.filter(function (item) {
+          return item.stage === stage[0];
+        }).map(function (item) {
+          return link(item, code(item));
+        });
+        if (codes.length) html += '<li class="' + stage[0] + '"><em>' + stage[1] + ' </em>' + codes.join(' · ') + '</li>';
+      });
+      return html ? '<ul class="plan">' + html + '</ul>' : '';
+    }
+
+    // month는 0부터 셉니다(9 = 10월).
+    function calendar(year, month) {
+      var today = new Date();
+      var days = new Date(year, month + 1, 0).getDate();
+      var html = '<div class="month"><strong>' + year + '년 ' + (month + 1) + '월</strong><table><thead><tr>';
+      ['일', '월', '화', '수', '목', '금', '토'].forEach(function (d, i) {
+        html += '<th scope="col" class="' + dayClass(i) + '">' + d + '</th>';
+      });
+      html += '</tr></thead><tbody><tr>';
+      var w = new Date(year, month, 1).getDay();
+      for (var i = 0; i < w; i++) html += '<td></td>';
+      for (var d = 1; d <= days; d++, w++) {
+        if (w === 7) {
+          html += '</tr><tr>';
+          w = 0;
+        }
+        var isToday = year === today.getFullYear() && month === today.getMonth() && d === today.getDate();
+        html += '<td class="' + (isToday ? 'today' : '') + '"><span class="date ' + dayClass(w) + '">' + d + '</span>' +
+          planHtml(new Date(year, month, d)) + '</td>';
+      }
+      for (; w < 7; w++) html += '<td></td>';
+      return html + '</tr></tbody></table></div>';
+    }
+
+    function dayClass(w) {
+      return w === 0 ? 'sun' : w === 6 ? 'sat' : '';
+    }
+
+    (function () {
+      var now = new Date();
+      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var left = Math.round((EXAM - today) / 86400000);
+      document.getElementById('dday').innerHTML =
+        '<strong>' + (left > 0 ? 'D-' + left : left < 0 ? 'D+' + -left : 'D-DAY') + '</strong>' +
+        '<span>실기 시험 ' + (EXAM.getMonth() + 1) + '월 ' + EXAM.getDate() + '일 (토)</span>';
+      document.getElementById('legend').innerHTML = '<ul class="plan"><li class="p1">새로 공부</li>' +
+        '<li class="p2">복습 (1·3·7·14일 뒤)</li><li class="p3">마무리</li></ul>';
+      document.getElementById('calendar').innerHTML = calendar(2026, 9) + calendar(2026, 10);
+    })();
 
     document.getElementById('menu').addEventListener('click', function () {
       sidebar.classList.toggle('open');
