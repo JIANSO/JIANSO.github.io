@@ -1,0 +1,650 @@
+<title>6위험분석및정보보안관리_ch2ISMS-P및정보보호제품인증</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: 한 줄 단, 위에 과목·단원 목차 → 단원마다 [개념 정리] 다음 [기출문제] 순서로 쌓아 가는 노트 */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#18212e; --muted:#5a6676; --line:#dde2ea;
+  --accent:#1f56b8; --accent-soft:#e6eefb; --mark:#fff1b8; --mark-ink:#5c4700;
+  --term-bg:#16202c; --term-ink:#d7e3f2; --ok:#1d7a4f; --warn:#b4541b; --warn-soft:#fbeee4;
+  --f-display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --f-body:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.7;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;line-height:1.35;margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+p{margin:0}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+ul ul{margin-top:4px}
+
+/* 머리 */
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+header h1{font-size:28px}
+header h1 .ch{display:block;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--accent);margin-bottom:2px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted)}
+.meta span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+
+/* 목차 */
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.toc h2{font-size:14px;color:var(--muted);letter-spacing:.06em;margin-bottom:8px}
+.toc ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover,.toc a:focus-visible{text-decoration:underline}
+.toc .sub{font-size:13.5px;color:var(--muted)}
+
+/* 과목 → 단원 */
+.subject{display:block;scroll-margin-top:16px}
+.subject-head{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.subject-head .no{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.subject-head h2{font-size:22px}
+.unit{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.unit>h3{font-size:19px}
+.label{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+
+/* 개념 카드 */
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.concept h4{font-size:18px}
+.concept h4 small{font-family:var(--f-mono);font-weight:500;font-size:13px;color:var(--muted);margin-left:6px}
+.block{display:flex;flex-direction:column;gap:8px}
+.block-title{font-size:14px;font-weight:700;color:var(--muted)}
+.why{background:var(--accent-soft);border-radius:8px;padding:12px 14px}
+.why .block-title{color:var(--accent)}
+
+/* 단계 */
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:10px;counter-increment:s}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-family:var(--f-mono);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.steps li>div{min-width:0}
+.steps b{display:block}
+.steps .bad::before{border-color:var(--warn);color:var(--warn)}
+
+/* 터미널 느낌 예시 */
+.term{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre}
+.term .c{opacity:.6}
+
+/* 시험 키워드 */
+.keys{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--mark);color:var(--mark-ink);border-radius:4px;padding:1px 8px;font-size:13.5px}
+.arrow{font-weight:700}
+
+.caution{background:var(--warn-soft);border-radius:8px;padding:12px 14px}
+.caution .block-title{color:var(--warn)}
+
+/* 표 */
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+thead th{background:var(--bg);font-size:13px;color:var(--muted);font-weight:700}
+td.dir{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+tr.extra td.dir{color:var(--muted)}
+tr.hit{background:var(--accent-soft)}
+.tag{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.tag.exam{background:var(--mark);color:var(--mark-ink)}
+.tag.add{border:1px solid var(--line);color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+
+/* 핵심 용어 */
+.terms{display:flex;flex-wrap:wrap;align-items:center;gap:10px;scroll-margin-top:16px}
+.terms-label{font-size:13px;font-weight:700;color:var(--muted)}
+.terms-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;justify-content:space-between}
+.terms-head h3{font-size:16px}
+.term-group{display:flex;flex-direction:column;gap:6px}
+.term-group h4{font-size:13.5px;color:var(--muted);font-weight:700}
+.term-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.term-list li{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.term-list .name{font-weight:700}
+.term-list .name code{color:var(--accent);font-weight:700}
+.term-list .name small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.term-list .desc{min-width:0}
+.term-list .desc .ex{display:block;font-size:13px;color:var(--muted)}
+.term-list .src{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;background:var(--mark);color:var(--mark-ink);white-space:nowrap}
+@media (max-width:480px){.term-list li{grid-template-columns:1fr;gap:2px}}
+
+
+/* 코드 · 다중 빈칸 */
+.code{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:10px 0;font-family:var(--f-mono);font-size:13px;line-height:1.7;overflow-x:auto}
+.code ol{margin:0;padding:0;list-style:none;counter-reset:ln;min-width:max-content}
+.code li{counter-increment:ln;white-space:pre;padding-right:14px}
+.code li::before{content:counter(ln,decimal-leading-zero);display:inline-block;width:2.6em;padding-right:.9em;text-align:right;opacity:.45}
+.out{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.blank{display:inline-block;min-width:2.2em;border-bottom:1.5px solid var(--ink);text-align:center;font-weight:700}
+.sub-title{font-size:13.5px;font-weight:700;color:var(--muted)}
+.multi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.multi label{display:flex;align-items:center;gap:6px;font-weight:700;min-width:0}
+.multi input{flex:1;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.mini{width:100%;border-collapse:collapse;min-width:460px;font-size:14px}
+.mini th,.mini td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.mini thead th{background:var(--bg);color:var(--muted);font-size:12.5px}
+.mini td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+@media (max-width:480px){.multi{grid-template-columns:1fr}}
+
+
+.shadow{border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;justify-content:center;overflow-x:auto}
+.shadow .seg{display:inline-flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--f-mono);font-size:15px;margin:0 6px}
+.shadow .seg u{text-underline-offset:4px}
+.shadow .seg span{font-size:13px;color:var(--muted)}
+.cmd{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.ex-line{display:block;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.multi.cols1{grid-template-columns:1fr}
+
+
+/* 문제 유형 구분 */
+.qtype{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.label.essay{background:var(--warn-soft);color:var(--warn)}
+.qsep{border-top:2px dashed var(--line);margin-top:10px}
+.q.essay{border-left:4px solid var(--warn)}
+.q.essay .q-no{color:var(--warn)}
+.q.essay textarea{width:100%;min-height:96px;font:inherit;font-size:14.5px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);resize:vertical}
+.essay-in{display:flex;flex-direction:column;gap:10px}
+.essay-in label{display:flex;flex-direction:column;gap:4px;font-weight:700}
+.q.essay textarea.mono-in{font-family:var(--f-mono);min-height:56px}
+.sub-qs{font-size:14.5px;gap:6px}
+.cfg{border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.75;white-space:pre;overflow-x:auto}
+.cfg u{text-decoration:none;background:var(--mark);color:var(--mark-ink);border-radius:2px;padding:0 3px}
+.perm-table th,.perm-table td{text-align:center}
+.perm-table td:first-child{color:inherit;font-family:inherit;font-weight:400}
+.mono-cell{font-family:var(--f-mono);font-size:13px;line-height:1.8;white-space:nowrap}
+.mini td ul{padding-left:1.1em;gap:2px}
+.uac{max-width:420px;width:100%;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+.uac-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.uac-q{font-size:16px;line-height:1.5}
+.uac-app{display:flex;align-items:center;gap:10px;font-size:15px}
+.uac-ico{background:var(--term-bg);color:var(--term-ink);font-family:var(--f-mono);font-size:10px;padding:6px 5px;border-radius:2px}
+.uac-meta{font-size:12.5px;color:var(--muted);line-height:1.6}
+.uac-btns{display:flex;justify-content:flex-end}
+.uac-no{border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:4px 40px;font-size:13px}
+.hs{border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;font-size:13.5px;overflow-x:auto}
+.hs .node{grid-row:1 / span 3;border:1.5px solid var(--ink);border-radius:4px;padding:28px 10px;text-align:center;font-weight:700}
+.hs .msg{display:flex;flex-direction:column;align-items:center;font-family:var(--f-mono);font-size:12.5px;min-width:200px}
+.hs .line{width:100%;height:0;border-top:1.5px solid var(--ink);position:relative;margin-top:4px}
+.hs .line.r::after,.hs .line.l::after{content:"";position:absolute;top:-5px;border:4.5px solid transparent}
+.hs .line.r::after{right:-1px;border-left:7px solid var(--ink)}
+.hs .line.l::after{left:-1px;border-right:7px solid var(--ink)}
+.bin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bin-grid>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.steps ul{margin-top:2px}
+.topo{border:1px solid var(--line);border-radius:8px;padding:14px;overflow-x:auto}
+.topo-row{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto 1fr auto;align-items:center;min-width:520px;gap:0}
+.topo .box{border:1.5px solid var(--ink);border-radius:4px;padding:8px 10px;font-size:12.5px;text-align:center;white-space:nowrap}
+.topo .gw{background:var(--accent-soft);color:var(--accent);font-weight:700;border-color:var(--accent)}
+.topo .net{border-radius:50%;font-weight:700}
+.topo .wire{border-top:1.5px dashed var(--muted);height:0;margin:0 4px}
+.topo-span{display:grid;min-width:520px;margin-top:8px;font-size:12px;color:var(--muted);text-align:center}
+.topo-span span{border-top:1.5px solid var(--ink);padding-top:3px;margin:0 2px}
+.topo-span span.prot{border-color:var(--accent);color:var(--accent);font-weight:700}
+.pkt{display:flex;flex-wrap:nowrap;overflow-x:auto;border:1.5px solid var(--ink);border-radius:4px;width:max-content;max-width:100%}
+.pkt span{padding:6px 10px;font-size:12.5px;border-right:1px solid var(--line);white-space:nowrap;text-align:center}
+.pkt span:last-child{border-right:0}
+.pkt span.esp{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.perm{font-family:var(--f-mono);font-size:14px;letter-spacing:.04em}
+.perm b{background:var(--mark);color:var(--mark-ink);padding:0 2px;border-radius:2px}
+.model{border-left:3px solid var(--ok);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:8px}
+
+
+/* 단원 접기 */
+details.subject>summary{cursor:pointer;list-style:none;align-items:center}
+details.subject>summary::-webkit-details-marker{display:none}
+details.subject>summary::before{content:"";width:9px;height:9px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);margin:0 4px 4px 2px;transition:transform .15s;flex:none}
+details.subject:not([open])>summary::before{transform:rotate(-45deg);margin-bottom:0}
+details.subject:not([open])>summary{border-bottom-color:var(--line)}
+.fold-hint{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+.subject-body{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.fold-all{align-self:flex-end}
+
+/* 기출문제 */
+.qbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.qlist{display:flex;flex-direction:column;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.q-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.q-no{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.round{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--ink);color:var(--surface)}
+.q-text{font-weight:500}
+.q-box ul{gap:6px}
+.q-box.mono{font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.q-box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--muted);font-size:14.5px}
+.try{display:flex;flex-wrap:wrap;gap:8px}
+.try input{flex:1 1 180px;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.result{font-size:13.5px;font-weight:700;min-height:1.2em}
+.result.ok{color:var(--ok)}.result.no{color:var(--warn)}
+details{border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";}
+details[open] summary::before{content:"▾ ";}
+.ans{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.ans .answer{font-family:var(--f-display);font-size:17px;font-weight:700}
+.answer-list{list-style:none;padding:0;font-weight:700}
+.answer-list mark,.ans .answer mark{background:var(--mark);color:var(--mark-ink);padding:0 6px;border-radius:3px}
+.ans a{color:var(--accent)}
+
+footer{font-size:12.5px;color:var(--muted);text-align:center}
+@media (max-width:480px){header h1{font-size:23px}.concept,.q{padding:16px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">정보보안기사 실기 · 6과목 위험분석 및 정보보안 관리</span>
+    <h1><span class="ch">CHAPTER 02</span> ISMS-P 및 정보보호 제품인증</h1>
+    <div class="meta">
+      <span>마지막 추가 2026-10-09</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="목차">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#bcp">01 업무연속성</a>
+        <div class="sub"><a href="#t-bcp">핵심 용어</a> · <a href="#q-bcp">단답형</a> · <a href="#q-bcp-essay">서술형 · 실무형</a></div>
+      </li>
+      <li><a href="#cyb">02 사이버 위협</a>
+        <div class="sub"><a href="#t-cyb">핵심 용어</a> · <a href="#q-cyb">단답형</a> · <a href="#q-cyb-essay">서술형 · 실무형</a></div>
+      </li>
+    </ol>
+  </nav>
+  <button type="button" class="fold-all" id="fold-all">단원 모두 접기</button>
+
+  <details class="subject" id="bcp" open>
+    <summary class="subject-head"><span class="no">01</span><h2>업무연속성</h2><span class="fold-hint">단답 4 · 서술 2</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-bcp">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">재해복구 시스템(DRS) 유형</span><span class="chip">BCP(업무 연속성 계획)</span><span class="chip">BIA · RTO · RPO</span><span class="chip">BCP 5단계(범영전계테)</span><span class="chip">DRS 운영 주체별 유형(자체 · 공동 · 위탁)</span><span class="chip">DRS 유형별 장단점</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-bcp">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="bcp">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="bcp">
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">10회</span><span class="round">12회</span></div>
+          <p class="q-text">다음은 재해복구 시스템에 대한 설명이다. 괄호 (&#12288;) 안에 들어갈 올바른 재해복구 시스템의 유형을 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>( &#9312; )은/는 주 센터와 같은 수준의 정보 기술 자원을 원격지에 구축하여 주 센터와 재해복구센터 모두 액티브 상태로(Active-Active) 실시간 동시 서비스를 제공하는 방식이다.</li>
+              <li>( &#9313; )은/는 데이터만 원격지에 보관하고, 서비스를 위한 정보자원은 확보하지 않거나 장소 등 최소한으로만 확보하고 있다가, 재해 시에 데이터를 근간으로 하여 필요한 정보자원을 조달하여 정보시스템의 복구를 개시하는 방식이다.</li>
+              <li>( &#9314; )은/는 주 센터와 같은 수준의 정보 기술 자원을 대기 상태로 원격지 사이트에 보유하면서 실시간 미러링을 통하여 데이터를 최신의 상태로 유지하고 있다가, 주 센터 재해 시 재해복구센터의 정보시스템을 액티브로 전환하여 서비스하는 방식이다.</li>
+              <li>( &#9315; )은/는 재해복구센터에 주 센터와 같은 수준의 정보 기술자원을 보유하는 대신, 중요성이 높은 정보 기술자원만 부분적으로 재해복구센터에 보유하는 방식이다.</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="bc1-a">&#9312;<input id="bc1-a" type="text" data-keys="미러|mirror" aria-label="Q1 빈칸 1"></label>
+            <label for="bc1-b">&#9313;<input id="bc1-b" type="text" data-keys="콜드|cold" aria-label="Q1 빈칸 2"></label>
+            <label for="bc1-c">&#9314;<input id="bc1-c" type="text" data-keys="핫|hot" aria-label="Q1 빈칸 3"></label>
+            <label for="bc1-d">&#9315;<input id="bc1-d" type="text" data-keys="웜|warm" aria-label="Q1 빈칸 4"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>미러 사이트(Mirror Site)</mark>&#12288;&#9313; <mark>콜드 사이트(Cold Site)</mark>&#12288;&#9314; <mark>핫 사이트(Hot Site)</mark>&#12288;&#9315; <mark>웜 사이트(Warm Site)</mark></p>
+              <ul>
+                <li>재해복구 시스템(DRS)의 유형
+                  <ul>
+                    <li><b>미러 사이트(Mirror Site)</b> — 주 센터와 같은 수준의 정보 기술 자원을 원격지에 구축하여 주 센터와 재해복구센터 모두 액티브 상태로(Active-Active) 실시간 동시 서비스를 제공하는 방식 / <b>RTO = 0</b></li>
+                    <li><b>핫 사이트(Hot Site)</b> — 주 센터와 같은 수준의 정보 기술 자원을 대기 상태로 원격지 사이트에 보유하면서 실시간 미러링을 통하여 데이터를 최신의 상태로 유지하고 있다가, 주 센터 재해 시 재해복구센터의 정보시스템을 액티브로 전환하여 서비스하는 방식 / <b>RTO = 수 시간(약 4시간) 이내</b></li>
+                    <li><b>웜 사이트(Warm Site)</b> — 핫 사이트와 유사하나, 재해복구센터에 주 센터와 같은 수준의 정보 기술자원을 보유하는 대신, 중요성이 높은 정보 기술 자원만 부분적으로 재해복구센터에 보유하는 방식 / 실시간 미러링을 수행하지 않음 / <b>RTO = 수일 ~ 수주</b></li>
+                    <li><b>콜드 사이트(Cold Site)</b> — 데이터만 원격지에 보관하고, 서비스를 위한 정보자원은 확보하지 않거나 장소 등 최소한으로만 확보하고 있다가, 재해 시에 데이터를 근간으로 하여 필요한 정보자원을 조달하여 정보시스템의 복구를 개시하는 방식 / 주 센터의 데이터는 원격지에 백업 / <b>RTO = 수주 ~ 수개월</b></li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="bcp|businesscontinuityplanning|업무연속성계획|bcp(businesscontinuityplanning)|bcp(업무연속성계획)">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">13회</span></div>
+          <p class="q-text">각종 재난·재해의 발생을 대비하기 위하여 핵심 시스템의 가용성과 신뢰성을 회복하고 비즈니스의 연속성을 유지하기 위한 계획과 절차를 무엇이라고 하는지 쓰시오.</p>
+          <div class="try"><input type="text" aria-label="Q2 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>BCP(Business Continuity Planning; 업무 연속성 계획)</mark></p>
+              <ul>
+                <li>BCP는 재난·재해의 발생을 대비하기 위하여 핵심 시스템의 가용성과 신뢰성을 회복하고 비즈니스의 연속성을 유지하기 위한 계획과 절차</li>
+                <li>BCP는 정보 기술 부문뿐 아니라, 인력·설비·자금 등 제반 자원을 대상으로 장애 및 재해를 포괄하여 조직의 생존을 보장하기 위한 예방 및 복구 활동 등을 포함하는 계획</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="bia|businessimpactanalysis|업무영향분석|bia(businessimpactanalysis)|bia(업무영향분석)">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">19회</span></div>
+          <p class="q-text">BCP(업무 연속성 계획) 수립을 위해 주요 업무 프로세스를 식별하고, 재해 발생 가능성과 업무 중단에 따른 손실을 평가하여 중요도와 복구 우선순위를 결정하며, 이를 통해 복구 목표 시간(RTO)과 복구 목표 시점(RPO)을 도출하는 분석 과정을 무엇이라고 하는지 쓰시오.</p>
+          <div class="try"><input type="text" aria-label="Q3 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>BIA(Business Impact Analysis; 업무 영향 분석)</mark></p>
+              <ul>
+                <li><b>BCP(Business Continuity Planning; 업무 연속성 계획)</b> — 재난·재해의 발생을 대비하기 위하여 핵심 시스템의 가용성과 신뢰성을 회복하고 비즈니스의 연속성을 유지하기 위한 계획과 절차</li>
+                <li><b>BIA(Business Impact Analysis; 업무 영향 분석)</b> — BCP(업무 연속성 계획) 수립을 위해 주요 업무 프로세스를 식별하고, 재해 발생 가능성과 업무 중단에 따른 손실을 평가하여 중요도와 복구 우선순위를 결정하며, 이를 통해 복구 목표 시간(RTO)과 복구 목표 시점(RPO)을 도출하는 분석 과정</li>
+                <li><b>RTO(Recovery Time Objective; 복구 목표 시간)</b> — 재해로 인하여 서비스가 중단되었을 때, 비즈니스가 복구되어야 하는 최단 시간 및 서비스 수준</li>
+                <li><b>RPO(Recovery Point Objective; 복구 목표 시점)</b> — 재해로 인하여 중단된 서비스를 복구하였을 때, 유실을 감내할 수 있는 데이터의 손실 허용 시점</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q4</span><span class="round">21회</span></div>
+          <p class="q-text">업무 연속성 계획(BCP) 5단계 중 2 ~ 4단계의 명칭을 쓰시오.</p>
+          <div class="cfg">프로젝트의 범위 설정 및 기획 → ( &#9312; ) → ( &#9313; ) → ( &#9314; ) → 프로젝트의 수행 테스트 및 유지보수</div>
+          <div class="multi">
+            <label for="bc4-a">&#9312;<input id="bc4-a" type="text" data-keys="영향평가|bia|영향분석" aria-label="Q4 빈칸 1"></label>
+            <label for="bc4-b">&#9313;<input id="bc4-b" type="text" data-keys="복구전략" aria-label="Q4 빈칸 2"></label>
+            <label for="bc4-c">&#9314;<input id="bc4-c" type="text" data-keys="복구계획" aria-label="Q4 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>사업 영향평가(BIA)</mark>&#12288;&#9313; <mark>복구 전략 개발</mark>&#12288;&#9314; <mark>복구계획 수립</mark></p>
+              <ul>
+                <li>업무 연속성 계획(BCP)의 접근 방법론 절차(5단계) — 암기: <b>범영전계테</b>
+                  <ul>
+                    <li>프로젝트의 범위 설정 및 기획 → 사업 영향평가(BIA) → 복구 전략 개발 → 복구계획 수립 → 프로젝트의 수행 테스트 및 유지보수</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+
+      <!-- 서술형 · 실무형 -->
+      <div class="qsep"></div>
+      <div class="qbar" id="q-bcp-essay">
+        <span class="qtype"><span class="label essay">서술형 · 실무형</span><span class="note">문장으로 설명하는 문제 · 직접 써 보고 모범 답안과 비교</span></span>
+        <button type="button" data-toggle="bcp-essay">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="bcp-essay">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">3회</span></div>
+          <p class="q-text">기업의 시스템 운영 규모 및 방식에 적합한 재난 복구 서비스를 구축할 예정이다. 재난 복구 서비스의 종류를 5가지 이상 나열하고 각각을 서술하시오.</p>
+          <div class="essay-in">
+            <label for="bce1-a">&#9312;<textarea id="bce1-a" placeholder="종류 : 설명"></textarea></label>
+            <label for="bce1-b">&#9313;<textarea id="bce1-b" placeholder="종류 : 설명"></textarea></label>
+            <label for="bce1-c">&#9314;<textarea id="bce1-c" placeholder="종류 : 설명"></textarea></label>
+            <label for="bce1-d">&#9315;<textarea id="bce1-d" placeholder="종류 : 설명"></textarea></label>
+            <label for="bce1-e">&#9316;<textarea id="bce1-e" placeholder="종류 : 설명"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>&#9312;</b> 미러 사이트(Mirror Site): 주 센터와 같은 수준의 정보기술 자원을 원격지에 구축하여 주 센터와 재해복구센터 모두 액티브 상태로(Active-Active) 실시간 동시 서비스를 제공하는 방식</p>
+                <p><b>&#9313;</b> 핫 사이트(Hot Site): 주 센터와 같은 수준의 정보기술 자원을 대기 상태로 원격지 사이트에 보유하면서 실시간 미러링을 통하여 데이터를 최신의 상태로 유지하고 있다가(Active-Standby), 주 센터 재해 시 재해복구센터의 정보시스템을 액티브로 전환하여 서비스하는 방식</p>
+                <p><b>&#9314;</b> 웜 사이트(Warm Site): 핫 사이트와 유사하나, 재해복구센터에 주 센터와 같은 수준의 정보 기술자원을 보유하는 대신, 중요성이 높은 정보기술 자원만 부분적으로 재해복구센터에 보유하는 방식</p>
+                <p><b>&#9315;</b> 콜드 사이트(Cold Site): 데이터만 원격지에 보관하고, 서비스를 위한 정보자원은 확보하지 않거나 장소 등 최소한으로만 확보하고 있다가, 재해 시에 데이터를 근간으로 하여 필요한 정보자원을 조달하여 정보시스템의 복구를 개시하는 방식</p>
+                <p><b>&#9316;</b> 공동구축: 두 개 이상의 기관이 재해복구시스템을 공동으로 이용하는 방식으로 비용 측면에서 독자 구축의 경우보다 적게 소요되지만, 보안과 운용 측면에서는 고려할 사항이 많고, 광역재해 발생 시 공동 이용 기관 간의 동시 재해복구가 불가능</p>
+              </div>
+              <span class="sub-title">해설</span>
+              <ul>
+                <li>DRS 복구 수준별 유형
+                  <ul>
+                    <li><b>미러 사이트(Mirror Site)</b> — 주 센터와 같은 수준의 정보기술 자원을 원격지에 구축하여 주 센터와 재해복구센터 모두 액티브 상태로(Active-Active) 실시간 동시 서비스를 제공하는 방식</li>
+                    <li><b>핫 사이트(Hot Site)</b> — 주 센터와 같은 수준의 정보 기술 자원을 대기 상태로 원격지 사이트에 보유하면서 실시간 미러링을 통하여 데이터를 최신의 상태로 유지하고 있다가, 주 센터 재해 시 재해복구센터의 정보시스템을 액티브로 전환하여 서비스하는 방식</li>
+                    <li><b>웜 사이트(Warm Site)</b> — 핫 사이트와 유사하나, 재해복구센터에 주 센터와 같은 수준의 정보 기술자원을 보유하는 대신, 중요성이 높은 정보기술 자원만 부분적으로 재해복구센터에 보유하는 방식</li>
+                    <li><b>콜드 사이트(Cold Site)</b> — 데이터만 원격지에 보관하고, 서비스를 위한 정보자원은 확보하지 않거나 장소 등 최소한으로만 확보하고 있다가, 재해 시에 데이터를 근간으로 하여 필요한 정보자원을 조달하여 정보시스템의 복구를 개시하는 방식</li>
+                  </ul></li>
+                <li>DRS 운영 주체별 유형
+                  <ul>
+                    <li><b>자체 운영</b> — 기관 자체의 인력으로 재해복구시스템을 운영하는 방식</li>
+                    <li><b>공동 운영</b> — 두 개 이상의 기관이 재해복구시스템의 운영인력을 상호 공유하는 방식</li>
+                    <li><b>위탁 운영</b> — 재해복구시스템의 운영을 민간 IDC 운영자 등 외부의 다른 기관에 위탁하는 방식</li>
+                  </ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">21회</span><span class="round">27회</span></div>
+          <p class="q-text">재해복구시스템은 재해복구계획의 원활한 수행을 지원하기 위하여 평상시에 확보하여 두는 인적·물적 자원 및 이들에 대한 지속적인 관리체계가 통합된 시스템으로 유형에는 미러사이트, 핫사이트, 웜사이트, 콜드사이트가 있다. 다음 질문에 대한 답을 쓰시오.</p>
+          <ul class="sub-qs"><li>(1) 미러사이트의 개념을 쓰시오.</li></ul>
+          <div class="essay-in"><label for="bce2-a">(1)<textarea id="bce2-a" placeholder="직접 써 보세요"></textarea></label></div>
+          <ul class="sub-qs"><li>(2) 미러사이트의 장점 및 단점을 각각 2개씩 쓰시오.</li></ul>
+          <div class="essay-in">
+            <label for="bce2-b">(2) &#9312; 장점<textarea id="bce2-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="bce2-c">(2) &#9313; 장점<textarea id="bce2-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="bce2-d">(2) &#9314; 단점<textarea id="bce2-d" placeholder="직접 써 보세요"></textarea></label>
+            <label for="bce2-e">(2) &#9315; 단점<textarea id="bce2-e" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <ul class="sub-qs"><li>(3) RTO가 가장 오래 걸리는 방식은 무엇이며, 이유는 무엇인지 쓰시오.</li></ul>
+          <div class="essay-in">
+            <label for="bce2-f">(3) &#9312; 방식<textarea id="bce2-f" placeholder="직접 써 보세요"></textarea></label>
+            <label for="bce2-g">(3) &#9313; 이유<textarea id="bce2-g" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>(1)</b> 미러사이트는 주 센터와 같은 수준의 정보기술 자원을 원격지에 구축하여 주 센터와 재해복구센터 모두 액티브 상태로(Active-Active) 실시간 동시 서비스를 제공하는 방식이다.</p>
+                <p><b>(2)</b> &#9312; 데이터가 실시간으로 복제되므로, 데이터 손실이 거의 없다.<br>&#9313; 재해 발생 시 빠른 서비스 복구가 가능하다.<br>&#9314; 구축 및 유지 비용이 매우 높다.<br>&#9315; 시스템이 상시 운영되므로 보안 유지 관리가 필요하다.</p>
+                <p><b>(3)</b> &#9312; 콜드 사이트<br>&#9313; 데이터만 원격지에 보관하고 서비스를 위한 정보자원은 최소한으로만 확보되어 있어서 재해 시 필요한 자원을 조달하여 복구하는데 오랜 시간이 소요된다.</p>
+              </div>
+              <span class="sub-title">해설</span>
+              <ul>
+                <li>미러 사이트(Mirror Site)는 주 센터와 같은 수준의 정보 기술 자원을 원격지에 구축하여 주 센터와 재해복구센터 모두 액티브 상태로(Active-Active) 실시간 동시 서비스를 제공하는 방식으로 RTO = 0</li>
+                <li>재해복구 시스템(DRS)의 유형별 장단점</li>
+              </ul>
+              <div class="table-scroll"><table class="mini">
+                <thead><tr><th>유형</th><th>장점</th><th>단점</th></tr></thead>
+                <tbody><tr><th>미러 사이트(Mirror Site)</th><td>데이터가 실시간으로 복제되므로, 데이터 손실이 거의 없음<br>부하 분산이 가능<br>재해 발생 시 빠른 서비스 복구가 가능</td><td>구축 및 유지 비용이 매우 높음<br>시스템이 상시 운영되므로 보안 유지 관리가 필요</td></tr><tr><th>핫 사이트(Hot Site)</th><td>데이터의 최신성 확보, 높은 안정성을 유지<br>업무 중단 시간의 최소화</td><td>구축 및 유지 비용이 매우 높음<br>시스템이 상시 운영되므로 보안 유지 관리가 필요</td></tr><tr><th>웜 사이트(Warm Site)</th><td>구축 및 유지비용이 저렴</td><td>초기 복구 수준이 완전하지 않으며, 완전한 복구까지 일정 시간이 소요<br>실시간 복제가 지원되지 않아 일부 데이터 손실이 발생할 수 있음</td></tr><tr><th>콜드 사이트(Cold Site)</th><td>구축 및 유지비용이 가장 저렴</td><td>복구 소요 시간이 매우 김<br>데이터 손실이 가장 큼<br>재해 복구나 비상 대응 체계를 실제로 가동해보기 어려움</td></tr></tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <details class="subject" id="cyb" open>
+    <summary class="subject-head"><span class="no">02</span><h2>사이버 위협</h2><span class="fold-hint">단답 3 · 서술 1</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-cyb">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">정보공유·분석센터(ISAC)</span><span class="chip">사이버위기경보 단계</span><span class="chip">침해사고 대응 7단계</span><span class="chip">CERT · ISAC</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-cyb">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="cyb">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="cyb">
+
+        <article class="q" data-answers="isac|정보공유분석센터|정보공유·분석센터|정보공유·분석센터(isac)|isac(informationsharingandanalysiscenter)|정보공유·분석센터(isac;informationsharingandanalysiscenter)">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">13회</span></div>
+          <p class="q-text">침해 사고가 발생하는 경우 실시간 경보·분석체계를 운영하며 금융·통신 등 분야별 정보통신기반시설을 보호하기 위하여 구축·운영하는 기관은 무엇인지 쓰시오.</p>
+          <div class="try"><input type="text" aria-label="Q1 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>정보공유·분석센터(ISAC; Information Sharing and Analysis Center)</mark></p>
+              <ul>
+                <li>정보공유·분석센터(ISAC)는 금융·통신 등 분야별 정보통신기반시설을 보호하기 위하여 구축·운영하는 기관</li>
+                <li>정보공유·분석센터(ISAC)는 취약점 및 침해 요인과 그 대응 방안에 관한 정보를 제공하고, 침해 사고가 발생하는 경우 실시간 경보·분석체계를 운영</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">14회</span></div>
+          <p class="q-text">다음은 사이버위기경보 단계에 대한 설명이다. 괄호 (&#12288;) 안에 들어갈 올바른 단계별 명칭을 쓰시오.</p>
+          <div class="q-box"><p>사이버위기경보는 「사이버안보업무규정」 제15조에 의거, 각종 사이버공격에 체계적으로 대응하기 위해 파급 영향, 피해 규모 등을 고려하여 수준에 따라 정상 → ( &#9312; ) → 주의 → ( &#9313; ) → ( &#9314; ) 등의 단계로 발령한다.</p></div>
+          <div class="multi">
+            <label for="cy2-a">&#9312;<input id="cy2-a" type="text" data-answer="관심" aria-label="Q2 빈칸 1"></label>
+            <label for="cy2-b">&#9313;<input id="cy2-b" type="text" data-answer="경계" aria-label="Q2 빈칸 2"></label>
+            <label for="cy2-c">&#9314;<input id="cy2-c" type="text" data-answer="심각" aria-label="Q2 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>관심</mark>&#12288;&#9313; <mark>경계</mark>&#12288;&#9314; <mark>심각</mark></p>
+              <ul>
+                <li>사이버 위기 경보 단계 — 암기: <b>정관 주경심</b>
+                  <ul><li>정상 → 관심 → 주의 → 경계 → 심각</li></ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="초기대응">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">17회</span></div>
+          <p class="q-text">다음은 침해사고 대응 7단계이다. 괄호 (&#12288;) 안에 들어갈 절차를 쓰시오.</p>
+          <div class="cfg">사고 전 준비 과정 → 사고 탐지 → (     ) → 대응 전략 체계화 → 사고 조사 → 보고서 작성 → 해결</div>
+          <div class="try"><input type="text" aria-label="Q3 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>초기 대응</mark></p>
+              <ul>
+                <li>침해사고 대응 7단계 절차 — 암기: <b>준탐초대 사보해</b>
+                  <ul><li>사고 대응 전 준비 → 사고 탐지 → 초기 대응 → 대응 전략 체계화 → 사고 조사 → 보고서 작성 → 해결</li></ul></li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+
+      <!-- 서술형 · 실무형 -->
+      <div class="qsep"></div>
+      <div class="qbar" id="q-cyb-essay">
+        <span class="qtype"><span class="label essay">서술형 · 실무형</span><span class="note">문장으로 설명하는 문제 · 직접 써 보고 모범 답안과 비교</span></span>
+        <button type="button" data-toggle="cyb-essay">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="cyb-essay">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">5회</span></div>
+          <p class="q-text">침해사고 관련 조직인 침해사고대응팀(CERT)과 정보공유 분석 센터(ISAC)에 대해서 서술하시오.</p>
+          <div class="essay-in">
+            <label for="cye1-a">&#9312; 침해사고대응팀(CERT)<textarea id="cye1-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="cye1-b">&#9313; 정보공유 분석 센터(ISAC)<textarea id="cye1-b" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>&#9312;</b> 전산망의 침해사고 대응 활동을 지원하고, 전산망 운영 기관 등에 대해 통일된 협조 체계를 구축하여, 국제적 침해사고 대응을 위한 창구를 제공하기 위해 설립된 조직</p>
+                <p><b>&#9313;</b> 금융·통신 등 분야별 정보통신기반시설을 보호하기 위하여 구축·운영하는 기관으로 취약점 및 침해 요인과 그 대응 방안에 관한 정보를 제공하고, 침해사고가 발생하는 경우 실시간 경보·분석체계를 운영하는 기관</p>
+              </div>
+              <span class="sub-title">해설 — 침해사고 관련 조직</span>
+              <ul>
+                <li><b>침해사고대응팀(CERT; Computer Emergency Response Team)</b> — 운영되고 있는 전산망의 침해사고 대응 활동을 지원하고, 전산망 운영 기관 등에 대해 통일된 협조 체계를 구축하여, 국제적 침해사고 대응을 위한 창구를 제공하기 위해 설립된 조직</li>
+                <li><b>정보공유 분석 센터(ISAC; Information Sharing and Analysis Center)</b> — 금융·통신 등 분야별 정보통신기반시설을 보호하기 위하여 구축·운영하는 기관 / 취약점 및 침해 요인과 그 대응 방안에 관한 정보를 제공하고, 침해사고가 발생하는 경우 실시간 경보·분석체계를 운영</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <footer>교재 기출문제를 바탕으로 정리 · 자료를 받을 때마다 이 페이지에 이어서 추가</footer>
+</div>
+
+<script>
+(function(){
+  const norm = s => s.toLowerCase().replace(/\s+/g,'');
+  document.querySelectorAll('.q:not(.essay), .q.essay[data-check]').forEach(q=>{
+    const out = q.querySelector('.result');
+    const inputs = [...q.querySelectorAll('input')];
+    const answers = q.dataset.answers ? q.dataset.answers.split('|').map(norm) : null;
+    const check = ()=>{
+      const vals = inputs.map(i=>norm(i.value));
+      if(vals.every(v=>!v)){ out.textContent=''; out.className='result'; return; }
+      let ok;
+      if(q.dataset.multi){
+        const marks = inputs.map(i=>{const v=norm(i.value); if(i.dataset.keys) return !!v && i.dataset.keys.split('|').some(k=>v.includes(norm(k))); return v.replace(/^\./,'')===norm(i.dataset.answer).replace(/^\./,'');});
+        ok = marks.every(Boolean);
+        out.textContent = ok ? '모두 정답이에요.' : '맞은 칸: '+marks.filter(Boolean).length+' / '+marks.length+' — 막히면 아래 해설을 열어 보세요.';
+      } else {
+        ok = answers.includes(vals[0]);
+        out.textContent = ok ? '정답이에요.' : '다시 생각해 보세요. 막히면 아래 해설을 열어 보세요.';
+      }
+      out.className = 'result ' + (ok ? 'ok' : 'no');
+    };
+    q.querySelector('.check').addEventListener('click', check);
+    inputs.forEach(i=>i.addEventListener('keydown', e=>{ if(e.key==='Enter') check(); }));
+  });
+  document.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const list = document.querySelectorAll('[data-group="'+btn.dataset.toggle+'"] details');
+      const open = [...list].some(d=>!d.open);
+      list.forEach(d=>d.open = open);
+      btn.textContent = open ? '답 모두 접기' : '답 모두 펼치기';
+    });
+  });
+
+  // 단원 접기: 상태 기억 + 목차 링크로 이동 시 자동 펼치기
+  const units=[...document.querySelectorAll('details.subject')];
+  const KEY='fold-state';
+  let saved={};
+  try{ saved=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  units.forEach(d=>{
+    if(saved[d.id]===false) d.open=false;
+    d.addEventListener('toggle',()=>{
+      saved[d.id]=d.open;
+      try{ localStorage.setItem(KEY,JSON.stringify(saved)); }catch(e){}
+      syncAll();
+    });
+  });
+  const allBtn=document.getElementById('fold-all');
+  function syncAll(){ if(allBtn) allBtn.textContent = units.some(d=>d.open) ? '단원 모두 접기' : '단원 모두 펼치기'; }
+  if(allBtn) allBtn.addEventListener('click',()=>{ const open=!units.some(d=>d.open); units.forEach(d=>d.open=open); });
+  function openFor(hash){
+    if(!hash) return;
+    const el=document.getElementById(hash.slice(1)); if(!el) return;
+    const d=el.closest('details.subject'); if(d && !d.open) d.open=true;
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>openFor(a.getAttribute('href'))));
+  openFor(location.hash);
+  syncAll();
+})();
+</script>

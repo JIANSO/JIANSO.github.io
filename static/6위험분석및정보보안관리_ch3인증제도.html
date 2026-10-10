@@ -1,0 +1,772 @@
+<title>6위험분석및정보보안관리_ch3인증제도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: 한 줄 단, 위에 과목·단원 목차 → 단원마다 [개념 정리] 다음 [기출문제] 순서로 쌓아 가는 노트 */
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#18212e; --muted:#5a6676; --line:#dde2ea;
+  --accent:#1f56b8; --accent-soft:#e6eefb; --mark:#fff1b8; --mark-ink:#5c4700;
+  --term-bg:#16202c; --term-ink:#d7e3f2; --ok:#1d7a4f; --warn:#b4541b; --warn-soft:#fbeee4;
+  --f-display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --f-body:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10151c; --surface:#18202a; --ink:#e3e9f1; --muted:#97a3b3; --line:#2a3542;
+  --accent:#7ea7f0; --accent-soft:#1c2a40; --mark:#4a3f12; --mark-ink:#ffe48a;
+  --term-bg:#0b1016; --term-ink:#d7e3f2; --ok:#5fc496; --warn:#f0a56e; --warn-soft:#3a2516; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.7;padding-inline:16px;padding-block:28px 64px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;line-height:1.35;margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+p{margin:0}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+ul ul{margin-top:4px}
+
+/* 머리 */
+header{display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+header h1{font-size:28px}
+header h1 .ch{display:block;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--accent);margin-bottom:2px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:var(--muted)}
+.meta span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+
+/* 목차 */
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.toc h2{font-size:14px;color:var(--muted);letter-spacing:.06em;margin-bottom:8px}
+.toc ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.toc a{color:var(--accent);text-decoration:none}
+.toc a:hover,.toc a:focus-visible{text-decoration:underline}
+.toc .sub{font-size:13.5px;color:var(--muted)}
+
+/* 과목 → 단원 */
+.subject{display:block;scroll-margin-top:16px}
+.subject-head{display:flex;align-items:baseline;gap:10px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.subject-head .no{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.subject-head h2{font-size:22px}
+.unit{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.unit>h3{font-size:19px}
+.label{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:4px;background:var(--accent-soft);color:var(--accent)}
+
+/* 개념 카드 */
+.concept{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+.concept h4{font-size:18px}
+.concept h4 small{font-family:var(--f-mono);font-weight:500;font-size:13px;color:var(--muted);margin-left:6px}
+.block{display:flex;flex-direction:column;gap:8px}
+.block-title{font-size:14px;font-weight:700;color:var(--muted)}
+.why{background:var(--accent-soft);border-radius:8px;padding:12px 14px}
+.why .block-title{color:var(--accent)}
+
+/* 단계 */
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px 1fr;gap:10px;counter-increment:s}
+.steps li::before{content:counter(s);width:26px;height:26px;border-radius:50%;border:1.5px solid var(--accent);color:var(--accent);font-family:var(--f-mono);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.steps li>div{min-width:0}
+.steps b{display:block}
+.steps .bad::before{border-color:var(--warn);color:var(--warn)}
+
+/* 터미널 느낌 예시 */
+.term{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre}
+.term .c{opacity:.6}
+
+/* 시험 키워드 */
+.keys{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--mark);color:var(--mark-ink);border-radius:4px;padding:1px 8px;font-size:13.5px}
+.arrow{font-weight:700}
+
+.caution{background:var(--warn-soft);border-radius:8px;padding:12px 14px}
+.caution .block-title{color:var(--warn)}
+
+/* 표 */
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+thead th{background:var(--bg);font-size:13px;color:var(--muted);font-weight:700}
+td.dir{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+tr.extra td.dir{color:var(--muted)}
+tr.hit{background:var(--accent-soft)}
+.tag{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.tag.exam{background:var(--mark);color:var(--mark-ink)}
+.tag.add{border:1px solid var(--line);color:var(--muted)}
+.note{font-size:13px;color:var(--muted)}
+
+
+/* 핵심 용어 */
+.terms{display:flex;flex-wrap:wrap;align-items:center;gap:10px;scroll-margin-top:16px}
+.terms-label{font-size:13px;font-weight:700;color:var(--muted)}
+.terms-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;justify-content:space-between}
+.terms-head h3{font-size:16px}
+.term-group{display:flex;flex-direction:column;gap:6px}
+.term-group h4{font-size:13.5px;color:var(--muted);font-weight:700}
+.term-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line)}
+.term-list li{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.term-list .name{font-weight:700}
+.term-list .name code{color:var(--accent);font-weight:700}
+.term-list .name small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.term-list .desc{min-width:0}
+.term-list .desc .ex{display:block;font-size:13px;color:var(--muted)}
+.term-list .src{font-size:11.5px;font-weight:700;border-radius:3px;padding:0 6px;margin-left:6px;background:var(--mark);color:var(--mark-ink);white-space:nowrap}
+@media (max-width:480px){.term-list li{grid-template-columns:1fr;gap:2px}}
+
+
+/* 코드 · 다중 빈칸 */
+.code{background:var(--term-bg);color:var(--term-ink);border-radius:8px;padding:10px 0;font-family:var(--f-mono);font-size:13px;line-height:1.7;overflow-x:auto}
+.code ol{margin:0;padding:0;list-style:none;counter-reset:ln;min-width:max-content}
+.code li{counter-increment:ln;white-space:pre;padding-right:14px}
+.code li::before{content:counter(ln,decimal-leading-zero);display:inline-block;width:2.6em;padding-right:.9em;text-align:right;opacity:.45}
+.out{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.blank{display:inline-block;min-width:2.2em;border-bottom:1.5px solid var(--ink);text-align:center;font-weight:700}
+.sub-title{font-size:13.5px;font-weight:700;color:var(--muted)}
+.multi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.multi label{display:flex;align-items:center;gap:6px;font-weight:700;min-width:0}
+.multi input{flex:1;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.mini{width:100%;border-collapse:collapse;min-width:460px;font-size:14px}
+.mini th,.mini td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.mini thead th{background:var(--bg);color:var(--muted);font-size:12.5px}
+.mini td:first-child{font-family:var(--f-mono);font-weight:700;white-space:nowrap;color:var(--accent)}
+@media (max-width:480px){.multi{grid-template-columns:1fr}}
+
+
+.shadow{border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;justify-content:center;overflow-x:auto}
+.shadow .seg{display:inline-flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--f-mono);font-size:15px;margin:0 6px}
+.shadow .seg u{text-underline-offset:4px}
+.shadow .seg span{font-size:13px;color:var(--muted)}
+.cmd{border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-family:var(--f-mono);font-size:14px;overflow-x:auto;white-space:nowrap}
+.ex-line{display:block;font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.multi.cols1{grid-template-columns:1fr}
+
+
+/* 문제 유형 구분 */
+.qtype{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.label.essay{background:var(--warn-soft);color:var(--warn)}
+.qsep{border-top:2px dashed var(--line);margin-top:10px}
+.q.essay{border-left:4px solid var(--warn)}
+.q.essay .q-no{color:var(--warn)}
+.q.essay textarea{width:100%;min-height:96px;font:inherit;font-size:14.5px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);resize:vertical}
+.essay-in{display:flex;flex-direction:column;gap:10px}
+.essay-in label{display:flex;flex-direction:column;gap:4px;font-weight:700}
+.q.essay textarea.mono-in{font-family:var(--f-mono);min-height:56px}
+.sub-qs{font-size:14.5px;gap:6px}
+.cfg{border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.75;white-space:pre;overflow-x:auto}
+.cfg u{text-decoration:none;background:var(--mark);color:var(--mark-ink);border-radius:2px;padding:0 3px}
+.perm-table th,.perm-table td{text-align:center}
+.perm-table td:first-child{color:inherit;font-family:inherit;font-weight:400}
+.mono-cell{font-family:var(--f-mono);font-size:13px;line-height:1.8;white-space:nowrap}
+.mini td ul{padding-left:1.1em;gap:2px}
+.uac{max-width:420px;width:100%;border:1px solid var(--line);border-radius:6px;background:var(--bg);padding:14px 16px;display:flex;flex-direction:column;gap:10px;font-size:13.5px}
+.uac-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.uac-q{font-size:16px;line-height:1.5}
+.uac-app{display:flex;align-items:center;gap:10px;font-size:15px}
+.uac-ico{background:var(--term-bg);color:var(--term-ink);font-family:var(--f-mono);font-size:10px;padding:6px 5px;border-radius:2px}
+.uac-meta{font-size:12.5px;color:var(--muted);line-height:1.6}
+.uac-btns{display:flex;justify-content:flex-end}
+.uac-no{border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:4px 40px;font-size:13px}
+.hs{border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;font-size:13.5px;overflow-x:auto}
+.hs .node{grid-row:1 / span 3;border:1.5px solid var(--ink);border-radius:4px;padding:28px 10px;text-align:center;font-weight:700}
+.hs .msg{display:flex;flex-direction:column;align-items:center;font-family:var(--f-mono);font-size:12.5px;min-width:200px}
+.hs .line{width:100%;height:0;border-top:1.5px solid var(--ink);position:relative;margin-top:4px}
+.hs .line.r::after,.hs .line.l::after{content:"";position:absolute;top:-5px;border:4.5px solid transparent}
+.hs .line.r::after{right:-1px;border-left:7px solid var(--ink)}
+.hs .line.l::after{left:-1px;border-right:7px solid var(--ink)}
+.bin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bin-grid>div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.steps ul{margin-top:2px}
+.topo{border:1px solid var(--line);border-radius:8px;padding:14px;overflow-x:auto}
+.topo-row{display:grid;grid-template-columns:auto 1fr auto 1fr auto 1fr auto 1fr auto;align-items:center;min-width:520px;gap:0}
+.topo .box{border:1.5px solid var(--ink);border-radius:4px;padding:8px 10px;font-size:12.5px;text-align:center;white-space:nowrap}
+.topo .gw{background:var(--accent-soft);color:var(--accent);font-weight:700;border-color:var(--accent)}
+.topo .net{border-radius:50%;font-weight:700}
+.topo .wire{border-top:1.5px dashed var(--muted);height:0;margin:0 4px}
+.topo-span{display:grid;min-width:520px;margin-top:8px;font-size:12px;color:var(--muted);text-align:center}
+.topo-span span{border-top:1.5px solid var(--ink);padding-top:3px;margin:0 2px}
+.topo-span span.prot{border-color:var(--accent);color:var(--accent);font-weight:700}
+.pkt{display:flex;flex-wrap:nowrap;overflow-x:auto;border:1.5px solid var(--ink);border-radius:4px;width:max-content;max-width:100%}
+.pkt span{padding:6px 10px;font-size:12.5px;border-right:1px solid var(--line);white-space:nowrap;text-align:center}
+.pkt span:last-child{border-right:0}
+.pkt span.esp{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.perm{font-family:var(--f-mono);font-size:14px;letter-spacing:.04em}
+.perm b{background:var(--mark);color:var(--mark-ink);padding:0 2px;border-radius:2px}
+.model{border-left:3px solid var(--ok);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:8px}
+
+
+/* 단원 접기 */
+details.subject>summary{cursor:pointer;list-style:none;align-items:center}
+details.subject>summary::-webkit-details-marker{display:none}
+details.subject>summary::before{content:"";width:9px;height:9px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);margin:0 4px 4px 2px;transition:transform .15s;flex:none}
+details.subject:not([open])>summary::before{transform:rotate(-45deg);margin-bottom:0}
+details.subject:not([open])>summary{border-bottom-color:var(--line)}
+.fold-hint{margin-left:auto;font-size:12.5px;color:var(--muted);font-weight:500}
+.subject-body{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.fold-all{align-self:flex-end}
+
+/* 기출문제 */
+.qbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+button{font:inherit;font-size:13.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--accent);color:var(--accent)}
+button:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.qlist{display:flex;flex-direction:column;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.q-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.q-no{font-family:var(--f-mono);font-weight:700;color:var(--accent)}
+.round{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--ink);color:var(--surface)}
+.q-text{font-weight:500}
+.q-box ul{gap:6px}
+.q-box.mono{font-family:var(--f-mono);font-size:13.5px;line-height:1.9;overflow-x:auto;white-space:nowrap}
+.q-box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;color:var(--muted);font-size:14.5px}
+.try{display:flex;flex-wrap:wrap;gap:8px}
+.try input{flex:1 1 180px;min-width:0;font:inherit;font-size:14.5px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.result{font-size:13.5px;font-weight:700;min-height:1.2em}
+.result.ok{color:var(--ok)}.result.no{color:var(--warn)}
+details{border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:14.5px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸ ";}
+details[open] summary::before{content:"▾ ";}
+.ans{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.ans .answer{font-family:var(--f-display);font-size:17px;font-weight:700}
+.answer-list{list-style:none;padding:0;font-weight:700}
+.answer-list mark,.ans .answer mark{background:var(--mark);color:var(--mark-ink);padding:0 6px;border-radius:3px}
+.ans a{color:var(--accent)}
+
+footer{font-size:12.5px;color:var(--muted);text-align:center}
+@media (max-width:480px){header h1{font-size:23px}.concept,.q{padding:16px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">정보보안기사 실기 · 6과목 위험분석 및 정보보안 관리</span>
+    <h1><span class="ch">CHAPTER 03</span> 인증제도</h1>
+    <div class="meta">
+      <span>마지막 추가 2026-10-09</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="목차">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#isms">01 정보보호 관리체계 인증</a>
+        <div class="sub"><a href="#t-isms">핵심 용어</a> · <a href="#q-isms">단답형</a> · <a href="#q-isms-essay">서술형 · 실무형</a></div>
+      </li>
+      <li><a href="#pc">02 정보보호 제품인증</a>
+        <div class="sub"><a href="#t-pc">핵심 용어</a> · <a href="#q-pc">단답형</a></div>
+      </li>
+    </ol>
+  </nav>
+  <button type="button" class="fold-all" id="fold-all">단원 모두 접기</button>
+
+  <details class="subject" id="isms" open>
+    <summary class="subject-head"><span class="no">01</span><h2>정보보호 관리체계 인증</h2><span class="fold-hint">단답 8 · 서술 3</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-isms">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">ISMS · ISMS-P</span><span class="chip">ISMS 인증 의무 대상자</span><span class="chip">ISMS 라이프 사이클(PDCA)</span><span class="chip">ISMS-P 보호대책 요구사항 12분야</span><span class="chip">1.2 위험 관리</span><span class="chip">ISMS-P 인증 추진체계</span><span class="chip">CISO</span><span class="chip">ISMS-P 3개 영역</span><span class="chip">정보보호 정책 승인·공표</span><span class="chip">물리 보안 7항목</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-isms">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="isms">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="isms">
+
+        <article class="q" data-answers="isms|정보보호관리체계|정보보호관리체계(isms)|isms(informationsecuritymanagementsystem)|정보보호관리체계(isms;informationsecuritymanagementsystem)">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">3회</span></div>
+          <p class="q-text">다음이 설명하는 용어는 무엇인지 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>정보통신망의 안정성과 신뢰성을 확보하기 위한 관리적·기술적·물리적 보호조치를 포함한 종합적인 관리체계가 인증 기준에 적합한지를 한국인터넷진흥원 또는 인증기관이 공식적으로 증명하는 제도</li>
+              <li>정보보호를 위한 일련의 조치와 활동이 인증 기준에 적합함을 인터넷진흥원 또는 인증기관이 증명하는 제도</li>
+            </ul>
+          </div>
+          <div class="try"><input type="text" aria-label="Q1 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>정보보호관리체계(ISMS; Information Security Management System)</mark></p>
+              <ul>
+                <li><b>정보보호관리체계(ISMS)</b> — 정보통신망의 안정성과 신뢰성을 확보하기 위한 관리적·기술적·물리적 보호조치를 포함한 종합적인 관리체계가 인증 기준에 적합한지를 한국인터넷진흥원 또는 인증기관이 공식적으로 증명하는 제도 / 정보보호를 위한 일련의 조치와 활동이 인증 기준에 적합함을 인터넷진흥원 또는 인증기관이 증명하는 제도</li>
+                <li><b>정보보호 및 개인정보보호 관리체계(ISMS-P)</b> — 정보보호 및 개인정보보호를 위한 관리적·기술적·물리적 보호조치를 포함한 종합적인 관리체계가 인증 기준에 적합한지를 한국인터넷진흥원 또는 인증기관이 공식적으로 증명하는 제도</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">3회</span></div>
+          <p class="q-text">다음은 정보통신망법 제47조 2항에 따른 ISMS 인증 의무 대상자에 대한 설명이다. 괄호 (&#12288;) 안에 들어갈 용어를 쓰시오.</p>
+          <div class="table-scroll"><table class="mini">
+            <tbody><tr><th>ISP</th><td>「전기통신사업법」 제6조제1항에 따른 허가를 받은 자로서 서울특별시 및 모든 광역시에서 정보통신망서비스를 제공하는 자</td></tr><tr><th>IDC</th><td>정보통신망법 제46조에 따른 집적정보통신시설 사업자</td></tr><tr><th>다음의 조건 중 하나라도 해당하는 자</th><td>전년도 매출액 또는 세입이 1,500억원 이상인 자 중에서 다음에 해당되는 경우<ul><li>「의료법」 제3조의4에 따른 상급종합병원</li><li>직전연도 12월 31일 기준으로 재학생 수가 ( &#9312; )명 이상인 「고등교육법」 제2조에 따른 학교</li></ul><ul><li>정보통신서비스 부문 전년도(법인인 경우에는 전 사업연도를 말한다) 매출액이 ( &#9313; )원 이상인 자</li><li>전년도 일일평균 정보통신서비스 이용자 수가 ( &#9314; )명 이상인 자</li></ul></td></tr></tbody>
+          </table></div>
+          <div class="multi">
+            <label for="is2-a">&#9312;<input id="is2-a" type="text" data-keys="1만|10000|10,000|만" aria-label="Q2 빈칸 1"></label>
+            <label for="is2-b">&#9313;<input id="is2-b" type="text" data-keys="100억|10000000000" aria-label="Q2 빈칸 2"></label>
+            <label for="is2-c">&#9314;<input id="is2-c" type="text" data-keys="100만|1000000|1,000,000" aria-label="Q2 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>1만</mark>&#12288;&#9313; <mark>100억</mark>&#12288;&#9314; <mark>100만</mark></p>
+              <ul><li>제47조 2항에 따른 ISMS인증 의무 대상자는 다음과 같다.</li></ul>
+              <div class="table-scroll"><table class="mini">
+                <tbody><tr><th>ISP</th><td>「전기통신사업법」 제6조제1항에 따른 허가를 받은 자로서 서울특별시 및 모든 광역시에서 정보통신망서비스를 제공하는 자</td></tr><tr><th>IDC</th><td>정보통신망법 제46조에 따른 집적정보통신시설 사업자</td></tr><tr><th>다음의 조건 중 하나라도 해당하는 자</th><td>전년도 매출액 또는 세입이 1,500억원 이상인 자 중에서 다음에 해당되는 경우<ul><li>「의료법」 제3조의4에 따른 상급종합병원</li><li>직전연도 12월 31일 기준으로 재학생 수가 1만명 이상인 「고등교육법」 제2조에 따른 학교</li></ul><ul><li>정보통신서비스 부문 전년도(법인인 경우에는 전 사업연도를 말한다) 매출액이 100억원 이상인 자</li><li>전년도 일일평균 정보통신서비스 이용자 수가 100만명 이상인 자</li></ul></td></tr></tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">6회</span></div>
+          <p class="q-text">다음은 정보보호 관리체계(ISMS)의 라이프 사이클 4단계 프로세스이다. 괄호 (&#12288;) 안에 들어갈 용어를 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>( &#9312; ) 단계는 조직의 정보보호 목표, 정책, 관리 방침, 위험평가 기준 등을 수립하고 정보보호 관리체계를 설계하는 단계이다.</li>
+              <li>( &#9313; ) 단계는 수립된 계획에 따라 실제 정보보호 대책과 통제 수단을 적용 및 운영하는 단계이다.</li>
+              <li>( &#9314; ) 단계는 정보보호 활동의 효과성, 적합성, 준수 여부를 내부 점검, 감사 등을 통해 검토하는 단계이다.</li>
+              <li>개선(Act) 단계는 점검 결과를 바탕으로 식별된 문제점, 미비점 등을 개선하여 정보보호 관리체계를 지속적으로 보완하는 단계이다.</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="is3-a">&#9312;<input id="is3-a" type="text" data-keys="계획|plan" aria-label="Q3 빈칸 1"></label>
+            <label for="is3-b">&#9313;<input id="is3-b" type="text" data-keys="실행|do" aria-label="Q3 빈칸 2"></label>
+            <label for="is3-c">&#9314;<input id="is3-c" type="text" data-keys="점검|check" aria-label="Q3 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>계획(Plan)</mark>&#12288;&#9313; <mark>실행(Do)</mark>&#12288;&#9314; <mark>점검(Check)</mark></p>
+              <ul><li>정보보호 관리체계(ISMS)의 라이프 사이클 4단계 프로세스는 다음과 같다.</li></ul>
+              <div class="table-scroll"><table class="mini">
+                <tbody>
+                  <tr><th>계획<br>(Plan)</th><td><ul><li>ISMS의 확립 단계</li><li>조직의 정보보호 목표, 정책, 관리 방침, 위험평가 기준 등을 수립하고 정보보호 관리체계를 설계하는 단계</li></ul></td></tr>
+                  <tr><th>실행<br>(Do)</th><td><ul><li>ISMS의 도입 및 운영 단계</li><li>수립된 계획에 따라 실제 정보보호 대책과 통제 수단을 적용 및 운영하는 단계</li></ul></td></tr>
+                  <tr><th>점검<br>(Check)</th><td><ul><li>ISMS의 감시 및 점검 단계</li><li>정보보호 활동의 효과성, 적합성, 준수 여부를 내부 점검, 감사 등을 통해 검토하는 단계</li></ul></td></tr>
+                  <tr><th>개선<br>(Act)</th><td><ul><li>ISMS의 유지 및 개선 단계</li><li>점검 결과를 바탕으로 식별된 문제점, 미비점 등을 개선하여 정보보호 관리체계를 지속적으로 보완하는 단계</li></ul></td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q4</span><span class="round">8회</span></div>
+          <p class="q-text">정보보호 및 개인정보보호 관리체계(ISMS-P)의 '보호대책 요구사항'은 12개 인증 분야 64개의 인증 기준으로 구성되어 있다. 다음 '보호대책 요구사항'의 12개 인증 분야 중 괄호 (&#12288;) 안에 들어가야 할 인증 분야를 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>2.1. 정책, 조직, 자산 관리</li>
+              <li>2.2. 인적 보안</li>
+              <li>2.3. ( &#9312; )</li>
+              <li>2.4. 물리 보안</li>
+              <li>2.5. 인증 및 권한관리</li>
+              <li>2.6. ( &#9313; )</li>
+              <li>2.7. 암호화 적용</li>
+              <li>2.8. 정보시스템 도입 및 개발 보안</li>
+              <li>2.9. 시스템 및 서비스 운영관리</li>
+              <li>2.10. 시스템 및 서비스 보안관리</li>
+              <li>2.11. 사고 예방 및 대응</li>
+              <li>2.12. ( &#9314; )</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="is4-a">&#9312;<input id="is4-a" type="text" data-keys="외부자" aria-label="Q4 빈칸 1"></label>
+            <label for="is4-b">&#9313;<input id="is4-b" type="text" data-keys="접근통제" aria-label="Q4 빈칸 2"></label>
+            <label for="is4-c">&#9314;<input id="is4-c" type="text" data-keys="재해" aria-label="Q4 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>외부자 보안</mark>&#12288;&#9313; <mark>접근통제</mark>&#12288;&#9314; <mark>재해 복구</mark></p>
+              <div class="table-scroll"><table class="mini">
+                <thead><tr><th colspan="2">ISMS-P 인증 세부 인증 기준</th></tr></thead>
+                <tbody><tr><th>정인외물<br>인접암시<br>운보사재</th><td>정책, 조직, 자산 관리 / 인적 보안 / 외부자 보안 / 물리 보안 / 인증 및 권한관리 / 접근통제 / 암호화 적용 / 정보시스템 도입 및 개발 보안 / 시스템 및 서비스 운영관리 / 시스템 및 서비스 보안관리 / 사고 예방 및 대응 / 재해 복구</td></tr></tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q5</span><span class="round">14회</span></div>
+          <p class="q-text">다음은 ISMS-P 인증 기준 중 관리체계 수립 및 운영 중 1.2. 위험 관리에 대한 설명이다. 괄호 (&#12288;) 안에 들어갈 용어를 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>1.2.1 (정보자산식별) 조직의 업무 특성에 따라 정보자산 분류 기준을 수립하여 관리체계 범위 내 모든 정보자산을 식별/분류하고 ( &#9312; )을/를 산정한 후 그 목록을 최신으로 관리하여야 한다.</li>
+              <li>1.2.3 (위험평가) 조직의 대내외 환경분석을 통해 유형별 ( &#9313; )을/를 수집하고 조직에 적합한 위험 평가 방법을 선정하여 관리체계 전 영역에 대하여 연 1회 이상 위험을 평가하며, 수용할 수 있는 위험은 ( &#9314; )의 승인을 받아 관리하여야 한다.</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="is5-a">&#9312;<input id="is5-a" type="text" data-keys="중요도" aria-label="Q5 빈칸 1"></label>
+            <label for="is5-b">&#9313;<input id="is5-b" type="text" data-keys="위협정보" aria-label="Q5 빈칸 2"></label>
+            <label for="is5-c">&#9314;<input id="is5-c" type="text" data-keys="경영진" aria-label="Q5 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>중요도</mark>&#12288;&#9313; <mark>위협 정보</mark>&#12288;&#9314; <mark>경영진</mark></p>
+              <ul><li>1.2. 위험 관리의 인증 기준은 다음과 같다.</li></ul>
+              <div class="table-scroll"><table class="mini">
+                <tbody>
+                  <tr><th>1.2.1<br>정보자산 식별</th><td>조직의 업무특성에 따라 정보자산 분류기준을 수립하여 관리체계 범위 내 모든 정보자산을 식별·분류하고, 중요도를 산정한 후 그 목록을 최신으로 관리하여야 한다.</td></tr>
+                  <tr><th>1.2.2<br>현황 및 흐름분석</th><td>관리체계 전 영역에 대한 정보서비스 및 개인정보 처리 현황을 분석하고 업무 절차와 흐름을 파악하여 문서화하며, 이를 주기적으로 검토하여 최신성을 유지하여야 한다.</td></tr>
+                  <tr><th>1.2.3<br>위험 평가</th><td>조직의 대내외 환경분석을 통하여 유형별 위협정보를 수집하고 조직에 적합한 위험 평가 방법을 선정하여 관리체계 전 영역에 대하여 연 1회 이상 위험을 평가하며, 수용할 수 있는 위험은 경영진의 승인을 받아 관리하여야 한다.</td></tr>
+                  <tr><th>1.2.4<br>보호대책 선정</th><td>위험 평가 결과에 따라 식별된 위험을 처리하기 위하여 조직에 적합한 보호대책을 선정하고, 보호대책의 우선순위와 일정·담당자·예산 등을 포함한 이행계획을 수립하여 경영진의 승인을 받아야 한다.</td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q6</span><span class="round">15회</span></div>
+          <p class="q-text">다음은 ISMS-P 인증 체계이다. 괄호 (&#12288;) 안에 들어갈 명칭을 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>정책기관(협의회)은 과학기술정보통신부장관과 ( &#9312; )이/가 ISMS-P 인증 운영에 관한 정책 사항을 협의하기 위하여 구성·운영하는 기관이다.</li>
+              <li>인증기관인 ( &#9313; )은/는 인증위원회 운영, 인증심사원 양성 및 자격관리, 인증제도 및 기준 개선 등 ISMS-P 인증제도 전반에 걸친 업무를 수행한다.</li>
+              <li>( &#9314; )은/는 인증심사 결과가 인증기준에 적합한지 여부, 인증 취소에 관한 사항, 이의신청에 관한 사항 등을 심의·의결하는 위원회이다.</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="is6-a">&#9312;<input id="is6-a" type="text" data-keys="개인정보보호위원회|개인정보위" aria-label="Q6 빈칸 1"></label>
+            <label for="is6-b">&#9313;<input id="is6-b" type="text" data-keys="한국인터넷진흥원|kisa" aria-label="Q6 빈칸 2"></label>
+            <label for="is6-c">&#9314;<input id="is6-c" type="text" data-keys="인증위원회" aria-label="Q6 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>개인정보보호위원회</mark>&#12288;&#9313; <mark>한국인터넷진흥원(KISA)</mark>&#12288;&#9314; <mark>인증위원회</mark></p>
+              <ul><li>ISMS-P 인증 추진체계는 다음과 같다.</li></ul>
+              <div class="table-scroll"><table class="mini">
+                <tbody>
+                  <tr><th>정책기관<br>(협의회)</th><td><ul><li>과학기술정보통신부장관과 개인정보보호위원회가 ISMS-P 인증 운영에 관한 정책 사항을 협의하기 위하여 구성·운영하는 기관</li><li>인증제도와 관련한 법제도 개선, 정책 결정, 인증기관 및 심사기관 지정 등의 업무를 수행</li></ul></td></tr>
+                  <tr><th>인증기관</th><td><ul><li>인증에 관한 업무를 수행하는 기관</li><li>신청기관이 수립·운영하는 관리체계를 인증기준에 따라 심사하고, 인증위원회를 운영하여 인증기준에 적합한 기관에게 인증서를 발급</li><li>법정 인증기관인 한국인터넷진흥원, 과학기술정보통신부장관과 개인정보보호위원회가 지정한 인증기관인 금융보안원(FSI)이 있음</li></ul></td></tr>
+                  <tr><th>인증위원회</th><td><ul><li>인증심사 결과가 인증기준에 적합한지 여부, 인증 취소에 관한 사항, 이의신청에 관한 사항 등을 심의·의결하는 위원회</li></ul></td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="ciso|정보보호최고책임자|정보보호최고책임자(ciso)|정보보호최고책임자(ciso;chiefinformationsecurityofficer)|chiefinformationsecurityofficer">
+          <div class="q-head"><span class="q-no">Q7</span><span class="round">16회</span></div>
+          <p class="q-text">다음 정보보호 업무를 총괄하는 자는 누구인지 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>정보보호 계획의 수립·시행 및 개선</li>
+              <li>정보보호 실태와 관행의 정기적인 감사 및 개선</li>
+              <li>정보보호 위험의 식별 평가 및 정보보호 대책 마련</li>
+              <li>정보보호 교육과 모의훈련 계획의 수립 및 시행</li>
+            </ul>
+          </div>
+          <div class="try"><input type="text" aria-label="Q7 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>정보보호 최고책임자(CISO; Chief Information Security Officer)</mark></p>
+              <ul><li>정보보호 최고책임자의 업무는 다음과 같다.</li></ul>
+              <div class="table-scroll"><table class="mini">
+                <tbody>
+                  <tr><th>정보보호 관리 및 운영</th><td><ul><li>정보보호 계획의 수립·시행 및 개선</li><li>정보보호 실태와 관행의 정기적인 감사 및 개선</li></ul></td></tr>
+                  <tr><th>위험 관리 및 대책 수립</th><td><ul><li>정보보호 위험의 식별 평가 및 정보보호 대책 마련</li></ul></td></tr>
+                  <tr><th>교육 및 훈련</th><td><ul><li>정보보호 교육과 모의훈련 계획의 수립 및 시행</li></ul></td></tr>
+                  <tr><th>법적 준수</th><td><ul><li>정보통신망법 또는 관계 법령에 따라 정보보호를 위하여 필요한 조치의 이행</li></ul></td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q8</span><span class="round">23회</span></div>
+          <p class="q-text">정보보호 및 개인정보보호 관리체계(ISMS-P) 인증 제도에서 인증 기준은 3개 영역, 101개 인증 항목으로 세분화되어 있다. 이 중에서 3개의 영역은 무엇인지 쓰시오.</p>
+          <div class="multi">
+            <label for="is8-a">&#9312;<input id="is8-a" type="text" data-keys="관리체계" aria-label="Q8 빈칸 1"></label>
+            <label for="is8-b">&#9313;<input id="is8-b" type="text" data-keys="보호대책" aria-label="Q8 빈칸 2"></label>
+            <label for="is8-c">&#9314;<input id="is8-c" type="text" data-keys="개인정보처리" aria-label="Q8 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>관리체계 수립 및 운영</mark>&#12288;&#9313; <mark>보호대책 요구사항</mark>&#12288;&#9314; <mark>개인정보 처리 단계별 요구사항</mark></p>
+              <div class="table-scroll"><table class="mini">
+                <thead><tr><th colspan="2">ISMS-P 인증 영역</th></tr></thead>
+                <tbody><tr><th>관보개</th><td>관리체계 수립 및 운영 / 보호대책 요구사항 / 개인정보 처리 단계</td></tr></tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+      </div>
+
+      <!-- 서술형 · 실무형 -->
+      <div class="qsep"></div>
+      <div class="qbar" id="q-isms-essay">
+        <span class="qtype"><span class="label essay">서술형 · 실무형</span><span class="note">문장으로 설명하는 문제 · 직접 써 보고 모범 답안과 비교</span></span>
+        <button type="button" data-toggle="isms-essay">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="isms-essay">
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">8회</span></div>
+          <p class="q-text">정보보호 관리체계(ISMS) 인증 기준에 따라 정보보호 정책의 승인 및 공표를 어떻게 해야 하는지를 서술하시오.</p>
+          <div class="essay-in">
+            <label for="ise1-a">답<textarea id="ise1-a" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p>정보보호정책의 승인은 이해관계자의 검토와 최고경영자의 승인을 받아야 하며, 정책의 공표는 정보보호정책 문서를 모든 임직원 및 관련자에게 이해하기 쉬운 형태로 전달하여야 한다.</p>
+              </div>
+              <span class="sub-title">해설</span>
+              <ul>
+                <li>정보보호 관리체계(ISMS) 인증 기준에 따라 정보보호 정책과 시행문서는 이해관계자의 검토를 거쳐서 최고 경영진의 승인을 받고, 임직원 및 관련자에게 이해하기 쉬운 형태로 전달하여야 한다.</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">17회</span></div>
+          <p class="q-text">정보보호 최고책임자(CISO; Chief Information Security Officer)의 역할 및 책임(R&amp;R) 4가지를 쓰시오.</p>
+          <div class="essay-in">
+            <label for="ise2-a">&#9312;<textarea id="ise2-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ise2-b">&#9313;<textarea id="ise2-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ise2-c">&#9314;<textarea id="ise2-c" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ise2-d">&#9315;<textarea id="ise2-d" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>&#9312;</b> 정보보호 관리체계의 수립·시행 및 개선</p>
+                <p><b>&#9313;</b> 정보보호 위험의 식별 평가 및 정보보호 대책 마련</p>
+                <p><b>&#9314;</b> 정보보호 교육과 모의훈련 계획의 수립 및 시행</p>
+                <p><b>&#9315;</b> 정보통신망법 또는 관계 법령에 따라 정보보호를 위하여 필요한 조치의 이행</p>
+              </div>
+              <span class="sub-title">해설 — 정보보호 최고책임자의 업무</span>
+              <div class="table-scroll"><table class="mini">
+                <tbody>
+                  <tr><th>정보보호 관리 및 운영</th><td><ul><li>정보보호 관리체계의 수립·시행 및 개선</li><li>정보보호 실태와 관행의 정기적인 감사 및 개선</li></ul></td></tr>
+                  <tr><th>위험 관리 및 대책 수립</th><td><ul><li>정보보호 위험의 식별 평가 및 정보보호 대책 마련</li></ul></td></tr>
+                  <tr><th>교육 및 훈련</th><td><ul><li>정보보호 교육과 모의훈련 계획의 수립 및 시행</li></ul></td></tr>
+                  <tr><th>법적 준수</th><td><ul><li>정보통신망법 또는 관계 법령에 따라 정보보호를 위하여 필요한 조치의 이행</li></ul></td></tr>
+                </tbody>
+              </table></div>
+              <div class="table-scroll"><table class="mini">
+                <thead><tr><th colspan="2">정보보호 최고책임자(CISO) 업무</th></tr></thead>
+                <tbody><tr><th>정위교법</th><td>정보보호 관리 및 운영 / 위험 관리 및 대책 수립 / 교육 및 훈련 / 법적 준수</td></tr></tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q essay">
+          <div class="q-head"><span class="q-no">Q3</span><span class="round">20회, 28회</span></div>
+          <p class="q-text">정보보호 및 개인정보보호 관리체계(ISMS-P) 인증 기준 중 '물리적 정보보호 대책'에 해당하는 사항을 3가지 서술하시오.</p>
+          <div class="essay-in">
+            <label for="ise3-a">&#9312;<textarea id="ise3-a" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ise3-b">&#9313;<textarea id="ise3-b" placeholder="직접 써 보세요"></textarea></label>
+            <label for="ise3-c">&#9314;<textarea id="ise3-c" placeholder="직접 써 보세요"></textarea></label>
+          </div>
+          <details>
+            <summary>모범 답안과 해설 보기</summary>
+            <div class="ans">
+              <span class="sub-title">모범 답안</span>
+              <div class="model">
+                <p><b>&#9312; 보호구역 지정</b>: 물리적·환경적 위협으로부터 개인정보 및 중요 정보, 문서, 저장매체, 주요 설비와 시스템 등을 보호하기 위하여 통제구역·제한구역·접견 구역 등 물리적 보호구역을 지정하고 구역별 보호 대책을 수립·이행하여야 함</p>
+                <p><b>&#9313; 출입 통제</b>: 보호구역은 인가된 사람만이 출입하도록 통제하고 책임 추적성을 확보할 수 있도록 출입 및 접근 이력을 주기적으로 검토하여야 함</p>
+                <p><b>&#9314; 정보시스템 보호</b>: 정보시스템은 환경적 위협과 유해 요소, 비인가 접근 가능성을 감소시킬 수 있도록 중요도와 특성을 고려하여 배치하고, 통신 및 전력 케이블이 손상을 입지 않도록 보호하여야 함</p>
+              </div>
+              <span class="sub-title">해설 — ISMS-P '보호대책 요구사항' 중 '물리 보안' 항목</span>
+              <div class="table-scroll"><table class="mini">
+                <tbody>
+                  <tr><th>보호구역 지정</th><td>물리적·환경적 위협으로부터 개인정보 및 중요 정보, 문서, 저장매체, 주요 설비와 시스템 등을 보호하기 위하여 통제구역·제한구역·접견 구역 등 물리적 보호구역을 지정하고 구역별 보호 대책을 수립·이행하여야 함</td></tr>
+                  <tr><th>출입 통제</th><td>보호구역은 인가된 사람만이 출입하도록 통제하고 책임 추적성을 확보할 수 있도록 출입 및 접근 이력을 주기적으로 검토하여야 함</td></tr>
+                  <tr><th>정보시스템 보호</th><td>정보시스템은 환경적 위협과 유해 요소, 비인가 접근 가능성을 감소시킬 수 있도록 중요도와 특성을 고려하여 배치하고, 통신 및 전력 케이블이 손상을 입지 않도록 보호하여야 함</td></tr>
+                  <tr><th>보호설비 운영</th><td>보호구역에 있는 정보시스템의 중요도 및 특성에 따라 온·습도 조절, 화재 감지, 소화설비, 누수 감지, UPS, 비상 발전기, 이중전원선 등의 보호 설비를 갖추고 운영 절차를 수립·운영하여야 함</td></tr>
+                  <tr><th>보호구역 내 작업</th><td>보호구역 내에서의 비인가 행위 및 권한 오·남용 등을 방지하기 위한 작업 절차를 수립·이행하고, 작업 기록을 주기적으로 검토하여야 함</td></tr>
+                  <tr><th>반·출입 기기 통제</th><td>보호구역 내 정보시스템, 모바일 기기, 저장매체 등에 대한 반·출입 통제 절차를 수립·이행하고 주기적으로 검토하여야 함</td></tr>
+                  <tr><th>업무환경 보안</th><td>공용으로 사용하는 사무용 기기(문서고, 공용 PC, 복합기, 파일서버 등) 및 개인 업무 환경(업무용 PC, 책상 등)을 통하여 개인정보 및 중요 정보가 비인가자에게 노출 또는 유출되지 않도록 클린 데스크, 정기 점검 등 업무 환경 보호 대책을 수립·이행하여야 함</td></tr>
+                </tbody>
+              </table></div>
+              <div class="table-scroll"><table class="mini">
+                <thead><tr><th colspan="2">물리적 보호 대책 수립 항목</th></tr></thead>
+                <tbody><tr><th>지출<br>정설내<br>반환</th><td>보호구역 지정 / 출입 통제 / 정보시스템 보호 / 보호 설비 운영 / 보호구역 내 작업 / 반·출입 기기 통제 / 업무 환경 보안</td></tr></tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <details class="subject" id="pc" open>
+    <summary class="subject-head"><span class="no">02</span><h2>정보보호 제품인증</h2><span class="fold-hint">단답 2</span></summary>
+    <div class="subject-body">
+    <div class="terms" id="t-pc">
+      <span class="terms-label">핵심 용어</span>
+      <div class="chips"><span class="chip">CC 인증 구성요소(PP · ST · EAL)</span><span class="chip">CC(공통 평가 기준)</span></div>
+    </div>
+
+    <section class="unit">
+      <!-- 단답형 -->
+      <div class="qbar" id="q-pc">
+        <span class="qtype"><span class="label">단답형</span><span class="note">한 단어·값으로 답하는 문제</span></span>
+        <button type="button" data-toggle="pc">답 모두 펼치기</button>
+      </div>
+      <div class="qlist" data-group="pc">
+
+        <article class="q" data-multi="1">
+          <div class="q-head"><span class="q-no">Q1</span><span class="round">9회, 12회</span></div>
+          <p class="q-text">다음은 정보보호시스템 공통 평가 기준(CC 인증)에 대한 설명이다. 괄호 (&#12288;) 안에 들어갈 용어를 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>( &#9312; )은/는 특정 제품군을 위해서 정보제품이 갖추어야 할 공통적인 보안 요구사항의 집합이다.</li>
+              <li>( &#9313; )은/는 평가대상이 되는 특정 제품이나 시스템이 충족해야 할 보안 명세의 집합으로 요구된 보안을 만족시키기 위한 보안 기능과 그 기능이 제대로 작동하도록 하는 보증 방법을 포함한다.</li>
+              <li>( &#9314; )은/는 보증 요구와 관련된 컴포넌트의 집합으로 구성된 패키지로 총 7단계로 구성되어 있다.</li>
+            </ul>
+          </div>
+          <div class="multi">
+            <label for="pc1-a">&#9312;<input id="pc1-a" type="text" data-keys="pp|보호프로파일|protectionprofile" aria-label="Q1 빈칸 1"></label>
+            <label for="pc1-b">&#9313;<input id="pc1-b" type="text" data-keys="st|보안목표명세서|securitytarget" aria-label="Q1 빈칸 2"></label>
+            <label for="pc1-c">&#9314;<input id="pc1-c" type="text" data-keys="eal|평가보증등급|evaluationassurancelevel" aria-label="Q1 빈칸 3"></label>
+          </div>
+          <div class="try"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: &#9312; <mark>PP(Protection Profile; 보호 프로파일)</mark>&#12288;&#9313; <mark>ST(Security Target; 보안 목표 명세서)</mark>&#12288;&#9314; <mark>EAL(Evaluation Assurance Level; 평가 보증 등급)</mark></p>
+              <ul><li>정보보호시스템 공통 평가 기준(CC 인증)의 구성요소는 다음과 같다.</li></ul>
+              <div class="table-scroll"><table class="mini">
+                <tbody>
+                  <tr><th>PP<br>(보호 프로파일)</th><td><ul><li>특정 제품군을 위해서 정보제품이 갖추어야 할 공통적인 보안 요구사항의 집합</li></ul></td></tr>
+                  <tr><th>ST<br>(보안 목표 명세서)</th><td><ul><li>특정 TOE가 충족해야 할 보안 목표 명세서</li></ul></td></tr>
+                  <tr><th>EAL<br>(평가 보증 등급)</th><td><ul><li>보증 요구와 관련된 컴포넌트의 집합으로 구성된 패키지로 총 7단계로 구성</li><li>보증 수준이 올라감에 따라 보다 포괄적이고 엄격한 시험이 이루어짐</li></ul></td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </details>
+        </article>
+
+        <article class="q" data-answers="cc|commoncriteria|cc(commoncriteriaforinformationtechnologysecurityevaluation)|commoncriteriaforinformationtechnologysecurityevaluation">
+          <div class="q-head"><span class="q-no">Q2</span><span class="round">14회</span></div>
+          <p class="q-text">다음에서 설명하는 정보보호제품 평가 및 인증 제도를 영어 약어로 쓰시오.</p>
+          <div class="q-box">
+            <ul>
+              <li>IT 제품 및 시스템의 보안 평가에 대한 국제 표준으로 현재 가장 널리 사용되는 보안 평가 체계</li>
+              <li>다른 국가들의 보안 평가 기준을 조합하여 개발된 ISO/IEC 15408 국제 표준</li>
+            </ul>
+          </div>
+          <div class="try"><input type="text" aria-label="Q2 답"><button type="button" class="check">확인</button></div>
+          <div class="result" aria-live="polite"></div>
+          <details>
+            <summary>답과 해설 보기</summary>
+            <div class="ans">
+              <p class="answer">답: <mark>CC(Common Criteria for Information Technology Security Evaluation)</mark></p>
+              <ul>
+                <li>CC는 TCSEC와 ITSEC를 통합하고, 다른 국가들의 보안 평가 기준을 조합하여 개발된 국제 표준(ISO/IEC 15408)이다.</li>
+                <li>IT 제품 및 시스템의 보안 평가에 대한 국제 표준으로 현재 가장 널리 사용되는 보안 평가 체계이다.</li>
+                <li>정보 기술과 보안 평가를 위한 공통 평가 기준으로 보안 요구조건을 명세화하고 평가 기준을 정의하기 위한 표준이다.</li>
+                <li>CC는 정보 기술 보안 평가에 대한 체계적이고 객관적인 기준을 제공하고, 정보시스템이 특정 보안 요구 사항을 충족하는지 확인하기 위해 사용된다.</li>
+              </ul>
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+    </div>
+  </details>
+
+  <footer>교재 기출문제를 바탕으로 정리 · 자료를 받을 때마다 이 페이지에 이어서 추가</footer>
+</div>
+
+<script>
+(function(){
+  const norm = s => s.toLowerCase().replace(/\s+/g,'');
+  document.querySelectorAll('.q:not(.essay), .q.essay[data-check]').forEach(q=>{
+    const out = q.querySelector('.result');
+    const inputs = [...q.querySelectorAll('input')];
+    const answers = q.dataset.answers ? q.dataset.answers.split('|').map(norm) : null;
+    const check = ()=>{
+      const vals = inputs.map(i=>norm(i.value));
+      if(vals.every(v=>!v)){ out.textContent=''; out.className='result'; return; }
+      let ok;
+      if(q.dataset.multi){
+        const marks = inputs.map(i=>{const v=norm(i.value); if(i.dataset.keys) return !!v && i.dataset.keys.split('|').some(k=>v.includes(norm(k))); return v.replace(/^\./,'')===norm(i.dataset.answer).replace(/^\./,'');});
+        ok = marks.every(Boolean);
+        out.textContent = ok ? '모두 정답이에요.' : '맞은 칸: '+marks.filter(Boolean).length+' / '+marks.length+' — 막히면 아래 해설을 열어 보세요.';
+      } else {
+        ok = answers.includes(vals[0]);
+        out.textContent = ok ? '정답이에요.' : '다시 생각해 보세요. 막히면 아래 해설을 열어 보세요.';
+      }
+      out.className = 'result ' + (ok ? 'ok' : 'no');
+    };
+    q.querySelector('.check').addEventListener('click', check);
+    inputs.forEach(i=>i.addEventListener('keydown', e=>{ if(e.key==='Enter') check(); }));
+  });
+  document.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const list = document.querySelectorAll('[data-group="'+btn.dataset.toggle+'"] details');
+      const open = [...list].some(d=>!d.open);
+      list.forEach(d=>d.open = open);
+      btn.textContent = open ? '답 모두 접기' : '답 모두 펼치기';
+    });
+  });
+
+  // 단원 접기: 상태 기억 + 목차 링크로 이동 시 자동 펼치기
+  const units=[...document.querySelectorAll('details.subject')];
+  const KEY='fold-state';
+  let saved={};
+  try{ saved=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  units.forEach(d=>{
+    if(saved[d.id]===false) d.open=false;
+    d.addEventListener('toggle',()=>{
+      saved[d.id]=d.open;
+      try{ localStorage.setItem(KEY,JSON.stringify(saved)); }catch(e){}
+      syncAll();
+    });
+  });
+  const allBtn=document.getElementById('fold-all');
+  function syncAll(){ if(allBtn) allBtn.textContent = units.some(d=>d.open) ? '단원 모두 접기' : '단원 모두 펼치기'; }
+  if(allBtn) allBtn.addEventListener('click',()=>{ const open=!units.some(d=>d.open); units.forEach(d=>d.open=open); });
+  function openFor(hash){
+    if(!hash) return;
+    const el=document.getElementById(hash.slice(1)); if(!el) return;
+    const d=el.closest('details.subject'); if(d && !d.open) d.open=true;
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',()=>openFor(a.getAttribute('href'))));
+  openFor(location.hash);
+  syncAll();
+})();
+</script>

