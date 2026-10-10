@@ -283,6 +283,11 @@
               { group: '5. 정보보안 일반', title: 'Ch1. 암호학', file: 'static/5정보보안일반_ch1암호학.html' },
               { group: '5. 정보보안 일반', title: 'Ch2. ISMS-P 및 정보보호제품 인증', file: 'static/5정보보안일반_ch2ISMS-P및정보보호제품인증.html' },
               { group: '5. 정보보안 일반', title: 'Ch3. 기타', file: 'static/5정보보안일반_ch3기타.html' },
+              { group: '6. 위험분석 및 정보보안 관리', title: 'Ch1. 정보보호 및 위험관리', file: 'static/6위험분석및정보보안관리_ch1정보보호및위험관리.html' },
+              { group: '6. 위험분석 및 정보보안 관리', title: 'Ch2. ISMS-P 및 정보보호제품 인증', file: 'static/6위험분석및정보보안관리_ch2ISMS-P및정보보호제품인증.html' },
+              { group: '6. 위험분석 및 정보보안 관리', title: 'Ch3. 인증제도', file: 'static/6위험분석및정보보안관리_ch3인증제도.html' },
+              { group: '7. 정보보안 법규', title: 'Ch1. 국가기반 및 서비스 보안 법규', file: 'static/7정보보안법규_ch1국가기반및서비스보안법규.html' },
+              { group: '7. 정보보안 법규', title: 'Ch2. 개인정보보호 법규', file: 'static/7정보보안법규_ch2개인정보보호법규.html' },
             ],
           },
         ],
@@ -414,12 +419,12 @@
     var lecture = { code: '26년2회 기출', text: '인강' };
     put(new Date(2026, 9, 9), 'p1', lecture);
     review(lecture, new Date(2026, 9, 10));
-    // 새로 공부: 문서(0부터)마다 며칠씩 볼지 (10/10 ~ 11/1)
-    [2, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 4, 1, 1, 1].forEach(function (days, i) {
+    // 새로 공부: 문서(0부터)마다 며칠씩 볼지 (10/10 ~ 11/8)
+    [2, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 4, 1, 1, 1, 2, 1, 1, 1, 2].forEach(function (days, i) {
       study({ page: i }, days);
     });
     // 마무리: 시험 전 5일 동안 과목별로 전체를 한 번 더 (11/9 ~ 11/13)
-    [[0, 1], [2, 3, 4, 5], [6, 7, 8, 9], [10, 11], [12, 13, 14]].forEach(function (pages, i) {
+    [[0, 1, 2, 3, 4, 5], [6, 7, 8, 9], [10, 11], [12, 13, 14, 15, 16, 17], [18, 19]].forEach(function (pages, i) {
       pages.forEach(function (page) {
         put(new Date(2026, 10, 9 + i), 'p3', { page: page });
       });
