@@ -257,10 +257,15 @@
 
   <script>
     // 사이드바 항목 > 하위 메뉴 > 문서 목록. html 파일을 추가하면 pages에 한 줄씩 적습니다.
+    // 하위 메뉴에 pages 대신 file을 적으면 목록 없이 그 문서가 바로 열립니다.
     var categories = [
       {
         title: '정보보안기사 실기',
         menus: [
+          {
+            title: '개념 지도',
+            file: 'static/실기 개념 지도.html',
+          },
           {
             title: '개념',
             pages: [],
@@ -307,7 +312,7 @@
       var parts = location.hash.slice(1).split('/');
       var category = categories[parts[0]];
       var menu = category && category.menus[parts[1]];
-      var page = menu && menu.pages[parts[2]];
+      var page = menu && (menu.file ? menu : menu.pages[parts[2]]);
       var here = menu ? '#' + Number(parts[0]) + '/' + Number(parts[1]) : '';
 
       var links = menuList.querySelectorAll('a');
@@ -322,7 +327,7 @@
       home.hidden = !!menu;
       list.hidden = !menu;
       content.hidden = !page;
-      back.hidden = !page;
+      back.hidden = !page || !!menu.file;
       back.href = here;
       if (page) {
         content.src = page.file;
@@ -376,7 +381,7 @@
     });
 
     // 공부 계획. 시작일부터 하루씩 새 단원을 채우고, 단원을 끝낸 날 기준으로 복습 날짜를 자동으로 잡습니다.
-    var PLAN_MENU = [0, 1];
+    var PLAN_MENU = [0, 2];
     var EXAM = new Date(2026, 10, 14);
     var REVIEW = [1, 3, 7, 14]; // 망각곡선 복습 간격(일)
     var day = new Date(2026, 9, 10);

